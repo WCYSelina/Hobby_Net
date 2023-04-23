@@ -43,6 +43,35 @@
             </objects>
             <point key="canvasLocation" x="2898.4732824427479" y="-27.464788732394368"/>
         </scene>
+        <!--Add Record View Controller-->
+        <scene sceneID="Xhf-ze-nb2">
+            <objects>
+                <viewController id="fYe-Oj-eD4" customClass="AddRecordViewController" customModule="FIT3178_Assigment" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="wQR-oK-6tk">
+                        <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <datePicker contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" datePickerMode="dateAndTime" minuteInterval="1" style="inline" translatesAutoresizingMaskIntoConstraints="NO" id="SNQ-9Q-arR">
+                                <rect key="frame" x="20" y="123" width="353" height="379"/>
+                            </datePicker>
+                        </subviews>
+                        <viewLayoutGuide key="safeArea" id="41G-lR-kSG"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                        <constraints>
+                            <constraint firstItem="SNQ-9Q-arR" firstAttribute="leading" secondItem="41G-lR-kSG" secondAttribute="leading" constant="20" id="ITf-5B-zHH"/>
+                            <constraint firstItem="SNQ-9Q-arR" firstAttribute="top" secondItem="41G-lR-kSG" secondAttribute="top" constant="20" id="auJ-BT-v4l"/>
+                            <constraint firstAttribute="trailing" secondItem="SNQ-9Q-arR" secondAttribute="trailing" constant="20" id="hcV-vx-9HI"/>
+                        </constraints>
+                    </view>
+                    <navigationItem key="navigationItem" id="C6x-O9-GVV"/>
+                    <connections>
+                        <outlet property="addRecordDate" destination="SNQ-9Q-arR" id="Ij2-tA-FOO"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="Qmm-RH-A2W" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="4791.6030534351139" y="-27.464788732394368"/>
+        </scene>
         <!--Sheet View Controller-->
         <scene sceneID="i9O-4L-20B">
             <objects>
@@ -135,6 +164,24 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Ysn-vf-9Hi" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="1971.7557251908397" y="-27.464788732394368"/>
+        </scene>
+        <!--Navigation Controller-->
+        <scene sceneID="Yr8-nW-0gE">
+            <objects>
+                <navigationController automaticallyAdjustsScrollViewInsets="NO" id="OuI-Q3-uNe" sceneMemberID="viewController">
+                    <toolbarItems/>
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="EDr-Ib-ziX">
+                        <rect key="frame" x="0.0" y="59" width="393" height="44"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </navigationBar>
+                    <nil name="viewControllers"/>
+                    <connections>
+                        <segue destination="fYe-Oj-eD4" kind="relationship" relationship="rootViewController" id="Py6-QA-yAK"/>
+                    </connections>
+                </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="fRJ-d9-lFI" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="3864.8854961832058" y="-27.464788732394368"/>
         </scene>
     </scenes>
     <resources>

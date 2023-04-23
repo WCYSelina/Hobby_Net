@@ -7,13 +7,39 @@
 
 import SwiftUI
 
+struct ViewControllerWrapper: UIViewControllerRepresentable {
+    typealias UIViewControllerType = AddRecordViewController
+
+    func makeUIViewController(context: Context) -> AddRecordViewController {
+        return AddRecordViewController()
+    }
+
+    func updateUIViewController(_ uiViewController: AddRecordViewController, context: Context) {
+        // Update the view controller
+    }
+}
+
 struct ViewHobbyPage: View {
     @State private var selectedDate = Date()
+    @State private var navigateToAddRecord = false
     var hobbyRecords:Hobby
     var body: some View {
         NavigationView{
             VStack {
                 Text("").navigationBarTitle("Hobby",displayMode: .inline)
+                    .toolbar {
+                        ToolbarItem(placement: .navigationBarTrailing) {
+                            Button(action: {
+                                // Handle action
+                                self.navigateToAddRecord = true
+                                
+                            }) {
+                                Label("Add", systemImage: "plus")
+                            }.sheet(isPresented: $navigateToAddRecord){
+                                ViewControllerWrapper()
+                            }
+                        }
+                    }
                 DatePicker("", selection: $selectedDate, displayedComponents: [.date, .hourAndMinute])
                     .datePickerStyle(.graphical).offset(x:0,y:-20)
                 ScrollView(.vertical,showsIndicators: true){
