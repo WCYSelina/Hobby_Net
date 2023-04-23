@@ -17,7 +17,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <prototypes>
-                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" id="Qf6-AW-adU">
+                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="hobbyCell" id="Qf6-AW-adU">
                                 <rect key="frame" x="0.0" y="50" width="393" height="43.666667938232422"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="Qf6-AW-adU" id="wkt-fc-Pgo">
@@ -38,10 +38,29 @@
                             </connections>
                         </barButtonItem>
                     </navigationItem>
+                    <connections>
+                        <segue destination="ehA-lW-RUN" kind="show" identifier="viewHobbyIdentifier" id="qfa-Ls-lOD"/>
+                    </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="uuA-54-G8y" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="2898.4732824427479" y="-27.464788732394368"/>
+        </scene>
+        <!--View Hobby Controller-->
+        <scene sceneID="W78-43-AHe">
+            <objects>
+                <viewController id="ehA-lW-RUN" customClass="ViewHobbyController" customModule="FIT3178_Assigment" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="Nh8-4c-6I3">
+                        <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <viewLayoutGuide key="safeArea" id="gsb-vD-XuR"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                    </view>
+                    <navigationItem key="navigationItem" id="sCN-lM-bKb"/>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="OEf-HS-L05" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="3822" y="-27"/>
         </scene>
         <!--Sheet View Controller-->
         <scene sceneID="i9O-4L-20B">
@@ -51,39 +70,42 @@
                         <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" text="Hobby Name:" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="h6n-JN-L7P">
-                                <rect key="frame" x="20" y="131" width="353" height="21"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                <nil key="textColor"/>
-                                <nil key="highlightedColor"/>
-                            </label>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" text="Background" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="7FV-hB-heK">
-                                <rect key="frame" x="20" y="214" width="353" height="21"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                <nil key="textColor"/>
-                                <nil key="highlightedColor"/>
-                            </label>
-                            <button opaque="NO" contentMode="scaleToFill" ambiguous="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="feq-Pd-cDQ">
-                                <rect key="frame" x="298.33333333333331" y="297" width="74.666666666666686" height="35"/>
-                                <state key="normal" title="Button"/>
-                                <buttonConfiguration key="configuration" style="filled" title="Create"/>
-                            </button>
-                            <textField opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="248" ambiguous="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="5wR-Nq-9Kt">
-                                <rect key="frame" x="20" y="243" width="353" height="34"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                                <textInputTraits key="textInputTraits"/>
-                            </textField>
-                            <textField opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="248" ambiguous="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="B8C-7o-6CL">
-                                <rect key="frame" x="20" y="160" width="353" height="34"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                                <textInputTraits key="textInputTraits"/>
-                            </textField>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" text="Create Hobby" textAlignment="center" lineBreakMode="tailTruncation" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="XfY-5G-yYn">
-                                <rect key="frame" x="20" y="84" width="353" height="27"/>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Create Hobby" textAlignment="center" lineBreakMode="tailTruncation" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="XfY-5G-yYn">
+                                <rect key="frame" x="20" y="79" width="353" height="27"/>
                                 <fontDescription key="fontDescription" type="boldSystem" pointSize="22"/>
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Hobby Name:" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="h6n-JN-L7P">
+                                <rect key="frame" x="20" y="126" width="353" height="21"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Background" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="7FV-hB-heK">
+                                <rect key="frame" x="20" y="209" width="353" height="21"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <textField opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="248" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="5wR-Nq-9Kt">
+                                <rect key="frame" x="20" y="238" width="353" height="34"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                <textInputTraits key="textInputTraits"/>
+                            </textField>
+                            <textField opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="248" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="B8C-7o-6CL">
+                                <rect key="frame" x="20" y="155" width="353" height="34"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                <textInputTraits key="textInputTraits"/>
+                            </textField>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="feq-Pd-cDQ">
+                                <rect key="frame" x="298.33333333333331" y="292" width="74.666666666666686" height="35"/>
+                                <state key="normal" title="Button"/>
+                                <buttonConfiguration key="configuration" style="filled" title="Create"/>
+                                <connections>
+                                    <action selector="createHobby:" destination="nI3-MN-4L7" eventType="touchUpInside" id="ctH-ZO-Yt4"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="a9d-NU-EKF"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
@@ -93,9 +115,11 @@
                             <constraint firstItem="a9d-NU-EKF" firstAttribute="trailing" secondItem="feq-Pd-cDQ" secondAttribute="trailing" constant="20" id="ES5-qo-12c"/>
                             <constraint firstItem="a9d-NU-EKF" firstAttribute="trailing" secondItem="XfY-5G-yYn" secondAttribute="trailing" constant="20" id="HCb-Ia-xr8"/>
                             <constraint firstItem="h6n-JN-L7P" firstAttribute="leading" secondItem="a9d-NU-EKF" secondAttribute="leading" constant="20" id="INr-wp-Z2V"/>
+                            <constraint firstItem="XfY-5G-yYn" firstAttribute="top" secondItem="a9d-NU-EKF" secondAttribute="top" constant="20" id="IuS-vz-UwT"/>
                             <constraint firstItem="a9d-NU-EKF" firstAttribute="trailing" secondItem="5wR-Nq-9Kt" secondAttribute="trailing" constant="20" id="MVO-Ct-IdM"/>
                             <constraint firstItem="B8C-7o-6CL" firstAttribute="top" secondItem="h6n-JN-L7P" secondAttribute="bottom" constant="8" id="MqW-gq-E5d"/>
                             <constraint firstItem="a9d-NU-EKF" firstAttribute="trailing" secondItem="h6n-JN-L7P" secondAttribute="trailing" constant="20" id="W5O-WQ-OIc"/>
+                            <constraint firstItem="feq-Pd-cDQ" firstAttribute="top" secondItem="5wR-Nq-9Kt" secondAttribute="bottom" constant="20" id="Xjq-Eh-nNW"/>
                             <constraint firstItem="B8C-7o-6CL" firstAttribute="leading" secondItem="a9d-NU-EKF" secondAttribute="leading" constant="20" id="Zzo-iD-1OA"/>
                             <constraint firstItem="5wR-Nq-9Kt" firstAttribute="leading" secondItem="a9d-NU-EKF" secondAttribute="leading" constant="20" id="ead-tG-9en"/>
                             <constraint firstItem="7FV-hB-heK" firstAttribute="top" secondItem="B8C-7o-6CL" secondAttribute="bottom" constant="20" id="g2B-ZC-Wrg"/>
@@ -105,10 +129,13 @@
                             <constraint firstItem="7FV-hB-heK" firstAttribute="leading" secondItem="a9d-NU-EKF" secondAttribute="leading" constant="20" id="yQN-8T-ZrN"/>
                         </constraints>
                     </view>
+                    <connections>
+                        <outlet property="hobbyName" destination="B8C-7o-6CL" id="wMW-qY-c0b"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="9cW-BU-ANP" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="3900" y="-27"/>
+            <point key="canvasLocation" x="2898" y="-689"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="boQ-qb-ot4">
