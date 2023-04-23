@@ -38,29 +38,10 @@
                             </connections>
                         </barButtonItem>
                     </navigationItem>
-                    <connections>
-                        <segue destination="ehA-lW-RUN" kind="show" identifier="viewHobbyIdentifier" id="qfa-Ls-lOD"/>
-                    </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="uuA-54-G8y" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="2898.4732824427479" y="-27.464788732394368"/>
-        </scene>
-        <!--View Hobby Controller-->
-        <scene sceneID="W78-43-AHe">
-            <objects>
-                <viewController id="ehA-lW-RUN" customClass="ViewHobbyController" customModule="FIT3178_Assigment" customModuleProvider="target" sceneMemberID="viewController">
-                    <view key="view" contentMode="scaleToFill" id="Nh8-4c-6I3">
-                        <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
-                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <viewLayoutGuide key="safeArea" id="gsb-vD-XuR"/>
-                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
-                    </view>
-                    <navigationItem key="navigationItem" id="sCN-lM-bKb"/>
-                </viewController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="OEf-HS-L05" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="3822" y="-27"/>
         </scene>
         <!--Sheet View Controller-->
         <scene sceneID="i9O-4L-20B">

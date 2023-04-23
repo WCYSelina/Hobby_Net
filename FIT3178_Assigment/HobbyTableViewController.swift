@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import SwiftUI
 
 class HobbyTableViewController: UITableViewController,CreateHobbyDelegate{
     
@@ -78,7 +79,9 @@ class HobbyTableViewController: UITableViewController,CreateHobbyDelegate{
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         currentHobby = allHobbies[indexPath.row]
         viewHobbyDelegate?.viewHobby(currentHobby!)
-        performSegue(withIdentifier: "viewHobbyIdentifier", sender: nil)
+        let swiftUIView = ViewHobbyPage(hobbyRecords: currentHobby!)
+        let hostingController = UIHostingController(rootView: swiftUIView)
+        present(hostingController, animated: true, completion: nil)
     }
 
 
@@ -112,15 +115,15 @@ class HobbyTableViewController: UITableViewController,CreateHobbyDelegate{
     // MARK: - Navigation
 
     // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destination.
-        // Pass the selected object to the new view controller.
-        if segue.identifier == "viewHobbyIdentifier" {
-            if let destination = segue.destination as? ViewHobbyController {
-                // Pass any necessary data to the destination view controller here
-                destination.hobbyRecords = currentHobby
-            }
-        }
-    }
+//    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+//        // Get the new view controller using segue.destination.
+//        // Pass the selected object to the new view controller.
+//        if segue.identifier == "viewHobbyIdentifier" {
+//            if let destination = segue.destination as? ViewHobbyController {
+//                // Pass any necessary data to the destination view controller here
+//                destination.hobbyRecords = currentHobby
+//            }
+//        }
+//    }
 
 }

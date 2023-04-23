@@ -7,35 +7,35 @@
 
 import UIKit
 
-class ViewHobbyController: UIViewController {
-//    func viewHobby(_ newHobby: Hobby) {
-//        hobbyRecords = newHobby
-//        print("ffff")
-////        performSegue(withIdentifier: "mySegue", sender: nil)
-//    }
-    
+class ViewHobbyController: UIViewController,UITableViewDataSource,, UITableViewDelegate, UICollectionViewDataSource, UICollectionViewDelegate{
+    //    func viewHobby(_ newHobby: Hobby) {
+    //        hobbyRecords = newHobby
+    //        print("ffff")
+    ////        performSegue(withIdentifier: "mySegue", sender: nil)
+    //    }
     
     weak var viewHobbyDelegate:ViewHobbyDelegate?
     var hobbyRecords:Hobby?
     var hobbyView: ViewHobbyPage!
     override func viewDidLoad() {
         super.viewDidLoad()
-        hobbyView = ViewHobbyPage(frame: view.bounds)//initialise the size screen, in this case, full screen
-        hobbyView.hobbyRecord = hobbyRecords
-//        hobbyView.viewHobbyDelegate = viewHobbyDelegate// set the delegate to the view controller
-//        viewHobbyDelegate?.hobbyRecord = hobbyRecords
-        view.addSubview(hobbyView)
-        // Do any additional setup after loading the view.
+        
+        // Create a UIScrollView
     }
-
+    func numberOfSections(in tableView: UITableView) -> Int {
+        1
+    }
+    num
+    
+    
     /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destination.
-        // Pass the selected object to the new view controller.
-    }
-    */
-
+     // MARK: - Navigation
+     
+     // In a storyboard-based application, you will often want to do a little preparation before navigation
+     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+     // Get the new view controller using segue.destination.
+     // Pass the selected object to the new view controller.
+     }
+     */
+    
 }
