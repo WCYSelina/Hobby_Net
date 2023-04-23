@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="21507" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina6_12" orientation="portrait" appearance="light"/>
+    <dependencies>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="21505"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="System colors in document resources" minToolsVersion="11.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <scenes>
+        <!--Create Hobby-->
+        <scene sceneID="s0d-6b-0kx">
+            <objects>
+                <viewController storyboardIdentifier="SheetViewController" id="Y6W-OH-hqX" customClass="SheetViewController" customModule="FIT3178_Assigment" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="5EZ-qb-Rvc">
+                        <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Hobby Name:" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="gYz-K9-d4w">
+                                <rect key="frame" x="20" y="126" width="353" height="21"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Background" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Sdj-T1-hjW">
+                                <rect key="frame" x="20" y="209" width="353" height="21"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <button opaque="NO" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="4OL-63-KXB">
+                                <rect key="frame" x="292" y="292" width="81" height="35"/>
+                                <state key="normal" title="Button"/>
+                                <buttonConfiguration key="configuration" style="filled" title="Create"/>
+                                <connections>
+                                    <action selector="createHobby:" destination="Y6W-OH-hqX" eventType="touchUpInside" id="lBL-LW-FwN"/>
+                                </connections>
+                            </button>
+                            <textField opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="248" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="wOn-td-IPs">
+                                <rect key="frame" x="20" y="238" width="353" height="34"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                <textInputTraits key="textInputTraits"/>
+                            </textField>
+                            <textField opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="248" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="O5h-Kr-5dz">
+                                <rect key="frame" x="20" y="155" width="353" height="34"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                <textInputTraits key="textInputTraits"/>
+                            </textField>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Create Hobby" textAlignment="center" lineBreakMode="tailTruncation" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="q6W-RK-fN1">
+                                <rect key="frame" x="20" y="79" width="353" height="27"/>
+                                <fontDescription key="fontDescription" type="boldSystem" pointSize="22"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                        </subviews>
+                        <viewLayoutGuide key="safeArea" id="vDu-zF-Fre"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                        <constraints>
+                            <constraint firstItem="gYz-K9-d4w" firstAttribute="leading" secondItem="vDu-zF-Fre" secondAttribute="leading" constant="20" id="4Kk-rf-T0e"/>
+                            <constraint firstItem="O5h-Kr-5dz" firstAttribute="top" secondItem="gYz-K9-d4w" secondAttribute="bottom" constant="8" id="5Bk-s2-dPp"/>
+                            <constraint firstItem="O5h-Kr-5dz" firstAttribute="leading" secondItem="vDu-zF-Fre" secondAttribute="leading" constant="20" id="AUG-ep-mut"/>
+                            <constraint firstItem="q6W-RK-fN1" firstAttribute="top" secondItem="vDu-zF-Fre" secondAttribute="top" constant="20" id="IDR-Rz-AHX"/>
+                            <constraint firstItem="4OL-63-KXB" firstAttribute="top" secondItem="wOn-td-IPs" secondAttribute="bottom" constant="20" id="PhU-cV-zuK"/>
+                            <constraint firstItem="wOn-td-IPs" firstAttribute="top" secondItem="Sdj-T1-hjW" secondAttribute="bottom" constant="8" id="QrB-2Q-i7o"/>
+                            <constraint firstItem="vDu-zF-Fre" firstAttribute="trailing" secondItem="4OL-63-KXB" secondAttribute="trailing" constant="20" id="SNh-Bn-brq"/>
+                            <constraint firstItem="vDu-zF-Fre" firstAttribute="trailing" secondItem="Sdj-T1-hjW" secondAttribute="trailing" constant="20" id="T5g-ku-UOn"/>
+                            <constraint firstItem="Sdj-T1-hjW" firstAttribute="top" secondItem="O5h-Kr-5dz" secondAttribute="bottom" constant="20" id="Z68-Ux-wMy"/>
+                            <constraint firstItem="wOn-td-IPs" firstAttribute="leading" secondItem="vDu-zF-Fre" secondAttribute="leading" constant="20" id="efs-0y-6K6"/>
+                            <constraint firstItem="gYz-K9-d4w" firstAttribute="top" secondItem="q6W-RK-fN1" secondAttribute="bottom" constant="20" id="jaf-Hs-8q6"/>
+                            <constraint firstItem="vDu-zF-Fre" firstAttribute="trailing" secondItem="wOn-td-IPs" secondAttribute="trailing" constant="20" id="kRJ-TI-xla"/>
+                            <constraint firstItem="vDu-zF-Fre" firstAttribute="trailing" secondItem="gYz-K9-d4w" secondAttribute="trailing" constant="20" id="l0d-Uh-VPW"/>
+                            <constraint firstItem="vDu-zF-Fre" firstAttribute="trailing" secondItem="O5h-Kr-5dz" secondAttribute="trailing" constant="20" id="lKo-tx-5FN"/>
+                            <constraint firstItem="q6W-RK-fN1" firstAttribute="leading" secondItem="vDu-zF-Fre" secondAttribute="leading" constant="20" id="lzH-Xr-Dmu"/>
+                            <constraint firstItem="vDu-zF-Fre" firstAttribute="trailing" secondItem="q6W-RK-fN1" secondAttribute="trailing" constant="20" id="svn-m0-3bv"/>
+                            <constraint firstItem="Sdj-T1-hjW" firstAttribute="leading" secondItem="vDu-zF-Fre" secondAttribute="leading" constant="20" id="wcH-mF-ETU"/>
+                        </constraints>
+                    </view>
+                    <toolbarItems/>
+                    <navigationItem key="navigationItem" title="Create Hobby" id="VUS-Q4-ZFA"/>
+                    <simulatedToolbarMetrics key="simulatedBottomBarMetrics"/>
+                    <connections>
+                        <outlet property="hobbyName" destination="O5h-Kr-5dz" id="rpV-d9-wSI"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="Ief-a0-LHa" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="980.91603053435108" y="-34.507042253521128"/>
+        </scene>
+    </scenes>
+    <resources>
+        <systemColor name="systemBackgroundColor">
+            <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+        </systemColor>
+    </resources>
+</document>

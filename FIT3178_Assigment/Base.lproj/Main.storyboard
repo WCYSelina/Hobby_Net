@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="21507" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="J4Z-NF-Fpv">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="21507" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="Qm8-ZU-8ho">
     <device id="retina6_12" orientation="portrait" appearance="light"/>
     <dependencies>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="21505"/>
@@ -9,38 +9,124 @@
     </dependencies>
     <scenes>
         <!--Your Hobby-->
-        <scene sceneID="tne-QT-ifu">
+        <scene sceneID="GUb-Am-BOj">
             <objects>
-                <viewController id="BYZ-38-t0r" customClass="ViewController" customModule="FIT3178_Assigment" customModuleProvider="target" sceneMemberID="viewController">
-                    <view key="view" contentMode="scaleToFill" id="8bC-Xf-vdC">
+                <tableViewController id="PNJ-Od-0Pn" customClass="HobbyTableViewController" customModule="FIT3178_Assigment" customModuleProvider="target" sceneMemberID="viewController">
+                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="-1" estimatedSectionHeaderHeight="-1" sectionFooterHeight="-1" estimatedSectionFooterHeight="-1" id="xep-HH-kBA">
                         <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
-                    </view>
-                    <navigationItem key="navigationItem" title="Your Hobby" id="0X2-HZ-v4s"/>
-                </viewController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
+                        <prototypes>
+                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" id="Qf6-AW-adU">
+                                <rect key="frame" x="0.0" y="50" width="393" height="43.666667938232422"/>
+                                <autoresizingMask key="autoresizingMask"/>
+                                <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="Qf6-AW-adU" id="wkt-fc-Pgo">
+                                    <rect key="frame" x="0.0" y="0.0" width="393" height="43.666667938232422"/>
+                                    <autoresizingMask key="autoresizingMask"/>
+                                </tableViewCellContentView>
+                            </tableViewCell>
+                        </prototypes>
+                        <connections>
+                            <outlet property="dataSource" destination="PNJ-Od-0Pn" id="wsv-RB-PdW"/>
+                            <outlet property="delegate" destination="PNJ-Od-0Pn" id="trP-bP-YUz"/>
+                        </connections>
+                    </tableView>
+                    <navigationItem key="navigationItem" title="Your Hobby" id="mXA-Eh-5w0">
+                        <barButtonItem key="rightBarButtonItem" systemItem="add" id="kIK-gx-8uX">
+                            <connections>
+                                <action selector="addHobby:" destination="PNJ-Od-0Pn" id="BvA-wM-Vtc"/>
+                            </connections>
+                        </barButtonItem>
+                    </navigationItem>
+                </tableViewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="uuA-54-G8y" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1092.3664122137404" y="-27.464788732394368"/>
+            <point key="canvasLocation" x="2898.4732824427479" y="-27.464788732394368"/>
+        </scene>
+        <!--Sheet View Controller-->
+        <scene sceneID="i9O-4L-20B">
+            <objects>
+                <viewController storyboardIdentifier="SheetViewController" id="nI3-MN-4L7" customClass="SheetViewController" customModule="FIT3178_Assigment" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="MFA-nQ-SH7">
+                        <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" text="Hobby Name:" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="h6n-JN-L7P">
+                                <rect key="frame" x="20" y="131" width="353" height="21"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" text="Background" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="7FV-hB-heK">
+                                <rect key="frame" x="20" y="214" width="353" height="21"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <button opaque="NO" contentMode="scaleToFill" ambiguous="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="feq-Pd-cDQ">
+                                <rect key="frame" x="298.33333333333331" y="297" width="74.666666666666686" height="35"/>
+                                <state key="normal" title="Button"/>
+                                <buttonConfiguration key="configuration" style="filled" title="Create"/>
+                            </button>
+                            <textField opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="248" ambiguous="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="5wR-Nq-9Kt">
+                                <rect key="frame" x="20" y="243" width="353" height="34"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                <textInputTraits key="textInputTraits"/>
+                            </textField>
+                            <textField opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="248" ambiguous="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="B8C-7o-6CL">
+                                <rect key="frame" x="20" y="160" width="353" height="34"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                <textInputTraits key="textInputTraits"/>
+                            </textField>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" text="Create Hobby" textAlignment="center" lineBreakMode="tailTruncation" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="XfY-5G-yYn">
+                                <rect key="frame" x="20" y="84" width="353" height="27"/>
+                                <fontDescription key="fontDescription" type="boldSystem" pointSize="22"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                        </subviews>
+                        <viewLayoutGuide key="safeArea" id="a9d-NU-EKF"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                        <constraints>
+                            <constraint firstItem="XfY-5G-yYn" firstAttribute="leading" secondItem="a9d-NU-EKF" secondAttribute="leading" constant="20" id="1uj-Kc-KNS"/>
+                            <constraint firstItem="h6n-JN-L7P" firstAttribute="top" secondItem="XfY-5G-yYn" secondAttribute="bottom" constant="20" id="Ccp-nm-pD4"/>
+                            <constraint firstItem="a9d-NU-EKF" firstAttribute="trailing" secondItem="feq-Pd-cDQ" secondAttribute="trailing" constant="20" id="ES5-qo-12c"/>
+                            <constraint firstItem="a9d-NU-EKF" firstAttribute="trailing" secondItem="XfY-5G-yYn" secondAttribute="trailing" constant="20" id="HCb-Ia-xr8"/>
+                            <constraint firstItem="h6n-JN-L7P" firstAttribute="leading" secondItem="a9d-NU-EKF" secondAttribute="leading" constant="20" id="INr-wp-Z2V"/>
+                            <constraint firstItem="a9d-NU-EKF" firstAttribute="trailing" secondItem="5wR-Nq-9Kt" secondAttribute="trailing" constant="20" id="MVO-Ct-IdM"/>
+                            <constraint firstItem="B8C-7o-6CL" firstAttribute="top" secondItem="h6n-JN-L7P" secondAttribute="bottom" constant="8" id="MqW-gq-E5d"/>
+                            <constraint firstItem="a9d-NU-EKF" firstAttribute="trailing" secondItem="h6n-JN-L7P" secondAttribute="trailing" constant="20" id="W5O-WQ-OIc"/>
+                            <constraint firstItem="B8C-7o-6CL" firstAttribute="leading" secondItem="a9d-NU-EKF" secondAttribute="leading" constant="20" id="Zzo-iD-1OA"/>
+                            <constraint firstItem="5wR-Nq-9Kt" firstAttribute="leading" secondItem="a9d-NU-EKF" secondAttribute="leading" constant="20" id="ead-tG-9en"/>
+                            <constraint firstItem="7FV-hB-heK" firstAttribute="top" secondItem="B8C-7o-6CL" secondAttribute="bottom" constant="20" id="g2B-ZC-Wrg"/>
+                            <constraint firstItem="a9d-NU-EKF" firstAttribute="trailing" secondItem="B8C-7o-6CL" secondAttribute="trailing" constant="20" id="kc2-rt-I0s"/>
+                            <constraint firstItem="a9d-NU-EKF" firstAttribute="trailing" secondItem="7FV-hB-heK" secondAttribute="trailing" constant="20" id="kwx-p2-qnn"/>
+                            <constraint firstItem="5wR-Nq-9Kt" firstAttribute="top" secondItem="7FV-hB-heK" secondAttribute="bottom" constant="8" id="ryk-Il-hjX"/>
+                            <constraint firstItem="7FV-hB-heK" firstAttribute="leading" secondItem="a9d-NU-EKF" secondAttribute="leading" constant="20" id="yQN-8T-ZrN"/>
+                        </constraints>
+                    </view>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="9cW-BU-ANP" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="3900" y="-27"/>
         </scene>
         <!--Navigation Controller-->
-        <scene sceneID="0qp-od-dQq">
+        <scene sceneID="boQ-qb-ot4">
             <objects>
-                <navigationController automaticallyAdjustsScrollViewInsets="NO" id="J4Z-NF-Fpv" sceneMemberID="viewController">
+                <navigationController automaticallyAdjustsScrollViewInsets="NO" id="Qm8-ZU-8ho" sceneMemberID="viewController">
                     <toolbarItems/>
-                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="GrA-3Z-xTA">
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="qlG-s9-RBs">
                         <rect key="frame" x="0.0" y="59" width="393" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
                     <nil name="viewControllers"/>
                     <connections>
-                        <segue destination="BYZ-38-t0r" kind="relationship" relationship="rootViewController" id="gjc-Fe-gLD"/>
+                        <segue destination="PNJ-Od-0Pn" kind="relationship" relationship="rootViewController" id="n5J-Mp-fTC"/>
                     </connections>
                 </navigationController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="aIj-Jh-nZn" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="Ysn-vf-9Hi" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="165.64885496183206" y="-27.464788732394368"/>
+            <point key="canvasLocation" x="1971.7557251908397" y="-27.464788732394368"/>
         </scene>
     </scenes>
     <resources>
