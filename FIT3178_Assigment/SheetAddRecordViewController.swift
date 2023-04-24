@@ -9,20 +9,33 @@ import UIKit
 
 class SheetAddRecordViewController: UIViewController {
 
-    
+    weak var hobbyDelegate:CreateHobbyDelegate?
     @IBOutlet weak var notesRecord: UITextField!
     
     
     @IBAction func addRecord(_ sender: Any) {
     }
     
-    
+    override var sheetPresentationController: UISheetPresentationController?{
+        presentationController as? UISheetPresentationController
+    }
+
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        // Do any additional setup after loading the view.
+        sheetPresentationController?.detents = [.custom{
+            _ in return 200
+        }]
+        sheetPresentationController?.prefersGrabberVisible = true //show the line on top of the bottom sheet
+        sheetPresentationController?.preferredCornerRadius = 24
     }
     
+    func displayMessage(title:String,message:String){
+        let alertController = UIAlertController(title: title, message: message,
+        preferredStyle: .alert)
+        alertController.addAction(UIAlertAction(title: "Dismiss", style: .default,
+        handler: nil))
+        self.present(alertController, animated: true, completion: nil)
+    }
 
     /*
     // MARK: - Navigation

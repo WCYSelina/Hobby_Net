@@ -8,13 +8,19 @@
 import UIKit
 
 class AddRecordViewController: UIViewController {
-
+    
     
     @IBAction func datePickedAddRecord(_ sender: UIDatePicker) {
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "MM-dd-yyyy"
         let selectedDate = dateFormatter.string(from: sender.date)
         print("Selected date: \(selectedDate)")
+        
+        let storyboard = UIStoryboard(name: "Main", bundle: nil)
+        let sheetPresentationControler = storyboard.instantiateViewController(withIdentifier: "SheetAddRecordViewController") as! SheetAddRecordViewController
+//        sheetPresentationControler.hobbyDelegate = self
+        present(sheetPresentationControler, animated: true, completion: nil)
+        
     }
     
     override func viewDidLoad() {

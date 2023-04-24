@@ -26,7 +26,7 @@ struct ViewHobbyPage: View {
     var body: some View {
         NavigationView{
             VStack {
-                Text("").navigationBarTitle("Hobby",displayMode: .inline)
+                Text("").navigationBarTitle(hobbyRecords.name ?? "",displayMode: .inline)
                     .toolbar {
                         ToolbarItem(placement: .navigationBarTrailing) {
                             Button(action: {

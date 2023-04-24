@@ -15,3 +15,6 @@ protocol ViewHobbyDelegate: AnyObject {
     var hobbyRecord:Hobby?{get set}
     func viewHobby(_ newHobby:Hobby)
 }
+protocol AddRecordDelegate: AnyObject {
+    func viewHobby(_ record:Hobby)
+}
