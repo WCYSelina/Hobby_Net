@@ -46,13 +46,13 @@
         <!--Add Record View Controller-->
         <scene sceneID="Xhf-ze-nb2">
             <objects>
-                <viewController id="fYe-Oj-eD4" customClass="AddRecordViewController" customModule="FIT3178_Assigment" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="AddRecordViewController" id="fYe-Oj-eD4" customClass="AddRecordViewController" customModule="FIT3178_Assigment" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="wQR-oK-6tk">
                         <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <datePicker contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" datePickerMode="dateAndTime" minuteInterval="1" style="inline" translatesAutoresizingMaskIntoConstraints="NO" id="SNQ-9Q-arR">
-                                <rect key="frame" x="20" y="123" width="353" height="379"/>
+                                <rect key="frame" x="20" y="122.99999999999997" width="353" height="370.33333333333326"/>
                             </datePicker>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="41G-lR-kSG"/>

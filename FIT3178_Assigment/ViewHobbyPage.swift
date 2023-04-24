@@ -8,13 +8,13 @@
 import SwiftUI
 
 struct ViewControllerWrapper: UIViewControllerRepresentable {
-    typealias UIViewControllerType = AddRecordViewController
-
-    func makeUIViewController(context: Context) -> AddRecordViewController {
-        return AddRecordViewController()
+    func makeUIViewController(context: Context) -> UIViewController {
+        let storyboard = UIStoryboard(name: "Main", bundle: nil)
+        let viewController = storyboard.instantiateViewController(identifier: "AddRecordViewController")
+        return viewController
     }
 
-    func updateUIViewController(_ uiViewController: AddRecordViewController, context: Context) {
+    func updateUIViewController(_ uiViewController: UIViewController, context: Context) {
         // Update the view controller
     }
 }
