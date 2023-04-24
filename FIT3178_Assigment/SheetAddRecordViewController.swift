@@ -1,5 +1,5 @@
 //
-//  AddRecordViewController.swift
+//  SheetAddRecordViewController.swift
 //  FIT3178_Assigment
 //
 //  Created by Ching Yee Selina Wong on 24/4/2023.
@@ -7,15 +7,15 @@
 
 import UIKit
 
-class AddRecordViewController: UIViewController {
+class SheetAddRecordViewController: UIViewController {
 
     
-    @IBAction func datePickedAddRecord(_ sender: UIDatePicker) {
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "MM-dd-yyyy"
-        let selectedDate = dateFormatter.string(from: sender.date)
-        print("Selected date: \(selectedDate)")
+    @IBOutlet weak var notesRecord: UITextField!
+    
+    
+    @IBAction func addRecord(_ sender: Any) {
     }
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()

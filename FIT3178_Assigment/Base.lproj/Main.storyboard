@@ -52,7 +52,10 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <datePicker contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" datePickerMode="dateAndTime" minuteInterval="1" style="inline" translatesAutoresizingMaskIntoConstraints="NO" id="SNQ-9Q-arR">
-                                <rect key="frame" x="20" y="122.99999999999997" width="353" height="370.33333333333326"/>
+                                <rect key="frame" x="20" y="122.99999999999997" width="353" height="379.33333333333326"/>
+                                <connections>
+                                    <action selector="datePickedAddRecord:" destination="fYe-Oj-eD4" eventType="valueChanged" id="drF-bP-4PG"/>
+                                </connections>
                             </datePicker>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="41G-lR-kSG"/>
@@ -64,9 +67,6 @@
                         </constraints>
                     </view>
                     <navigationItem key="navigationItem" id="C6x-O9-GVV"/>
-                    <connections>
-                        <outlet property="addRecordDate" destination="SNQ-9Q-arR" id="Ij2-tA-FOO"/>
-                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Qmm-RH-A2W" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
@@ -146,6 +146,57 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="9cW-BU-ANP" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="2898" y="-689"/>
+        </scene>
+        <!--Sheet Add Record View Controller-->
+        <scene sceneID="4qL-PG-VLP">
+            <objects>
+                <viewController storyboardIdentifier="SheetAddRecordViewController" id="J6z-S4-SeQ" customClass="SheetAddRecordViewController" customModule="FIT3178_Assigment" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="qM4-as-Nnn">
+                        <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" text="Add Record" textAlignment="center" lineBreakMode="tailTruncation" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="fxy-nE-TsW">
+                                <rect key="frame" x="20" y="73" width="353" height="27"/>
+                                <fontDescription key="fontDescription" type="boldSystem" pointSize="22"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" text="Add Notes:" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Mnt-eE-KfE">
+                                <rect key="frame" x="20" y="120" width="353" height="21"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <textField opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="248" ambiguous="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="Vsd-qR-k0S">
+                                <rect key="frame" x="20" y="149" width="353" height="34"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                <textInputTraits key="textInputTraits"/>
+                            </textField>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="huT-qB-9Bp">
+                                <rect key="frame" x="298" y="210" width="74.66666666666697" height="35"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <state key="normal" title="Button"/>
+                                <buttonConfiguration key="configuration" style="filled" title="Create"/>
+                                <connections>
+                                    <action selector="addRecord:" destination="J6z-S4-SeQ" eventType="touchUpInside" id="TJz-5p-Bv9"/>
+                                    <action selector="createHobby:" destination="nI3-MN-4L7" eventType="touchUpInside" id="xfk-dX-IYI"/>
+                                </connections>
+                            </button>
+                        </subviews>
+                        <viewLayoutGuide key="safeArea" id="e7V-yR-54S"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                        <constraints>
+                            <constraint firstItem="Vsd-qR-k0S" firstAttribute="top" secondItem="Mnt-eE-KfE" secondAttribute="bottom" constant="8" id="5Ny-eP-rKr"/>
+                            <constraint firstItem="Mnt-eE-KfE" firstAttribute="top" secondItem="fxy-nE-TsW" secondAttribute="bottom" constant="20" id="bba-Oh-cIO"/>
+                        </constraints>
+                    </view>
+                    <connections>
+                        <outlet property="notesRecord" destination="Vsd-qR-k0S" id="vfk-oU-cpx"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="M3f-v2-W1y" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="3687.7862595419847" y="-689.43661971830988"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="boQ-qb-ot4">
