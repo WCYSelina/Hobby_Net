@@ -68,6 +68,6 @@ struct ViewHobbyPage: View {
 
 struct ViewHobbyPage_Previews: PreviewProvider {
     static var previews: some View {
-        ViewHobbyPage(hobbyRecords: Hobby(name: "Running"))
+        ViewHobbyPage(hobbyRecords: Hobby())
     }
 }

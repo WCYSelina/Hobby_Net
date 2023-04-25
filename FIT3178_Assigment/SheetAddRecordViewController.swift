@@ -14,6 +14,10 @@ class SheetAddRecordViewController: UIViewController {
     
     
     @IBAction func addRecord(_ sender: Any) {
+//        guard let name = notesRecord.text else{
+//            return
+//        }
+//        let _ = databaseController?.addRecordToHobby(record: <#T##Records#>, hobby: <#T##Hobby#>)
     }
     
     override var sheetPresentationController: UISheetPresentationController?{

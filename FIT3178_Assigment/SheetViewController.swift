@@ -9,7 +9,8 @@ import UIKit
 
 class SheetViewController: UIViewController,UISheetPresentationControllerDelegate{
     
-    weak var hobbyDelegate:CreateHobbyDelegate?
+    weak var databaseController:DatabaseProtocol?
+    
     @IBOutlet weak var hobbyName: UITextField!
     
     
@@ -17,12 +18,11 @@ class SheetViewController: UIViewController,UISheetPresentationControllerDelegat
         guard let name = hobbyName.text else{
             return
         }
-        let hobby = Hobby(name: name)
-        let createHobbyDel = hobbyDelegate?.createHobby(hobby)
-        if createHobbyDel == false{
-            displayMessage(title: "Failed", message: "Unable to create hobby")
-            return
-        }
+        let _ = databaseController?.addHobby(name: name)
+//        if createHobbyDel == false{
+//            displayMessage(title: "Failed", message: "Unable to create hobby")
+//            return
+//        }
         self.dismiss(animated: true)
     }
     
@@ -34,6 +34,8 @@ class SheetViewController: UIViewController,UISheetPresentationControllerDelegat
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        let appDelegate = UIApplication.shared.delegate as? AppDelegate
+        databaseController = appDelegate?.databaseController
         sheetPresentationController?.detents = [.custom{
             _ in return 300
         }]

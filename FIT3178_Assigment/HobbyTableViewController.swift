@@ -35,7 +35,7 @@ class HobbyTableViewController: UITableViewController,CreateHobbyDelegate{
     @IBAction func addHobby(_ sender: Any) {
         let storyboard = UIStoryboard(name: "Main", bundle: nil)
         let sheetPresentationControler = storyboard.instantiateViewController(withIdentifier: "SheetViewController") as! SheetViewController
-        sheetPresentationControler.hobbyDelegate = self
+//        sheetPresentationControler.hobbyDelegate = self
         present(sheetPresentationControler, animated: true, completion: nil)
     }
     
