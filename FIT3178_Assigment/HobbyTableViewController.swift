@@ -7,8 +7,20 @@
 
 import UIKit
 import SwiftUI
+import FirebaseAuth
 
-class HobbyTableViewController: UITableViewController,CreateHobbyDelegate{
+class HobbyTableViewController: UITableViewController,DatabaseListener{
+    func onUserChange(change: DatabaseChange, hobbies: [Hobby]) {
+        allHobbies = hobbies
+        tableView.reloadData()
+    }
+    
+    func onHobbyChange(change: DatabaseChange, record: [Records]) {
+    }
+    
+    func onRecordChange(change: DatabaseChange, notes: [Notes]) {
+    }
+    
     
     func createHobby(_ newHobby: Hobby) -> Bool {
         if let name = newHobby.name{
@@ -25,12 +37,11 @@ class HobbyTableViewController: UITableViewController,CreateHobbyDelegate{
         return true
     }
     
-    
-    weak var hobbyDelegate:CreateHobbyDelegate?
-    weak var viewHobbyDelegate:ViewHobbyDelegate?
+    weak var databaseController:DatabaseProtocol?
     let CELL_HOBBY = "hobbyCell"
     var allHobbies: [Hobby] = []
     var currentHobby:Hobby?
+    var listenerType = ListenerType.user
     
     @IBAction func addHobby(_ sender: Any) {
         let storyboard = UIStoryboard(name: "Main", bundle: nil)
@@ -41,12 +52,23 @@ class HobbyTableViewController: UITableViewController,CreateHobbyDelegate{
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        let appDelegate = UIApplication.shared.delegate as? AppDelegate
+        databaseController = appDelegate?.databaseController
 
         // Uncomment the following line to preserve selection between presentations
         // self.clearsSelectionOnViewWillAppear = false
 
         // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
         // self.navigationItem.rightBarButtonItem = self.editButtonItem
+    }
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        databaseController?.addListener(listener: self)
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        databaseController?.removeListener(listener: self)
     }
 
     // MARK: - Table view data source
@@ -78,7 +100,7 @@ class HobbyTableViewController: UITableViewController,CreateHobbyDelegate{
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         currentHobby = allHobbies[indexPath.row]
-        viewHobbyDelegate?.viewHobby(currentHobby!)
+//        viewHobbyDelegate?.viewHobby(currentHobby!)
         let swiftUIView = ViewHobbyPage(hobbyRecords: currentHobby!)
         let hostingController = UIHostingController(rootView: swiftUIView)
         present(hostingController, animated: true, completion: nil)

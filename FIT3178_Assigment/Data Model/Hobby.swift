@@ -6,10 +6,15 @@
 //
 
 import UIKit
+import FirebaseFirestoreSwift
 
 class Hobby: NSObject,Codable{
-    var id:String?
+    @DocumentID var id:String?
     var name:String?
     var records:[Records] = []
     
+    enum CodingKeys: String,CodingKey{
+        case name
+//        case records
+    }
 }

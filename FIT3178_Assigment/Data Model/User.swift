@@ -10,14 +10,11 @@ import FirebaseFirestoreSwift
 
 struct User: Codable{
     @DocumentID var id:String?
-    var username:String?
-    var hobbies:[Hobby]
+    var name:String?
+    var hobbies:[Hobby] = []
     
-
     enum CodingKeys: String,CodingKey{
-        case id
-        case username
-        case hobbies = "hobbies"
-        
+        case name
+        case hobbies
     }
 }
