@@ -78,12 +78,11 @@ struct ViewHobbyPage: View{
                     VStack{
                         Text("Selected date: \(selectedDate, formatter: dateFormatter)")
                         Text(hobbyRecords.name!)
-                        ScrollView(.horizontal,showsIndicators: false){
-                            HStack{
-                                ForEach(notesList.indices) { index in
-                                    Text(notesList[index].noteDetails!)
-                                }
-                            }
+                        ForEach(notesList.indices) { index in
+                            Text(notesList[index].noteDetails!)
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                                .background(RoundedRectangle(cornerRadius: 5).fill(Color.gray.opacity(0.2)))
+                            Text("")
                         }
                     }
                 }
