@@ -7,10 +7,16 @@
 
 import SwiftUI
 
-struct ViewControllerWrapper: UIViewControllerRepresentable {
+struct ViewControllerWrapper: UIViewControllerRepresentable{
+    
+    var currentHobby:Hobby?
+    weak var databaseController:DatabaseProtocol?
+    var listenerType = ListenerType.record
+    
     func makeUIViewController(context: Context) -> UIViewController {
         let storyboard = UIStoryboard(name: "Main", bundle: nil)
-        let viewController = storyboard.instantiateViewController(identifier: "AddRecordViewController")
+        let viewController = storyboard.instantiateViewController(withIdentifier: "AddRecordViewController") as! AddRecordViewController
+        viewController.currentHobby = currentHobby
         return viewController
     }
 
@@ -19,9 +25,35 @@ struct ViewControllerWrapper: UIViewControllerRepresentable {
     }
 }
 
-struct ViewHobbyPage: View {
-    @State private var selectedDate = Date()
+class viewHobbyPageListener: NSObject, DatabaseListener {
+    var listenerType = ListenerType.record
+    @Published var notesList:[Notes] = []
+    
+    func onUserChange(change: DatabaseChange, hobbies: [Hobby]) {
+    }
+    
+    func onHobbyChange(change: DatabaseChange, record: [Records]) {
+    }
+    
+    func onRecordChange(change: DatabaseChange, notes: [Notes]) {
+        notesList = notes
+    }
+    
+    
+    // Implement the required functions and properties of the protocol
+    // ...
+}
+
+class DatabaseControllerModel: ObservableObject {
+    weak var databaseController: DatabaseProtocol?
+}
+
+struct ViewHobbyPage: View{
+    @State private var selectedDate = Date() //@State triggers update in the view when its value is changed
     @State private var navigateToAddRecord = false
+    @State private var notesList:[Notes] = []
+    @StateObject var databaseModel = DatabaseControllerModel()
+    let listener = viewHobbyPageListener()
     var hobbyRecords:Hobby
     var body: some View {
         NavigationView{
@@ -36,7 +68,7 @@ struct ViewHobbyPage: View {
                             }) {
                                 Label("Add", systemImage: "plus")
                             }.sheet(isPresented: $navigateToAddRecord){
-                                ViewControllerWrapper()
+                                ViewControllerWrapper(currentHobby :hobbyRecords)
                             }
                         }
                     }
@@ -48,16 +80,26 @@ struct ViewHobbyPage: View {
                         Text(hobbyRecords.name!)
                         ScrollView(.horizontal,showsIndicators: false){
                             HStack{
-                                Text("Horizontal Content 1")
-                                Text("Horizontal Content 2")
-                                Text("Horizontal Content 3")
+                                ForEach(notesList.indices) { index in
+                                    Text(notesList[index].noteDetails!)
+                                }
                             }
                         }
                     }
                 }
             }
+        }.onAppear{
+            let appDelegate = UIApplication.shared.delegate as? AppDelegate
+            databaseModel.databaseController = appDelegate?.databaseController
+            databaseModel.databaseController?.addListener(listener: listener)
+        }.onDisappear{
+            databaseModel.databaseController?.removeListener(listener: listener)
+        }.onReceive(listener.$notesList) { notes in //subcribe to the publisher variable
+            // Update the notesList
+            self.notesList = notes
         }
     }
+    
     private let dateFormatter: DateFormatter = {
             let formatter = DateFormatter()
             formatter.dateStyle = .long

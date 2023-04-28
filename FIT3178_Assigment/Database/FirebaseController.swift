@@ -17,6 +17,7 @@ class FirebaseController: NSObject,DatabaseProtocol{
     let DEFAULT_HOBBY_NAME = "Running"
     var listeners = MulticastDelegate<DatabaseListener>()
     var hobbyList: [Hobby]
+    var notesList: [Notes]
     var defaultHobby: Hobby
     var defaultUser: User
     var authController: Auth
@@ -37,6 +38,7 @@ class FirebaseController: NSObject,DatabaseProtocol{
         hobbyList = [Hobby]()
         defaultHobby = Hobby()
         defaultUser = User()
+        notesList = [Notes]()
         super.init()
         
         Task {
@@ -50,11 +52,13 @@ class FirebaseController: NSObject,DatabaseProtocol{
                 fatalError("Firebase Authentication Failed with Error\(String(describing: error))")
             }
             self.setupUserListener()
+            self.setupNotesListener()
         }
     }
     
     func addListener(listener: DatabaseListener){
         listeners.addDelegate(listener)
+        print("ffffff\(listener)")
         if listener.listenerType == .user || listener.listenerType == .all {
             listener.onUserChange(change: .update, hobbies: hobbyList)
         }
@@ -62,7 +66,7 @@ class FirebaseController: NSObject,DatabaseProtocol{
             listener.onHobbyChange(change: .update, record: defaultHobby.records)
         }
         if listener.listenerType == .record || listener.listenerType == .all {
-            listener.onRecordChange(change: .update, notes: currentRecord!.notes)
+            listener.onRecordChange(change: .update, notes: notesList)
         }
 //        if listener.listenerType == .auth || listener.listenerType == .all {
 //            listener.onAuthAccount(change: .login, user: currentUser)
@@ -82,10 +86,11 @@ class FirebaseController: NSObject,DatabaseProtocol{
             if let hobbyRef = try hobbyRef?.addDocument(from: hobby) {
                 hobby.id = hobbyRef.documentID
             }
+//            let _ = self.addHobbyToUser(hobby: hobby, user: defaultUser)
         } catch {
             print("Failed to serialize hero")
         }
-        let _ = self.addHobbyToUser(hobby: hobby, user: defaultUser)
+        
         return hobby
     }
     func deleteHobby(hobby: Hobby) {
@@ -93,19 +98,21 @@ class FirebaseController: NSObject,DatabaseProtocol{
             hobbyRef?.document(hobbyID).delete()
         }
     }
-//    func addRecord() -> Hobby {
+    func addRecord(record: Records) -> Records {
 //        let hobby = Hobby()
 //        hobby.name = name
 //        if let hobbyRef = hobbyRef?.addDocument(data: ["name" : name]) {
 //            hobby.id = hobbyRef.documentID
 //        }
 //        return hobby
-//    }
-    
+        return record
+    }
+
     func addHobbyToUser(hobby: Hobby, user: User) -> Bool {
         guard let hobbyID = hobby.id, let userID = user.id else {
             return false
         }
+
         if let newHobbyRef = hobbyRef?.document(hobbyID) {
             userRef?.document(userID).updateData(
                 ["hobbies" : FieldValue.arrayUnion([newHobbyRef])])
@@ -164,8 +171,8 @@ class FirebaseController: NSObject,DatabaseProtocol{
 //        }
 //        return nil
 //    }
+
     func getHobbyByID(_ id: String) -> Hobby? {
-        print(hobbyList)
         for hobby in hobbyList {
             if hobby.id == id {
                 return hobby
@@ -269,6 +276,47 @@ class FirebaseController: NSObject,DatabaseProtocol{
 //            }
 //        }
 //    }
+    func setupNotesListener() {
+        noteRef = database.collection("notes")
+        noteRef?.addSnapshotListener() { (querySnapshot, error) in
+            guard let querySnapshot = querySnapshot else {
+                print("Failed to fetch documents with error: \(String(describing: error))")
+                return
+            }
+            self.parseNotesSnapshot(snapshot: querySnapshot)
+        }
+    }
+    func parseNotesSnapshot(snapshot: QuerySnapshot) {
+        snapshot.documentChanges.forEach { (change) in
+            
+            var parsedNote: Notes?
+            do {
+                parsedNote = try change.document.data(as: Notes.self)
+            } catch {
+                print("Unable to decode hero. Is the hero malformed?")
+                return
+            }
+            guard let note = parsedNote else {
+                print("Document doesn't exist")
+                return
+            }
+            if change.type == .added {
+                notesList.insert(note, at: Int(change.newIndex))
+            }
+            else if change.type == .modified {
+                notesList[Int(change.oldIndex)] = note
+            }
+            else if change.type == .removed {
+                notesList.remove(at: Int(change.oldIndex))
+            }
+            listeners.invoke { (listener) in
+                if listener.listenerType == ListenerType.record || listener.listenerType == ListenerType.all {
+                    listener.onRecordChange(change: .update, notes: notesList)
+                }
+            }
+        }
+    }
+    
 //    func setupRecordListener() {
 //        recordRef = database.collection("records")
 //        let dateFormatter = DateFormatter()

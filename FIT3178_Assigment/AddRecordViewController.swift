@@ -9,6 +9,7 @@ import UIKit
 
 class AddRecordViewController: UIViewController {
     
+    var currentHobby:Hobby?
     
     @IBAction func datePickedAddRecord(_ sender: UIDatePicker) {
         let dateFormatter = DateFormatter()
@@ -18,6 +19,7 @@ class AddRecordViewController: UIViewController {
         
         let storyboard = UIStoryboard(name: "Main", bundle: nil)
         let sheetPresentationControler = storyboard.instantiateViewController(withIdentifier: "SheetAddRecordViewController") as! SheetAddRecordViewController
+        sheetPresentationControler.hobby = currentHobby
 //        sheetPresentationControler.hobbyDelegate = self
         present(sheetPresentationControler, animated: true, completion: nil)
         

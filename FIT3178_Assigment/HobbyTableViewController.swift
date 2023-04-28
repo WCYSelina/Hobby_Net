@@ -21,22 +21,6 @@ class HobbyTableViewController: UITableViewController,DatabaseListener{
     func onRecordChange(change: DatabaseChange, notes: [Notes]) {
     }
     
-    
-    func createHobby(_ newHobby: Hobby) -> Bool {
-        if let name = newHobby.name{
-            if name.isEmpty{
-                return false
-            }
-        }
-        tableView.performBatchUpdates({
-        // Safe because search can't be active when Add button is tapped.
-        allHobbies.append(newHobby)
-        tableView.insertRows(at: [IndexPath(row: allHobbies.count - 1, section:0)], with: .automatic)
-        tableView.reloadSections([0], with: .automatic)
-        }, completion: nil)
-        return true
-    }
-    
     weak var databaseController:DatabaseProtocol?
     let CELL_HOBBY = "hobbyCell"
     var allHobbies: [Hobby] = []
@@ -100,9 +84,8 @@ class HobbyTableViewController: UITableViewController,DatabaseListener{
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         currentHobby = allHobbies[indexPath.row]
-//        viewHobbyDelegate?.viewHobby(currentHobby!)
         let swiftUIView = ViewHobbyPage(hobbyRecords: currentHobby!)
-        let hostingController = UIHostingController(rootView: swiftUIView)
+        let hostingController = UIHostingController(rootView: swiftUIView) //UIHostingController allow swiftUI to be embedded into UIKit
         present(hostingController, animated: true, completion: nil)
     }
 
@@ -111,11 +94,7 @@ class HobbyTableViewController: UITableViewController,DatabaseListener{
     override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
         if editingStyle == .delete {
             // Delete the row from the data source
-            tableView.performBatchUpdates({
-                self.allHobbies.remove(at: indexPath.row)
-                self.tableView.deleteRows(at: [indexPath], with: .fade)
-                self.tableView.reloadSections([0], with: .automatic)
-            }, completion: nil)
+            self.databaseController?.deleteHobby(hobby: allHobbies[indexPath.row])
         }
     }
 

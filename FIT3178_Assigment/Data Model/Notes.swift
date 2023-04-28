@@ -7,8 +7,7 @@
 
 import UIKit
 
-class Notes: NSObject,Codable{
+class Notes: NSObject,Codable,Identifiable{
     var id:String?
-    var rootRecord:Records?
-    var noteDetail:String?
+    var noteDetails:String?
 }

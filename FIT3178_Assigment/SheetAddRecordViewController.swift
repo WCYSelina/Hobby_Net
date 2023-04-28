@@ -9,15 +9,15 @@ import UIKit
 
 class SheetAddRecordViewController: UIViewController {
 
-    weak var hobbyDelegate:CreateHobbyDelegate?
     @IBOutlet weak var notesRecord: UITextField!
+    var hobby:Hobby?
     
     
     @IBAction func addRecord(_ sender: Any) {
-//        guard let name = notesRecord.text else{
-//            return
-//        }
-//        let _ = databaseController?.addRecordToHobby(record: <#T##Records#>, hobby: <#T##Hobby#>)
+        guard let name = notesRecord.text else{
+            return
+        }
+//        let _ = databaseController?.add
     }
     
     override var sheetPresentationController: UISheetPresentationController?{

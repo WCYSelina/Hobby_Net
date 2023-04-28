@@ -12,9 +12,4 @@ class Hobby: NSObject,Codable{
     @DocumentID var id:String?
     var name:String?
     var records:[Records] = []
-    
-    enum CodingKeys: String,CodingKey{
-        case name
-//        case records
-    }
 }
