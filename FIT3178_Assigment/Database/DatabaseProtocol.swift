@@ -40,7 +40,7 @@ protocol DatabaseProtocol: AnyObject {
     func addNote(noteDetails:String,date:String) -> Notes
     func addRecord(date:String) -> Records
     func deleteHobby(hobby: Hobby)
-    var defaultHobby: Hobby {get}
+    var defaultHobby: Hobby {get set}
     var hasLogin:Bool? {get set}
     var hasCreated:Bool? {get set}
     var error:String? {get set}

@@ -108,6 +108,7 @@ class HobbyTableViewController: UITableViewController,DatabaseListener{
         currentHobby = allHobbies[indexPath.row]
         let swiftUIView = ViewHobbyPage(hobbyRecords: currentHobby!)
         let hostingController = UIHostingController(rootView: swiftUIView) //UIHostingController allow swiftUI to be embedded into UIKit
+        databaseController?.defaultHobby = currentHobby!
         present(hostingController, animated: true, completion: nil)
     }
 

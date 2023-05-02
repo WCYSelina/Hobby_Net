@@ -57,7 +57,6 @@ class FirebaseController: NSObject,DatabaseProtocol{
             }
             self.setupHobbyListener()
             self.setupNotesListener()
-            self.setupAllRecordListener()
             self.setupRecordListener()
         }
     }
@@ -187,6 +186,7 @@ class FirebaseController: NSObject,DatabaseProtocol{
             recordRef?.document(recordID).updateData(
                 ["notes" : FieldValue.arrayUnion([newNoteRef])])
         }
+        
         return true
     }
     
@@ -287,73 +287,49 @@ class FirebaseController: NSObject,DatabaseProtocol{
                     listener.onHobbyChange(change: .update, hobbies: hobbyList)
                 }
             }
+            setupDocumentHobbyListener(hobbyID: hobby.id!)
 
         }
     }
-//    func setupHobbyListener() {
-//        hobbyRef = database.collection("hobbies")
-//        hobbyRef?.whereField("name", isEqualTo: self.hobbyName ?? DEFAULT_HOBBY_NAME).addSnapshotListener {(querySnapshot, error) in
-//            guard let querySnapshot = querySnapshot, let hobbySnapShot = querySnapshot.documents.first else {
-//                print("Error fetching teams: \(error!)")
-//                return
-//            }
-//            self.parseHobbySnapshot(snapshot: hobbySnapShot)
-//        }
-//    }
-//    func parseHobbySnapshot(snapshot: QueryDocumentSnapshot) {
-//        defaultHobby = Hobby()
-//        defaultHobby.name = snapshot.data()["name"] as? String
-//        defaultHobby.id = snapshot.documentID
-//        if let recordReferences = snapshot.data()["records"] as? [DocumentReference] {
-//            for reference in recordReferences {
-//                if let record = getRecordsByID(reference.documentID) {
-//                defaultHobby.records.append(record)
-//                }
-//            }
-//        }
-//        listeners.invoke { (listener) in
-//            if listener.listenerType == ListenerType.hobby || listener.listenerType == ListenerType.all {
-//                listener.onHobbyChange(change: .update, record: defaultHobby.records)
-//            }
-//        }
-//    }
-    func setupAllRecordListener() {
-        recordRef = database.collection("records")
-        recordRef?.addSnapshotListener() { (querySnapshot, error) in
-            guard let querySnapshot = querySnapshot else {
-                print("Failed to fetch documents with error: \(String(describing: error))")
-                return
-            }
-            self.parseAllRecordsSnapshot(snapshot: querySnapshot)
-        }
-    }
-    func parseAllRecordsSnapshot(snapshot: QuerySnapshot) {
-        snapshot.documentChanges.forEach { (change) in
-            
-            var parsedRecord: Records?
-            do {
-                parsedRecord = try change.document.data(as: Records.self)
-            } catch {
-                print("Unable to decode records.")
-                return
-            }
-            guard let record = parsedRecord else {
-                print("Document doesn't exist")
-                return
-            }
-            if change.type == .added {
-                recordList.insert(record, at: Int(change.newIndex))
-            }
-            else if change.type == .modified {
-                recordList[Int(change.oldIndex)] = record
-            }
-            else if change.type == .removed {
-                recordList.remove(at: Int(change.oldIndex))
-            }
-            listeners.invoke { (listener) in
-                if listener.listenerType == ListenerType.record || listener.listenerType == ListenerType.all {
-                    listener.onNoteChange(change: .update, notes: notesList)
+    func setupDocumentHobbyListener(hobbyID: String) {
+        hobbyRef = database.collection("hobbies")
+        let hobbyDocRef = hobbyRef?.document(hobbyID)
+        hobbyDocRef?.getDocument{(document,error) in
+            if let document = document, document.exists{
+                if let recordArray = document.data()?["records"] as? [DocumentReference]{
+                    print("yyyyy")
+                    for recordRef in recordArray{
+                        recordRef.getDocument{(document,error) in
+                            if let document = document, document.exists{
+                                print("bbbbb")
+                                let recordDoc = document.data()
+                                var record = Records()
+                                record.id = document.documentID
+                                record.date = recordDoc!["date"] as? String
+                                if let noteArray = document.data()?["notes"] as? [DocumentReference]{
+                                    for noteRef in noteArray{
+                                        noteRef.getDocument{(document,error) in
+                                            if let document = document, document.exists{
+                                                print("cccc")
+                                                let noteDoc = document.data()
+                                                let note = Notes()
+                                                note.noteDetails = noteDoc!["noteDetails"] as? String
+                                                record.notes?.append(note)
+                                            }
+                                        }
+                                    }
+                                }
+                                self.recordList.append(record)
+                            }
+                        }
+                    }
                 }
+            }
+        }
+        print("ggggg\(recordList)")
+        listeners.invoke { (listener) in
+            if listener.listenerType == ListenerType.record || listener.listenerType == ListenerType.all {
+                listener.onRecordChange(change: .update, record: defaultRecord.notes!)
             }
         }
     }
@@ -374,7 +350,7 @@ class FirebaseController: NSObject,DatabaseProtocol{
         if let noteReference = snapshot.data()["notes"] as? [Notes] {
             for reference in noteReference {
                 if let note = getNotesByID(reference.rootRecord!) {
-//                    defaultRecord.notes.append(note)
+                    defaultRecord.notes?.append(note)
                 }
             }
         }
