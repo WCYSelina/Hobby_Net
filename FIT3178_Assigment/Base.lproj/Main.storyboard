@@ -11,17 +11,17 @@
         <!--Your Hobby-->
         <scene sceneID="GUb-Am-BOj">
             <objects>
-                <tableViewController id="PNJ-Od-0Pn" customClass="HobbyTableViewController" customModule="FIT3178_Assigment" customModuleProvider="target" sceneMemberID="viewController">
+                <tableViewController id="PNJ-Od-0Pn" customClass="HobbyTableViewController" customModule="FIT3178_Assignment" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="-1" estimatedSectionHeaderHeight="-1" sectionFooterHeight="-1" estimatedSectionFooterHeight="-1" id="xep-HH-kBA">
                         <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <prototypes>
-                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="hobbyCell" id="Qf6-AW-adU">
-                                <rect key="frame" x="0.0" y="50" width="393" height="43.666667938232422"/>
+                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="hobbyCell" rowHeight="40" id="Qf6-AW-adU">
+                                <rect key="frame" x="0.0" y="50" width="393" height="40"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="Qf6-AW-adU" id="wkt-fc-Pgo">
-                                    <rect key="frame" x="0.0" y="0.0" width="393" height="43.666667938232422"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="393" height="40"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                 </tableViewCellContentView>
                             </tableViewCell>
@@ -46,13 +46,13 @@
         <!--Add Record View Controller-->
         <scene sceneID="Xhf-ze-nb2">
             <objects>
-                <viewController storyboardIdentifier="AddRecordViewController" id="fYe-Oj-eD4" customClass="AddRecordViewController" customModule="FIT3178_Assigment" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="AddRecordViewController" id="fYe-Oj-eD4" customClass="AddRecordViewController" customModule="FIT3178_Assignment" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="wQR-oK-6tk">
                         <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <datePicker contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" datePickerMode="dateAndTime" minuteInterval="1" style="inline" translatesAutoresizingMaskIntoConstraints="NO" id="SNQ-9Q-arR">
-                                <rect key="frame" x="20" y="122.99999999999997" width="353" height="379.33333333333326"/>
+                                <rect key="frame" x="20" y="122.99999999999997" width="353" height="370.33333333333326"/>
                                 <connections>
                                     <action selector="datePickedAddRecord:" destination="fYe-Oj-eD4" eventType="valueChanged" id="drF-bP-4PG"/>
                                 </connections>
@@ -75,7 +75,7 @@
         <!--Sheet View Controller-->
         <scene sceneID="i9O-4L-20B">
             <objects>
-                <viewController storyboardIdentifier="SheetViewController" id="nI3-MN-4L7" customClass="SheetViewController" customModule="FIT3178_Assigment" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="SheetViewController" id="nI3-MN-4L7" customClass="SheetViewController" customModule="FIT3178_Assignment" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="MFA-nQ-SH7">
                         <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -150,7 +150,7 @@
         <!--Sheet Add Record View Controller-->
         <scene sceneID="4qL-PG-VLP">
             <objects>
-                <viewController storyboardIdentifier="SheetAddRecordViewController" id="J6z-S4-SeQ" customClass="SheetAddRecordViewController" customModule="FIT3178_Assigment" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="SheetAddRecordViewController" id="J6z-S4-SeQ" customClass="SheetAddRecordViewController" customModule="FIT3178_Assignment" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="qM4-as-Nnn">
                         <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>

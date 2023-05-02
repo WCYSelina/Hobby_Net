@@ -8,8 +8,8 @@
 import UIKit
 import Firebase
 
-class Records:Codable{
+struct Records:Codable{
     var id:String?
     var date: String?
-    var notes:[Notes] = []
+    var notes:[Notes]?
 }

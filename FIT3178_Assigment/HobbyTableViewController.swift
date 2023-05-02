@@ -27,7 +27,7 @@ class HobbyTableViewController: UITableViewController,DatabaseListener{
     var allHobbies: [Hobby] = []
     var currentHobby:Hobby?
     var listenerType = ListenerType.hobby
-    
+    var tabBar: UITabBar!
     @IBAction func addHobby(_ sender: Any) {
         let storyboard = UIStoryboard(name: "Main", bundle: nil)
         let sheetPresentationControler = storyboard.instantiateViewController(withIdentifier: "SheetViewController") as! SheetViewController
@@ -39,12 +39,33 @@ class HobbyTableViewController: UITableViewController,DatabaseListener{
         super.viewDidLoad()
         let appDelegate = UIApplication.shared.delegate as? AppDelegate
         databaseController = appDelegate?.databaseController
-
-        // Uncomment the following line to preserve selection between presentations
-        // self.clearsSelectionOnViewWillAppear = false
-
-        // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
-        // self.navigationItem.rightBarButtonItem = self.editButtonItem
+        
+        // Create the tab bar and set it as the table view's footer view
+        tabBar = UITabBar()
+        // add tab bar as subview of parent view
+        if let parentView = self.parent?.view {
+            tabBar.translatesAutoresizingMaskIntoConstraints = false
+            parentView.addSubview(tabBar)
+            // set constraints for tab bar
+            NSLayoutConstraint.activate([
+                tabBar.leadingAnchor.constraint(equalTo: parentView.leadingAnchor),
+                tabBar.trailingAnchor.constraint(equalTo: parentView.trailingAnchor),
+                tabBar.bottomAnchor.constraint(equalTo: parentView.safeAreaLayoutGuide.bottomAnchor),
+                tabBar.heightAnchor.constraint(equalToConstant: 49) // set height to standard 49 points
+            ])
+        }
+        
+        // Create the tab bar items
+        let hobbyPageBarItem = UITabBarItem(title: "Your Hobby", image: UIImage(systemName: "calendar"), tag: 0)
+        let socialPlatformPageBarItem = UITabBarItem(title: "Social Net", image: UIImage(systemName: "person.2.fill"), tag: 1)
+        let eventPageBarItem = UITabBarItem(title: "Event", image: UIImage(systemName: "megaphone.fill"), tag: 2)
+        let profilePage  = UITabBarItem(title: "Profile", image: UIImage(systemName: "person.fill"), tag: 2)
+        
+        // Add the items to the tab bar
+        tabBar.setItems([hobbyPageBarItem, socialPlatformPageBarItem, eventPageBarItem,profilePage], animated: false)
+        // Set the initial tab bar item
+        tabBar.selectedItem = hobbyPageBarItem
+        
     }
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
@@ -98,34 +119,7 @@ class HobbyTableViewController: UITableViewController,DatabaseListener{
             self.databaseController?.deleteHobby(hobby: allHobbies[indexPath.row])
         }
     }
-
-    /*
-    // Override to support rearranging the table view.
-    override func tableView(_ tableView: UITableView, moveRowAt fromIndexPath: IndexPath, to: IndexPath) {
-
-    }
-    */
-
-    /*
-    // Override to support conditional rearranging of the table view.
-    override func tableView(_ tableView: UITableView, canMoveRowAt indexPath: IndexPath) -> Bool {
-        // Return false if you do not want the item to be re-orderable.
-        return true
-    }
-    */
-
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-//    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-//        // Get the new view controller using segue.destination.
-//        // Pass the selected object to the new view controller.
-//        if segue.identifier == "viewHobbyIdentifier" {
-//            if let destination = segue.destination as? ViewHobbyController {
-//                // Pass any necessary data to the destination view controller here
-//                destination.hobbyRecords = currentHobby
-//            }
-//        }
-//    }
-
 }
+
+
+
