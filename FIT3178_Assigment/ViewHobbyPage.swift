@@ -11,7 +11,7 @@ struct ViewControllerWrapper: UIViewControllerRepresentable{
     
     var currentHobby:Hobby?
     weak var databaseController:DatabaseProtocol?
-    var listenerType = ListenerType.record
+    var listenerType = ListenerType.note
     
     func makeUIViewController(context: Context) -> UIViewController {
         let storyboard = UIStoryboard(name: "Main", bundle: nil)
@@ -26,16 +26,19 @@ struct ViewControllerWrapper: UIViewControllerRepresentable{
 }
 
 class viewHobbyPageListener: NSObject, DatabaseListener {
-    var listenerType = ListenerType.record
+
+    
+    
+    var listenerType = ListenerType.note
     @Published var notesList:[Notes] = []
-    
-    func onUserChange(change: DatabaseChange, hobbies: [Hobby]) {
+    func onHobbyChange(change: DatabaseChange, hobbies: [Hobby]) {
+
     }
     
-    func onHobbyChange(change: DatabaseChange, record: [Records]) {
+    func onRecordChange(change: DatabaseChange, record: [Records]) {
     }
     
-    func onRecordChange(change: DatabaseChange, notes: [Notes]) {
+    func onNoteChange(change: DatabaseChange, notes: [Notes]) {
         notesList = notes
     }
     
@@ -72,14 +75,14 @@ struct ViewHobbyPage: View{
                             }
                         }
                     }
-                DatePicker("", selection: $selectedDate, displayedComponents: [.date, .hourAndMinute])
+                DatePicker("", selection: $selectedDate, displayedComponents: [.date])
                     .datePickerStyle(.graphical).offset(x:0,y:-20)
+                Text("Records on \(selectedDate, formatter: dateFormatter)").font(.title3.bold())
                 ScrollView(.vertical,showsIndicators: true){
                     VStack{
-                        Text("Selected date: \(selectedDate, formatter: dateFormatter)")
-                        Text(hobbyRecords.name!)
-                        ForEach(notesList.indices) { index in
-                            Text(notesList[index].noteDetails!)
+                        Text("")
+                        ForEach(notesList.indices, id: \.self) { index in
+                            Text(notesList[index].noteDetails ?? "")
                                 .frame(maxWidth: .infinity, alignment: .leading)
                                 .background(RoundedRectangle(cornerRadius: 5).fill(Color.gray.opacity(0.2)))
                             Text("")

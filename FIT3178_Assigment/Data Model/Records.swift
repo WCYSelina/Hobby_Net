@@ -11,6 +11,5 @@ import Firebase
 class Records: NSObject,Codable{
     var id:String?
     var date: Timestamp?
-    var rootHobby:Hobby?
     var notes:[Notes] = []
 }

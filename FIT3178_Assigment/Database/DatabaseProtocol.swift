@@ -7,6 +7,7 @@
 
 import Foundation
 import FirebaseAuth
+import Firebase
 enum DatabaseChange {
     case add
     case remove
@@ -15,8 +16,8 @@ enum DatabaseChange {
 }
 
 enum ListenerType{
-    case user
     case hobby
+    case note
     case record
     case all
     case auth
@@ -24,9 +25,9 @@ enum ListenerType{
 
 protocol DatabaseListener: AnyObject {
     var listenerType: ListenerType {get set}
-    func onUserChange(change: DatabaseChange, hobbies: [Hobby])
-    func onHobbyChange(change: DatabaseChange, record: [Records])
-    func onRecordChange(change: DatabaseChange, notes: [Notes])
+    func onHobbyChange(change: DatabaseChange, hobbies: [Hobby])
+    func onRecordChange(change: DatabaseChange, record: [Records])
+    func onNoteChange(change: DatabaseChange, notes: [Notes])
 //    func onAuthAccount(change:DatabaseChange,user:FirebaseAuth.User?)
 //    func onCreateAccount(change:DatabaseChange,user:FirebaseAuth.User?)
 }
@@ -36,7 +37,8 @@ protocol DatabaseProtocol: AnyObject {
     func addListener(listener: DatabaseListener)
     func removeListener(listener: DatabaseListener)
     func addHobby(name:String) -> Hobby
-//    func addRecord(record:) -> Hobby
+    func addNote(noteDetails:String,date:Date) -> Notes
+    func addRecord(date:Timestamp) -> Records
     func deleteHobby(hobby: Hobby)
     var defaultHobby: Hobby {get}
     var hasLogin:Bool? {get set}
@@ -44,7 +46,7 @@ protocol DatabaseProtocol: AnyObject {
     var error:String? {get set}
     func addRecordToHobby(record: Records, hobby: Hobby) -> Bool
     func removeRecordFromHobby(record: Records, hobby: Hobby)
-    func addNoteToRecord(note: Notes, record: Records) -> Bool
+    func addNoteToRecord(note:Notes,date:Timestamp,record:Records)
     func removeNoteFromRecord(note: Notes, record: Records)
 //    func createAccount(email:String,password:String) async
 //    func loginAccount(email:String,password:String) async

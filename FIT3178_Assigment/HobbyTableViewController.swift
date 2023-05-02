@@ -10,22 +10,22 @@ import SwiftUI
 import FirebaseAuth
 
 class HobbyTableViewController: UITableViewController,DatabaseListener{
-    func onUserChange(change: DatabaseChange, hobbies: [Hobby]) {
+    func onHobbyChange(change: DatabaseChange, hobbies: [Hobby]) {
         allHobbies = hobbies
         tableView.reloadData()
     }
     
-    func onHobbyChange(change: DatabaseChange, record: [Records]) {
+    func onRecordChange(change: DatabaseChange, record: [Records]) {
     }
     
-    func onRecordChange(change: DatabaseChange, notes: [Notes]) {
+    func onNoteChange(change: DatabaseChange, notes: [Notes]) {
     }
     
     weak var databaseController:DatabaseProtocol?
     let CELL_HOBBY = "hobbyCell"
     var allHobbies: [Hobby] = []
     var currentHobby:Hobby?
-    var listenerType = ListenerType.user
+    var listenerType = ListenerType.hobby
     
     @IBAction func addHobby(_ sender: Any) {
         let storyboard = UIStoryboard(name: "Main", bundle: nil)

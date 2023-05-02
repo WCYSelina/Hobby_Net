@@ -8,16 +8,18 @@
 import UIKit
 
 class SheetAddRecordViewController: UIViewController {
-
+    weak var databaseController:DatabaseProtocol?
     @IBOutlet weak var notesRecord: UITextField!
     var hobby:Hobby?
+    var choosenDate:Date?
     
     
     @IBAction func addRecord(_ sender: Any) {
-        guard let name = notesRecord.text else{
+        guard let note = notesRecord.text else{
             return
         }
-//        let _ = databaseController?.add
+        let _ = databaseController?.addNote(noteDetails: note,date: choosenDate!)
+        self.dismiss(animated: true)
     }
     
     override var sheetPresentationController: UISheetPresentationController?{
@@ -26,6 +28,8 @@ class SheetAddRecordViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        let appDelegate = UIApplication.shared.delegate as? AppDelegate
+        databaseController = appDelegate?.databaseController
         sheetPresentationController?.detents = [.custom{
             _ in return 200
         }]

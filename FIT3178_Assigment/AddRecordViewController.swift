@@ -10,16 +10,19 @@ import UIKit
 class AddRecordViewController: UIViewController {
     
     var currentHobby:Hobby?
+    var passedDate:Date?
     
     @IBAction func datePickedAddRecord(_ sender: UIDatePicker) {
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "MM-dd-yyyy"
         let selectedDate = dateFormatter.string(from: sender.date)
+        passedDate = sender.date
         print("Selected date: \(selectedDate)")
         
         let storyboard = UIStoryboard(name: "Main", bundle: nil)
         let sheetPresentationControler = storyboard.instantiateViewController(withIdentifier: "SheetAddRecordViewController") as! SheetAddRecordViewController
         sheetPresentationControler.hobby = currentHobby
+        sheetPresentationControler.choosenDate = passedDate
 //        sheetPresentationControler.hobbyDelegate = self
         present(sheetPresentationControler, animated: true, completion: nil)
         
