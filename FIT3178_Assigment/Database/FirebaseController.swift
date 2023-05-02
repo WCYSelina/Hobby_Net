@@ -21,6 +21,7 @@ class FirebaseController: NSObject,DatabaseProtocol{
     var recordList: [Records]
     var defaultHobby: Hobby
     var defaultUser: User
+    var defaultRecord: Records
     var authController: Auth
     var database: Firestore
     var hobbyRef: CollectionReference?
@@ -39,6 +40,7 @@ class FirebaseController: NSObject,DatabaseProtocol{
         hobbyList = [Hobby]()
         defaultHobby = Hobby()
         defaultUser = User()
+        defaultRecord = Records()
         notesList = [Notes]()
         recordList = [Records]()
         super.init()
@@ -55,6 +57,7 @@ class FirebaseController: NSObject,DatabaseProtocol{
             }
             self.setupHobbyListener()
             self.setupNotesListener()
+            self.setupRecordListener()
         }
     }
     
@@ -65,7 +68,7 @@ class FirebaseController: NSObject,DatabaseProtocol{
             listener.onHobbyChange(change: .update, hobbies: hobbyList)
         }
         if listener.listenerType == .record || listener.listenerType == .all {
-            listener.onRecordChange(change: .update, record: recordList)
+            listener.onRecordChange(change: .update, record: defaultRecord.notes)
         }
         if listener.listenerType == .note || listener.listenerType == .all {
             listener.onNoteChange(change: .update, notes: notesList)
@@ -100,29 +103,35 @@ class FirebaseController: NSObject,DatabaseProtocol{
             hobbyRef?.document(hobbyID).delete()
         }
     }
-    func addNote(noteDetails:String,date:Date) -> Notes {
+    func addNote(noteDetails:String,date:String) -> Notes {
         let note = Notes()
         note.noteDetails = noteDetails
         if let noteRef = noteRef?.addDocument(data: ["noteDetails" : noteDetails]) {
             note.id = noteRef.documentID
         }
-        let timestamp = Timestamp(date: date)
-//        addNoteToRecord(note: note, date: timestamp, record: <#T##Records#>)
+        var record = getRecordByTimestamp(date: date)
+        print(record)
+        if record != nil {
+            let _ = addNoteToRecord(note: note, date: date, record: record!)
+        }else{
+            record = addRecord(date: date)
+            let _ = addNoteToRecord(note: note, date: date, record: record!)
+
+        }
         return note
     }
-    func addNoteToRecord(note:Notes,date:Timestamp,record:Records) {
+    func addNoteToRecord(note:Notes,date:String,record:Records) -> Bool {
         guard let noteID = note.id, let recordID = record.id else {
-            let record = addRecord(date: date)
-            let _ = addNoteToRecord(note: note, record: record)
-            return 
+            return false
         }
         if let newNoteRef = noteRef?.document(noteID) {
             recordRef?.document(recordID).updateData(
                 ["notes" : FieldValue.arrayUnion([newNoteRef])])
         }
+        return true
     }
-    func addRecord(date:Timestamp) -> Records{
-        let record = Records()
+    func addRecord(date:String) -> Records{
+        var record = Records()
         record.date = date
         record.notes = []
         do{
@@ -161,13 +170,13 @@ class FirebaseController: NSObject,DatabaseProtocol{
     }
     
     func removeRecordFromHobby(record: Records, hobby: Hobby) {
-        if hobby.records.contains(record), let hobbyID = hobby.id, let recordID = record.id {
-            if let removedRecordRef = recordRef?.document(recordID) {
-                hobbyRef?.document(hobbyID).updateData(
-                    ["records": FieldValue.arrayRemove([removedRecordRef])]
-                )
-            }
-        }
+//        if hobby.records.contains(record), let hobbyID = hobby.id, let recordID = record.id {
+//            if let removedRecordRef = recordRef?.document(recordID) {
+//                hobbyRef?.document(hobbyID).updateData(
+//                    ["records": FieldValue.arrayRemove([removedRecordRef])]
+//                )
+//            }
+//        }
     }
     
     func addNoteToRecord(note: Notes, record: Records) -> Bool {
@@ -209,34 +218,37 @@ class FirebaseController: NSObject,DatabaseProtocol{
         }
         return nil
     }
-//    func setupUserListener() {
-//        userRef = database.collection("users")
-//        userRef?.whereField("name", isEqualTo: DEFAULT_USERNAME).addSnapshotListener {(querySnapshot, error) in
-//            guard let querySnapshot = querySnapshot, let hobbySnapShot = querySnapshot.documents.first else {
-//                print("Error fetching teams: \(error!)")
-//                return
-//            }
-//            self.setupHobbyListener()
-//            self.parseUserSnapshot(snapshot: hobbySnapShot)
-//        }
-//    }
-//    func parseUserSnapshot(snapshot: QueryDocumentSnapshot) {
-//        defaultUser = User()
-//        defaultUser.name = snapshot.data()["name"] as? String
-//        defaultUser.id = snapshot.documentID
-//        if let hobbiesReference = snapshot.data()["hobbies"] as? [DocumentReference] {
-//            for reference in hobbiesReference {
-//                if let hobby = getHobbyByID(reference.documentID) {
-//                    defaultUser.hobbies?.append(hobby)
-//                }
-//            }
-//        }
-//        listeners.invoke { (listener) in
-//            if listener.listenerType == ListenerType.user || listener.listenerType == ListenerType.all {
-//                listener.onUserChange(change: .update, hobbies: defaultUser.hobbies ?? [])
-//            }
-//        }
-//    }
+    func getNotesByID(_ id: String) -> Notes? {
+        for note in notesList {
+            if note.rootRecord == id {
+                return note
+            }
+        }
+        return nil
+    }
+    func getRecordByTimestamp(date:String) -> Records? {
+        for record in recordList {
+            print(record.date == date)
+            if record.date == date {
+                return record
+            }
+        }
+        return nil
+    }
+    func convertToDateOnly(date:Date) -> Timestamp {
+        let calendar = Calendar.current
+        let year = calendar.component(.year, from: date)
+        let month = calendar.component(.month, from: date)
+        let day = calendar.component(.day, from: date)
+
+        // Create a new Date object with the extracted date components
+        let dateOnly = calendar.date(from: DateComponents(year: year, month: month, day: day))!
+
+        // Convert the date-only object to a Timestamp
+        let timestamp = Timestamp(date: dateOnly)
+        return timestamp
+    }
+
     func setupHobbyListener() {
         hobbyRef = database.collection("hobbies")
         hobbyRef?.addSnapshotListener() { (querySnapshot, error) in
@@ -254,7 +266,7 @@ class FirebaseController: NSObject,DatabaseProtocol{
             do {
                 parsedHobby = try change.document.data(as: Hobby.self)
             } catch {
-                print("Unable to decode hero. Is the hero malformed?")
+                print("Unable to decode hobby.")
                 return
             }
             guard let hobby = parsedHobby else {
@@ -307,41 +319,28 @@ class FirebaseController: NSObject,DatabaseProtocol{
 //    }
     func setupRecordListener() {
         recordRef = database.collection("records")
-        recordRef?.addSnapshotListener() { (querySnapshot, error) in
-            guard let querySnapshot = querySnapshot else {
-                print("Failed to fetch documents with error: \(String(describing: error))")
+        recordRef?.whereField("date", isEqualTo: self.currentRecord?.date ?? "18 April 2023").addSnapshotListener {(querySnapshot, error) in
+            guard let querySnapshot = querySnapshot,let hobbySnapShot = querySnapshot.documents.first else {
+                print("Error fetching teams: \(error!)")
                 return
             }
-            self.parseRecordsSnapshot(snapshot: querySnapshot)
+            self.parseRecordSnapshot(snapshot: hobbySnapShot)
         }
     }
-    func parseRecordsSnapshot(snapshot: QuerySnapshot) {
-        snapshot.documentChanges.forEach { (change) in
-            
-            var parsedRecord: Records?
-            do {
-                parsedRecord = try change.document.data(as: Records.self)
-            } catch {
-                print("Unable to decode hero. Is the hero malformed?")
-                return
-            }
-            guard let record = parsedRecord else {
-                print("Document doesn't exist")
-                return
-            }
-            if change.type == .added {
-                recordList.insert(record, at: Int(change.newIndex))
-            }
-            else if change.type == .modified {
-                recordList[Int(change.oldIndex)] = record
-            }
-            else if change.type == .removed {
-                recordList.remove(at: Int(change.oldIndex))
-            }
-            listeners.invoke { (listener) in
-                if listener.listenerType == ListenerType.record || listener.listenerType == ListenerType.all {
-                    listener.onNoteChange(change: .update, notes: notesList)
+    func parseRecordSnapshot(snapshot: QueryDocumentSnapshot) {
+        defaultRecord = Records()
+        defaultRecord.date = snapshot.data()["date"] as? String
+        defaultRecord.id = snapshot.documentID
+        if let noteReference = snapshot.data()["notes"] as? [Notes] {
+            for reference in noteReference {
+                if let note = getNotesByID(reference.rootRecord!) {
+                    defaultRecord.notes.append(note)
                 }
+            }
+        }
+        listeners.invoke { (listener) in
+            if listener.listenerType == ListenerType.record || listener.listenerType == ListenerType.all {
+                listener.onRecordChange(change: .update, record: defaultRecord.notes)
             }
         }
     }
@@ -362,7 +361,7 @@ class FirebaseController: NSObject,DatabaseProtocol{
             do {
                 parsedNote = try change.document.data(as: Notes.self)
             } catch {
-                print("Unable to decode hero. Is the hero malformed?")
+                print("Unable to decode notes.")
                 return
             }
             guard let note = parsedNote else {

@@ -10,12 +10,13 @@ import SwiftUI
 import FirebaseAuth
 
 class HobbyTableViewController: UITableViewController,DatabaseListener{
+    
     func onHobbyChange(change: DatabaseChange, hobbies: [Hobby]) {
         allHobbies = hobbies
         tableView.reloadData()
     }
     
-    func onRecordChange(change: DatabaseChange, record: [Records]) {
+    func onRecordChange(change: DatabaseChange, record: [Notes]) {
     }
     
     func onNoteChange(change: DatabaseChange, notes: [Notes]) {

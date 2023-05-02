@@ -8,8 +8,8 @@
 import UIKit
 import Firebase
 
-class Records: NSObject,Codable{
+class Records:Codable{
     var id:String?
-    var date: Timestamp?
+    var date: String?
     var notes:[Notes] = []
 }

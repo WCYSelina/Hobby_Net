@@ -11,7 +11,7 @@ class SheetAddRecordViewController: UIViewController {
     weak var databaseController:DatabaseProtocol?
     @IBOutlet weak var notesRecord: UITextField!
     var hobby:Hobby?
-    var choosenDate:Date?
+    var choosenDate:String?
     
     
     @IBAction func addRecord(_ sender: Any) {

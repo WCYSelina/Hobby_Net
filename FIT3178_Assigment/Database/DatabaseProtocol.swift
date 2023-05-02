@@ -26,7 +26,7 @@ enum ListenerType{
 protocol DatabaseListener: AnyObject {
     var listenerType: ListenerType {get set}
     func onHobbyChange(change: DatabaseChange, hobbies: [Hobby])
-    func onRecordChange(change: DatabaseChange, record: [Records])
+    func onRecordChange(change: DatabaseChange, record: [Notes])
     func onNoteChange(change: DatabaseChange, notes: [Notes])
 //    func onAuthAccount(change:DatabaseChange,user:FirebaseAuth.User?)
 //    func onCreateAccount(change:DatabaseChange,user:FirebaseAuth.User?)
@@ -37,8 +37,8 @@ protocol DatabaseProtocol: AnyObject {
     func addListener(listener: DatabaseListener)
     func removeListener(listener: DatabaseListener)
     func addHobby(name:String) -> Hobby
-    func addNote(noteDetails:String,date:Date) -> Notes
-    func addRecord(date:Timestamp) -> Records
+    func addNote(noteDetails:String,date:String) -> Notes
+    func addRecord(date:String) -> Records
     func deleteHobby(hobby: Hobby)
     var defaultHobby: Hobby {get}
     var hasLogin:Bool? {get set}
@@ -46,7 +46,7 @@ protocol DatabaseProtocol: AnyObject {
     var error:String? {get set}
     func addRecordToHobby(record: Records, hobby: Hobby) -> Bool
     func removeRecordFromHobby(record: Records, hobby: Hobby)
-    func addNoteToRecord(note:Notes,date:Timestamp,record:Records)
+    func addNoteToRecord(note:Notes,date:String,record:Records) -> Bool
     func removeNoteFromRecord(note: Notes, record: Records)
 //    func createAccount(email:String,password:String) async
 //    func loginAccount(email:String,password:String) async

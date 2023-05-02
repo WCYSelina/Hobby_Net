@@ -10,4 +10,9 @@ import UIKit
 class Notes: NSObject,Codable,Identifiable{
     var id:String?
     var noteDetails:String?
+    var rootRecord: String?
+    enum CodingKeys: String, CodingKey {
+        case noteDetails
+    }
+
 }

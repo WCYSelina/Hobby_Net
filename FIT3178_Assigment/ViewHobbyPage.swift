@@ -35,7 +35,7 @@ class viewHobbyPageListener: NSObject, DatabaseListener {
 
     }
     
-    func onRecordChange(change: DatabaseChange, record: [Records]) {
+    func onRecordChange(change: DatabaseChange, record: [Notes]) {
     }
     
     func onNoteChange(change: DatabaseChange, notes: [Notes]) {
