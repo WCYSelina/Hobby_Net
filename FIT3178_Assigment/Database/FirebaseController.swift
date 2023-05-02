@@ -68,7 +68,7 @@ class FirebaseController: NSObject,DatabaseProtocol{
             listener.onHobbyChange(change: .update, hobbies: hobbyList)
         }
         if listener.listenerType == .record || listener.listenerType == .all {
-            listener.onRecordChange(change: .update, record: defaultRecord.notes!)
+            listener.onRecordChange(change: .update, record: defaultRecord.notes)
         }
         if listener.listenerType == .note || listener.listenerType == .all {
             listener.onNoteChange(change: .update, notes: notesList)
@@ -84,7 +84,7 @@ class FirebaseController: NSObject,DatabaseProtocol{
         listeners.removeDelegate(listener)
     }
     func addHobby(name: String) -> Hobby {
-        let hobby = Hobby()
+        var hobby = Hobby()
         hobby.name = name
         hobby.records = []
         do{
@@ -191,7 +191,7 @@ class FirebaseController: NSObject,DatabaseProtocol{
     }
     
     func removeNoteFromRecord(note: Notes, record: Records) {
-        if record.notes!.contains(note), let recordID = record.id, let noteID = note.id {
+        if record.notes.contains(note), let recordID = record.id, let noteID = note.id {
             if let removedNoteRef = noteRef?.document(noteID) {
                 recordRef?.document(recordID).updateData(
                     ["records": FieldValue.arrayRemove([removedNoteRef])]
@@ -261,78 +261,128 @@ class FirebaseController: NSObject,DatabaseProtocol{
     }
     func parseHobbySnapshot(snapshot: QuerySnapshot) {
         snapshot.documentChanges.forEach { (change) in
-            
+            var records: [Records] = []
             var parsedHobby: Hobby?
             do {
-                parsedHobby = try change.document.data(as: Hobby.self)
-            } catch {
-                print("Unable to decode hobby.")
-                return
-            }
-            guard let hobby = parsedHobby else {
-                print("Document doesn't exist")
-                return
-            }
-            if change.type == .added {
-                hobbyList.insert(hobby, at: Int(change.newIndex))
-            }
-            else if change.type == .modified {
-                hobbyList[Int(change.oldIndex)] = hobby
-            }
-            else if change.type == .removed {
-                hobbyList.remove(at: Int(change.oldIndex))
-            }
-            listeners.invoke { (listener) in
-                if listener.listenerType == ListenerType.hobby || listener.listenerType == ListenerType.all {
-                    listener.onHobbyChange(change: .update, hobbies: hobbyList)
-                }
-            }
-            setupDocumentHobbyListener(hobbyID: hobby.id!)
-
-        }
-    }
-    func setupDocumentHobbyListener(hobbyID: String) {
-        hobbyRef = database.collection("hobbies")
-        let hobbyDocRef = hobbyRef?.document(hobbyID)
-        hobbyDocRef?.getDocument{(document,error) in
-            if let document = document, document.exists{
-                if let recordArray = document.data()?["records"] as? [DocumentReference]{
-                    print("yyyyy")
-                    for recordRef in recordArray{
-                        recordRef.getDocument{(document,error) in
-                            if let document = document, document.exists{
-                                print("bbbbb")
-                                let recordDoc = document.data()
-                                var record = Records()
-                                record.id = document.documentID
-                                record.date = recordDoc!["date"] as? String
-                                if let noteArray = document.data()?["notes"] as? [DocumentReference]{
-                                    for noteRef in noteArray{
-                                        noteRef.getDocument{(document,error) in
-                                            if let document = document, document.exists{
-                                                print("cccc")
-                                                let noteDoc = document.data()
-                                                let note = Notes()
-                                                note.noteDetails = noteDoc!["noteDetails"] as? String
-                                                record.notes?.append(note)
-                                            }
+                var hobbyData = change.document.data()
+                let recordRefArray = hobbyData["records"] as! [DocumentReference]
+                
+                let dispatchGroup = DispatchGroup() // <-- Create a DispatchGroup
+                dispatchGroup.enter() // <-- Enter the dispatch group
+                for recordRef in recordRefArray {
+                    recordRef.getDocument { (document, error) in
+                        if let document = document, document.exists {
+                            print("bbbbb")
+                            let recordDoc = document.data()
+                            var record = Records()
+                            record.id = document.documentID
+                            record.date = recordDoc!["date"] as? String
+                            dispatchGroup.enter() // <-- Enter the dispatch group
+                            if let noteArray = document.data()?["notes"] as? [DocumentReference] {
+                                for noteRef in noteArray {
+                                    noteRef.getDocument { (document, error) in
+                                        if let document = document, document.exists {
+                                            print("cccc")
+                                            let noteDoc = document.data()
+                                            let note = Notes()
+                                            note.noteDetails = noteDoc!["noteDetails"] as? String
+                                            print("noteeee\(note.noteDetails)")
+                                            record.notes.append(note)
+                                            
+                                            
                                         }
                                     }
                                 }
-                                self.recordList.append(record)
                             }
+                            dispatchGroup.leave() // <-- Leave the dispatch group
+                            print("recordddd\(record)")
+                            records.append(record)
+                            self.recordList.append(record)
+                            
+                            
                         }
                     }
                 }
-            }
-        }
-        print("ggggg\(recordList)")
-        listeners.invoke { (listener) in
-            if listener.listenerType == ListenerType.record || listener.listenerType == ListenerType.all {
-                listener.onRecordChange(change: .update, record: defaultRecord.notes!)
+                dispatchGroup.leave() // <-- Leave the dispatch group
+                // Wait for all the tasks to finish
+                dispatchGroup.notify(queue: .main) {
+                    hobbyData["records"] = records
+                    let decoder = Firestore.Decoder()
+                    print(records)
+                    do {
+                        parsedHobby = try decoder.decode(Hobby.self, from: hobbyData)
+                    } catch {
+                        print("Unable to decode hobby.")
+                        return
+                    }
+
+                    guard let hobby = parsedHobby else {
+                        print("Document doesn't exist")
+                        return
+                    }
+                    if change.type == .added {
+                        self.hobbyList.insert(hobby, at: Int(change.newIndex))
+                    }
+                    else if change.type == .modified {
+                        self.hobbyList[Int(change.oldIndex)] = hobby
+                    }
+                    else if change.type == .removed {
+                        self.hobbyList.remove(at: Int(change.oldIndex))
+                    }
+
+                    self.listeners.invoke { (listener) in
+                        if listener.listenerType == ListenerType.hobby || listener.listenerType == ListenerType.all {
+                            listener.onHobbyChange(change: .update, hobbies: self.hobbyList)
+                        }
+                    }
+                }
+
             }
         }
     }
+    
+//    func setupDocumentHobbyListener(hobbyID: String) {
+//        hobbyRef = database.collection("hobbies")
+//        let hobbyDocRef = hobbyRef?.document(hobbyID)
+//        hobbyDocRef?.getDocument{(document,error) in
+//            if let document = document, document.exists{
+//                if let recordArray = document.data()?["records"] as? [DocumentReference]{
+//                    print("yyyyy")
+//                    for recordRef in recordArray{
+//                        recordRef.getDocument{(document,error) in
+//                            if let document = document, document.exists{
+//                                print("bbbbb")
+//                                let recordDoc = document.data()
+//                                var record = Records()
+//                                record.id = document.documentID
+//                                record.date = recordDoc!["date"] as? String
+//                                if let noteArray = document.data()?["notes"] as? [DocumentReference]{
+//                                    for noteRef in noteArray{
+//                                        noteRef.getDocument{(document,error) in
+//                                            if let document = document, document.exists{
+//                                                print("cccc")
+//                                                let noteDoc = document.data()
+//                                                let note = Notes()
+//                                                note.noteDetails = noteDoc!["noteDetails"] as? String
+//                                                record.notes.append(note)
+//                                            }
+//                                        }
+//                                    }
+//                                }
+//                                self.recordList.append(record)
+//                            }
+//                        }
+//                    }
+//                }
+//            }
+//        }
+//        print("ggggg\(recordList)")
+//        listeners.invoke { (listener) in
+//            if listener.listenerType == ListenerType.record || listener.listenerType == ListenerType.all {
+//                listener.onRecordChange(change: .update, record: defaultRecord.notes)
+//            }
+//        }
+//    }
     func setupRecordListener() {
         recordRef = database.collection("records")
         recordRef?.whereField("date", isEqualTo: self.currentRecord?.date ?? "17 May 2023").addSnapshotListener {(querySnapshot, error) in
@@ -350,13 +400,13 @@ class FirebaseController: NSObject,DatabaseProtocol{
         if let noteReference = snapshot.data()["notes"] as? [Notes] {
             for reference in noteReference {
                 if let note = getNotesByID(reference.rootRecord!) {
-                    defaultRecord.notes?.append(note)
+                    defaultRecord.notes.append(note)
                 }
             }
         }
         listeners.invoke { (listener) in
             if listener.listenerType == ListenerType.record || listener.listenerType == ListenerType.all {
-                listener.onRecordChange(change: .update, record: defaultRecord.notes!)
+                listener.onRecordChange(change: .update, record: defaultRecord.notes)
             }
         }
     }

@@ -8,7 +8,7 @@
 import UIKit
 import FirebaseFirestoreSwift
 
-class Hobby: NSObject,Codable{
+struct Hobby: Codable{
     @DocumentID var id:String?
     var name:String?
     var records:[Records] = []
