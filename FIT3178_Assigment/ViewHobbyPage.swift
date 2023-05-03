@@ -29,18 +29,19 @@ class viewHobbyPageListener: NSObject, DatabaseListener {
 
     
     
-    var listenerType = ListenerType.note
+    var listenerType = ListenerType.record
     @Published var notesList:[Notes] = []
     func onHobbyChange(change: DatabaseChange, hobbies: [Hobby]) {
 
     }
     
     func onRecordChange(change: DatabaseChange, record: [Notes]) {
+        notesList = record
     }
     
     func onNoteChange(change: DatabaseChange, notes: [Notes]) {
-        notesList = notes
     }
+    
     
     
     // Implement the required functions and properties of the protocol
