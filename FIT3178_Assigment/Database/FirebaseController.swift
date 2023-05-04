@@ -113,7 +113,6 @@ class FirebaseController: NSObject,DatabaseProtocol{
         } catch {
             print("Failed to serialize hero")
         }
-        
         return hobby
     }
     func deleteHobby(hobby: Hobby) {
@@ -170,7 +169,7 @@ class FirebaseController: NSObject,DatabaseProtocol{
 
         if let newHobbyRef = hobbyRef?.document(hobbyID) {
             userRef?.document(userID).updateData(
-                ["hobbies" : FieldValue.arrayUnion([newHobbyRef])])
+                ["hobby" : FieldValue.arrayUnion([newHobbyRef])])
         }
         return true
     }
@@ -268,7 +267,7 @@ class FirebaseController: NSObject,DatabaseProtocol{
     }
 
     func setupHobbyListener() {
-        hobbyRef = database.collection("hobbies")
+        hobbyRef = database.collection("hobby")
         hobbyRef?.addSnapshotListener() { (querySnapshot, error) in
             guard let querySnapshot = querySnapshot else {
                 print("Failed to fetch documents with error: \(String(describing: error))")
@@ -282,42 +281,47 @@ class FirebaseController: NSObject,DatabaseProtocol{
         }
     }
  
+    func addToHobbyList(change:DocumentChange,parsedHobby:Hobby){
+        if change.type == .added {
+            print("yyyyy")
+            self.hobbyList.insert(parsedHobby, at: Int(change.newIndex))
+        }
+        else if change.type == .modified {
+            self.hobbyList[Int(change.oldIndex)] = parsedHobby
+        }
+        else if change.type == .removed {
+            self.hobbyList.remove(at: Int(change.oldIndex))
+        }
+    }
+ 
     func parseHobbySnapshot(snapshot: QuerySnapshot, completion: @escaping () -> Void){
         snapshot.documentChanges.forEach{ (change) in
             var parsedHobby = Hobby()
             parsedHobby.id = change.document.documentID
-            print("bbbbb")
             parsedHobby.name = change.document.data()["name"] as? String
-            var recordRef = change.document.data()["records"] as! [DocumentReference]
-            self.parseSpecificRecord(recordRefArray: recordRef){ resultRecords in
-                parsedHobby.records = resultRecords
-                
-                if change.type == .added {
-                    print("hobbylist insert")
-                    self.hobbyList.insert(parsedHobby, at: Int(0))
-                }
-                else if change.type == .modified {
-                    self.hobbyList[Int(change.oldIndex)] = parsedHobby
-                }
-                else if change.type == .removed {
-                    self.hobbyList.remove(at: Int(change.oldIndex))
-                }
-                
+            let recordRef = change.document.data()["records"] as! [DocumentReference]
+            if recordRef == []{
+                parsedHobby.records = []
+                self.addToHobbyList(change: change, parsedHobby: parsedHobby)
                 self.listeners.invoke { (listener) in
                     if listener.listenerType == ListenerType.hobby || listener.listenerType == ListenerType.all {
                         listener.onHobbyChange(change: .update, hobbies: self.hobbyList)
                     }
                 }
-//                self.listeners.invoke { (listener) in
-//                    if listener.listenerType == ListenerType.record || listener.listenerType == ListenerType.all {
-//                        print("fxxkU record")
-//                        listener.onRecordChange(change: .update, record: self.notesList)
-//                    }
-//                }
+            }
+            else{
+                self.parseSpecificRecord(recordRefArray: recordRef){ resultRecords in
+                    parsedHobby.records = resultRecords
+                    self.addToHobbyList(change: change, parsedHobby: parsedHobby)
+                    self.listeners.invoke { (listener) in
+                        if listener.listenerType == ListenerType.hobby || listener.listenerType == ListenerType.all {
+                            listener.onHobbyChange(change: .update, hobbies: self.hobbyList)
+                        }
+                    }
+                }
             }
         }
     }
-    
     func parseSpecificRecord(recordRefArray:[DocumentReference], completion: @escaping ([Records]) -> Void){
         var counter = 0
         var resultRecordsList:[Records] = []
