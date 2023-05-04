@@ -288,7 +288,8 @@ class FirebaseController: NSObject,DatabaseProtocol{
             parsedHobby.id = change.document.documentID
             print("bbbbb")
             parsedHobby.name = change.document.data()["name"] as? String
-            self.parseSpecificRecord(recordRefArray: change.document.data()["records"] as! [DocumentReference]){ resultRecords in
+            var recordRef = change.document.data()["records"] as! [DocumentReference]
+            self.parseSpecificRecord(recordRefArray: recordRef){ resultRecords in
                 parsedHobby.records = resultRecords
                 
                 if change.type == .added {
@@ -304,17 +305,15 @@ class FirebaseController: NSObject,DatabaseProtocol{
                 
                 self.listeners.invoke { (listener) in
                     if listener.listenerType == ListenerType.hobby || listener.listenerType == ListenerType.all {
-                        print("fxxkU hobby")
                         listener.onHobbyChange(change: .update, hobbies: self.hobbyList)
-                        listener.onRecordChange(change: .update, record: self.notesList)
                     }
                 }
-                self.listeners.invoke { (listener) in
-                    if listener.listenerType == ListenerType.record || listener.listenerType == ListenerType.all {
-                        print("fxxkU record")
-                        listener.onRecordChange(change: .update, record: self.notesList)
-                    }
-                }
+//                self.listeners.invoke { (listener) in
+//                    if listener.listenerType == ListenerType.record || listener.listenerType == ListenerType.all {
+//                        print("fxxkU record")
+//                        listener.onRecordChange(change: .update, record: self.notesList)
+//                    }
+//                }
             }
         }
     }
