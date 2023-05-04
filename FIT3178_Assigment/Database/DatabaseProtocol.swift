@@ -37,7 +37,7 @@ protocol DatabaseProtocol: AnyObject {
     func addListener(listener: DatabaseListener)
     func removeListener(listener: DatabaseListener)
     func addHobby(name:String) -> Hobby
-    func addNote(noteDetails:String,date:String) -> Notes
+    func addNote(noteDetails:String,date:String,hobby:Hobby) -> Notes
     func addRecord(date:String) -> Records
     func deleteHobby(hobby: Hobby)
     var defaultHobby: Hobby {get set}

@@ -61,6 +61,9 @@ class FirebaseController: NSObject,DatabaseProtocol{
                 fatalError("Firebase Authentication Failed with Error\(String(describing: error))")
             }
             self.setupHobbyListener()
+            self.setupRecordListener()
+            self.setupNotesListener()
+
         }
     }
     
@@ -120,7 +123,7 @@ class FirebaseController: NSObject,DatabaseProtocol{
             hobbyRef?.document(hobbyID).delete()
         }
     }
-    func addNote(noteDetails:String,date:String) -> Notes {
+    func addNote(noteDetails:String,date:String,hobby:Hobby) -> Notes {
         let note = Notes()
         note.noteDetails = noteDetails
         if let noteRef = noteRef?.addDocument(data: ["noteDetails" : noteDetails]) {
@@ -134,6 +137,7 @@ class FirebaseController: NSObject,DatabaseProtocol{
             let _ = addNoteToRecord(note: note, date: date, record: record!)
 
         }
+        let _ = addRecordToHobby(record: record!, hobby: hobby)
         return note
     }
     func addNoteToRecord(note:Notes,date:String,record:Records) -> Bool {
@@ -146,6 +150,18 @@ class FirebaseController: NSObject,DatabaseProtocol{
         }
         return true
     }
+    
+    func addRecordToHobby(record: Records, hobby: Hobby) -> Bool {
+        guard let recordID = record.id, let hobbyID = hobby.id else {
+            return false
+        }
+        if let newRecordRef = recordRef?.document(recordID) {
+            hobbyRef?.document(hobbyID).updateData(
+                ["records" : FieldValue.arrayUnion([newRecordRef])])
+        }
+        return true
+    }
+    
     func addRecord(date:String) -> Records{
         var record = Records()
         record.date = date
@@ -170,17 +186,6 @@ class FirebaseController: NSObject,DatabaseProtocol{
         if let newHobbyRef = hobbyRef?.document(hobbyID) {
             userRef?.document(userID).updateData(
                 ["hobby" : FieldValue.arrayUnion([newHobbyRef])])
-        }
-        return true
-    }
-    
-    func addRecordToHobby(record: Records, hobby: Hobby) -> Bool {
-        guard let recordID = record.id, let hobbyID = hobby.id else {
-            return false
-        }
-        if let newRecordRef = recordRef?.document(recordID) {
-            hobbyRef?.document(hobbyID).updateData(
-                ["records" : FieldValue.arrayUnion([newRecordRef])])
         }
         return true
     }
@@ -235,14 +240,14 @@ class FirebaseController: NSObject,DatabaseProtocol{
         }
         return nil
     }
-    func getNotesByID(_ id: String) -> Notes? {
-        for note in notesList {
-            if note.rootRecord == id {
-                return note
-            }
-        }
-        return nil
-    }
+//    func getNotesByID(_ id: String) -> Notes? {
+//        for note in notesList {
+//            if note.rootRecord == id {
+//                return note
+//            }
+//        }
+//        return nil
+//    }
     func getRecordByTimestamp(date:String) -> Records? {
         for record in recordList {
             print(record.date == date)
@@ -267,7 +272,7 @@ class FirebaseController: NSObject,DatabaseProtocol{
     }
 
     func setupHobbyListener() {
-        hobbyRef = database.collection("hobby")
+        hobbyRef = database.collection("hobby1")
         hobbyRef?.addSnapshotListener() { (querySnapshot, error) in
             guard let querySnapshot = querySnapshot else {
                 print("Failed to fetch documents with error: \(String(describing: error))")
@@ -323,19 +328,24 @@ class FirebaseController: NSObject,DatabaseProtocol{
         }
     }
     func parseSpecificRecord(recordRefArray:[DocumentReference], completion: @escaping ([Records]) -> Void){
+        print(recordList.count)
         var counter = 0
         var resultRecordsList:[Records] = []
         recordRefArray.forEach{ oneRecordRef in
             oneRecordRef.getDocument{ (oneRecordDoc,error)  in
-                var oneRecordObj = Records()
-                oneRecordObj.id = oneRecordDoc?.documentID
-                oneRecordObj.date = oneRecordDoc?.data()!["date"] as? String
-                self.parseSpecificNote(noteRefArray: oneRecordDoc?.data()!["notes"] as! [DocumentReference]){ allNotes in
-                    oneRecordObj.notes = allNotes
-                    resultRecordsList.append(oneRecordObj)
-                    counter += 1
-                    if counter == recordRefArray.count{
-                        completion(resultRecordsList)
+                if let document = oneRecordDoc, document.exists{
+                    var oneRecordObj = Records()
+                    oneRecordObj.id = document.documentID
+                    oneRecordObj.date = document.data()!["date"] as? String
+                    self.parseSpecificNote(noteRefArray: oneRecordDoc?.data()!["notes"] as! [DocumentReference]){ allNotes in
+                        oneRecordObj.notes = allNotes
+                        resultRecordsList.append(oneRecordObj)
+                        self.recordList.append(oneRecordObj)
+                        print(self.recordList.count)
+                        counter += 1
+                        if counter == recordRefArray.count{
+                            completion(resultRecordsList)
+                        }
                     }
                 }
             }
@@ -346,25 +356,108 @@ class FirebaseController: NSObject,DatabaseProtocol{
         var count = 0
         noteRefArray.forEach{ onoNoteRef in
             onoNoteRef.getDocument{ (oneNoteDoc,error) in
-                var parsedNote: Notes?
-                do {
-                    parsedNote = try oneNoteDoc!.data(as: Notes.self)
-                } catch {
-                    print("Unable to decode notes.: Note")
-                    return
-                }
-                guard let note = parsedNote else {
-                    print("Document doesn't exist: Note")
-                    return
-                }
-                NotesList.append(note)
-                count += 1
-                if count == noteRefArray.count{
-                    completion(NotesList)
+                if let document = oneNoteDoc, document.exists{
+                    var parsedNote: Notes?
+                    do {
+                        parsedNote = try document.data(as: Notes.self)
+                    } catch {
+                        print("Unable to decode notes.: Note")
+                        return
+                    }
+                    guard let note = parsedNote else {
+                        print("Document doesn't exist: Note")
+                        return
+                    }
+                    NotesList.append(note)
+                    count += 1
+                    if count == noteRefArray.count{
+                        completion(NotesList)
+                    }
                 }
             }
         }
     }
+    func setupRecordListener() {
+        recordRef = database.collection("record1")
+        recordRef?.addSnapshotListener() { (querySnapshot, error) in
+            guard let querySnapshot = querySnapshot else {
+                print("Failed to fetch documents with error: \(String(describing: error))")
+                return
+            }
+//            self.parseHobbySnapshot(snapshot: querySnapshot)
+            self.parseRecordSnapshot(snapshot: querySnapshot){ () in
+                // nothing to do
+                
+            }
+        }
+    }
+    func parseRecordSnapshot(snapshot: QuerySnapshot, completion: @escaping () -> Void){
+        snapshot.documentChanges.forEach{ (change) in
+            var parsedRecord = Records()
+            if change.document.exists{
+                parsedRecord.id = change.document.documentID
+                parsedRecord.date = change.document.data()["date"] as? String
+                let noteRef = change.document.data()["notes"] as! [DocumentReference]
+                if noteRef == []{
+                    parsedRecord.notes = []
+                    self.addToRecordList(change: change, parsedRecord: parsedRecord)
+                }
+                else{
+                    self.parseSpecificNote(noteRefArray: noteRef){ allNotes in
+                        parsedRecord.notes = allNotes
+                    }
+                }
+            }
+        }
+    }
+    func addToRecordList(change:DocumentChange,parsedRecord:Records){
+        if change.type == .added {
+            print("index\(change.newIndex)")
+            self.recordList.insert(parsedRecord, at: Int(change.newIndex))
+        }
+        else if change.type == .modified {
+            self.recordList[Int(change.oldIndex)] = parsedRecord
+        }
+        else if change.type == .removed {
+            self.recordList.remove(at: Int(change.oldIndex))
+        }
+    }
+    func setupNotesListener() {
+        noteRef = database.collection("notes1")
+        noteRef?.addSnapshotListener() { (querySnapshot, error) in
+            guard let querySnapshot = querySnapshot else {
+                print("Failed to fetch documents with error: \(String(describing: error))")
+                return
+            }
+            self.parseNotesSnapshot(snapshot: querySnapshot)
+        }
+    }
+    func parseNotesSnapshot(snapshot: QuerySnapshot) {
+        snapshot.documentChanges.forEach { (change) in
+            
+            var parsedNote: Notes?
+            do {
+                parsedNote = try change.document.data(as: Notes.self)
+            } catch {
+                print("Unable to decode notes.")
+                return
+            }
+            guard let note = parsedNote else {
+                print("Document doesn't exist")
+                return
+            }
+            if change.type == .added {
+                notesList.insert(note, at: Int(change.newIndex))
+            }
+            else if change.type == .modified {
+                notesList[Int(change.oldIndex)] = note
+            }
+            else if change.type == .removed {
+                notesList.remove(at: Int(change.oldIndex))
+            }
+        }
+    }
+
     
 //    func createAccount(email: String, password: String) async {
 //        do{

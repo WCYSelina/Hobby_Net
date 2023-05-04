@@ -18,7 +18,7 @@ class SheetAddRecordViewController: UIViewController {
         guard let note = notesRecord.text else{
             return
         }
-        let _ = databaseController?.addNote(noteDetails: note,date: choosenDate!)
+        let _ = databaseController?.addNote(noteDetails: note,date: choosenDate!,hobby: hobby!)
         self.dismiss(animated: true)
     }
     
