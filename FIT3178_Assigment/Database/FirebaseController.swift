@@ -116,7 +116,15 @@ class FirebaseController: NSObject,DatabaseProtocol{
     func deleteHobby(hobby: Hobby) {
         if let hobbyID = hobby.id {
             hobbyRef?.document(hobbyID).delete(){ delete in
-                self.hobbyList.removeAll(where: {$0.id == hobbyID})
+                var records = hobby.records
+                var notes:[Notes] = []
+                for record in records {
+                    notes.append(contentsOf: record.notes)
+                    self.deleteRecord(record: record)
+                }
+                for note in notes {
+                    self.deleteNote(note: note)
+                }
                 print(self.hobbyList.count)
                 self.listeners.invoke{ listener in
                     if listener.listenerType == ListenerType.hobby || listener.listenerType == ListenerType.all {
@@ -127,6 +135,17 @@ class FirebaseController: NSObject,DatabaseProtocol{
             }
         }
     }
+    func deleteRecord(record:Records){
+        if let recordID = record.id{
+            recordRef?.document(recordID).delete()
+        }
+    }
+    func deleteNote(note:Notes){
+        if let noteID = note.id{
+            noteRef?.document(noteID).delete()
+        }
+    }
+    
     func addNote(noteDetails:String,date:String,hobby:Hobby, completion: @escaping (Hobby) -> Void) {
         let note = Notes()
         note.noteDetails = noteDetails
