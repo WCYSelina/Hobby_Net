@@ -12,7 +12,6 @@ import FirebaseAuth
 class HobbyTableViewController: UITableViewController,DatabaseListener{
     
     func onHobbyChange(change: DatabaseChange, hobbies: [Hobby]) {
-        print("hhhhh")
         allHobbies = hobbies
         tableView.reloadData()
     }

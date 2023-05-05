@@ -10,7 +10,6 @@ import Firebase
 import FirebaseFirestoreSwift
 
 class FirebaseController: NSObject,DatabaseProtocol{
-    
     var hasLogin: Bool? = nil
     var hasCreated: Bool? = nil
     var error: String?
@@ -36,6 +35,7 @@ class FirebaseController: NSObject,DatabaseProtocol{
     var hobbyData: [String: Any]?
     var notes:[Notes] = []
 //    var allRecords:[]
+
     
     override init(){
         FirebaseApp.configure()
@@ -116,29 +116,27 @@ class FirebaseController: NSObject,DatabaseProtocol{
             hobbyRef?.document(hobbyID).delete()
         }
     }
-    func addNote(noteDetails:String,date:String,hobby:Hobby) async -> Hobby {
+    func addNote(noteDetails:String,date:String,hobby:Hobby, completion: @escaping (Hobby) -> Void) {
         let note = Notes()
         note.noteDetails = noteDetails
-        do{
-            if let noteRef = try await noteRef?.addDocument(data: ["noteDetails" : noteDetails]) {
-                note.id = noteRef.documentID
-            }
-        } catch{
-            print("Error")
+        if let noteRef =  noteRef?.addDocument(data: ["noteDetails" : noteDetails]) {
+            note.id = noteRef.documentID
         }
         var record = getRecordByTimestamp(date: date)
         if record != nil {
             print("aaaaa")
-            let _ = await addNoteToRecord(note: note, date: date, record: record!)
+            let _ = addNoteToRecord(note: note, date: date, record: record!){
+                completion(hobby)
+            }
         }else{
-            record = addRecord(date: date)
-            let _ = addRecordToHobby(record: record!, hobby: hobby)
-            let _ = await addNoteToRecord(note: note, date: date, record: record!)
+            record = self.addRecord(date: date)
+            let _ = self.addRecordToHobby(record: record!, hobby: hobby)
+            let _ = self.addNoteToRecord(note: note, date: date, record: record!){
+                completion(hobby)
+            }
         }
-        
-        return hobby
     }
-    func addNoteToRecord(note:Notes,date:String,record:Records) async {
+    func addNoteToRecord(note:Notes,date:String,record:Records, completion: @escaping () -> Void){
         guard let noteID = note.id, let recordID = record.id else {
             return
         }
@@ -148,19 +146,26 @@ class FirebaseController: NSObject,DatabaseProtocol{
                     if let error = error{
                         print(error)
                     }else{
-                        print("records number\(record.notes.count)")
-                        return
+                        self.recordRef?.document(recordID).getDocument{ (updateRecord,error) in
+                            if let error = error{
+                                print(error.localizedDescription)
+                                completion()
+                            }else{
+                                print("record document modified")
+                                completion()
+                                }
+                            }
+                        }
                     }
                 }
             }
-    }
     
     func addRecordToHobby(record: Records, hobby: Hobby) -> Bool {
         guard let recordID = record.id, let hobbyID = hobby.id else {
             return false
         }
-        if let newRecordRef = recordRef?.document(recordID) {
-            hobbyRef?.document(hobbyID).updateData(
+        if let newRecordRef = self.recordRef?.document(recordID) {
+            self.hobbyRef?.document(hobbyID).updateData(
                 ["records" : FieldValue.arrayUnion([newRecordRef])])
         }
         return true
@@ -254,7 +259,6 @@ class FirebaseController: NSObject,DatabaseProtocol{
 //    }
     func getRecordByTimestamp(date:String) -> Records? {
         for record in recordList {
-            print(record.date == date)
             if record.date == date {
                 return record
             }
@@ -275,12 +279,12 @@ class FirebaseController: NSObject,DatabaseProtocol{
         return timestamp
     }
     func showCorrespondingRecord(hobby:Hobby){
+        var currentHobby = getHobbyByID(hobby.id!)
         self.notes = []
-        let records = hobby.records
+        let records = currentHobby!.records
         for record in records {
             self.notes.append(contentsOf:record.notes)
         }
-        print(notes.count)
         self.listeners.invoke { (listener) in
             if listener.listenerType == ListenerType.record || listener.listenerType == ListenerType.all {
                 listener.onRecordChange(change: .update, record: self.notes)
@@ -418,6 +422,7 @@ class FirebaseController: NSObject,DatabaseProtocol{
         }
     }
     func parseRecordSnapshot(snapshot: QuerySnapshot, completion: @escaping () -> Void){
+        print("heyyyyyy")
         snapshot.documentChanges.forEach{ (change) in
             var parsedRecord = Records()
             if change.document.exists{
@@ -431,6 +436,7 @@ class FirebaseController: NSObject,DatabaseProtocol{
                 else{
                     self.parseSpecificNote(noteRefArray: noteRef){ allNotes in
                         parsedRecord.notes = allNotes
+                        self.addToRecordList(change: change, parsedRecord: parsedRecord)
                     }
                 }
             }
@@ -441,6 +447,7 @@ class FirebaseController: NSObject,DatabaseProtocol{
             self.recordList.insert(parsedRecord, at: Int(change.newIndex))
         }
         else if change.type == .modified {
+            print("called add record1")
             self.recordList[Int(change.oldIndex)] = parsedRecord
         }
         else if change.type == .removed {

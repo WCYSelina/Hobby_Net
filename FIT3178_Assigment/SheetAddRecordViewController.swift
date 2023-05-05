@@ -19,9 +19,17 @@ class SheetAddRecordViewController: UIViewController {
             return
         }
         Task{
-            let hobby = await self.databaseController?.addNote(noteDetails: note,date: self.choosenDate!,hobby: self.hobby!)
-            self.databaseController?.showCorrespondingRecord(hobby: hobby!)
-            self.dismiss(animated: true)
+            do{
+                self.databaseController?.addNote(noteDetails: note,date: self.choosenDate!,hobby: self.hobby!){ hobby in
+                    DispatchQueue.main.async {
+                        self.databaseController?.showCorrespondingRecord(hobby: hobby)
+                        self.dismiss(animated: true)
+                    }
+                    
+                    
+                }
+            }
+                
         }
     }
     
