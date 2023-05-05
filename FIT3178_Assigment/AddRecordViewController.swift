@@ -9,6 +9,7 @@ import UIKit
 
 class AddRecordViewController: UIViewController {
     
+    weak var databaseConroller:DatabaseProtocol?
     var currentHobby:Hobby?
     var passedDate:String?
     

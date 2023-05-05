@@ -32,10 +32,9 @@ class FirebaseController: NSObject,DatabaseProtocol{
     var DEFAULT_USERNAME = "username"
     var currentRecord:Records?
     var hobbyName:String?
-//    var record = Records()
     var records: [Records] = []
     var hobbyData: [String: Any]?
-    var recordsFxxkU: [Records]?
+    var notes:[Notes] = []
 //    var allRecords:[]
     
     override init(){
@@ -83,13 +82,7 @@ class FirebaseController: NSObject,DatabaseProtocol{
                 }
                 
             }
-//            let tempHob = self.hobbyList.first(where: {$0.name == self.defaultHobby.name})
-//            tempHob?.records.forEach{ rec in
-//                notesList.append(contentsOf: rec.notes)
-//            }
             listener.onRecordChange(change: .update, record: notesList)
-//            listener.onRecordChange(change: .update, record: defaultRecord.notes)
-//            listener.onRecordChange(change: .update, record: self.notesList)
         }
         if listener.listenerType == .note || listener.listenerType == .all {
             listener.onNoteChange(change: .update, notes: notesList)
@@ -123,32 +116,43 @@ class FirebaseController: NSObject,DatabaseProtocol{
             hobbyRef?.document(hobbyID).delete()
         }
     }
-    func addNote(noteDetails:String,date:String,hobby:Hobby) -> Notes {
+    func addNote(noteDetails:String,date:String,hobby:Hobby) async -> Hobby {
         let note = Notes()
         note.noteDetails = noteDetails
-        if let noteRef = noteRef?.addDocument(data: ["noteDetails" : noteDetails]) {
-            note.id = noteRef.documentID
+        do{
+            if let noteRef = try await noteRef?.addDocument(data: ["noteDetails" : noteDetails]) {
+                note.id = noteRef.documentID
+            }
+        } catch{
+            print("Error")
         }
         var record = getRecordByTimestamp(date: date)
         if record != nil {
-            let _ = addNoteToRecord(note: note, date: date, record: record!)
+            print("aaaaa")
+            let _ = await addNoteToRecord(note: note, date: date, record: record!)
         }else{
             record = addRecord(date: date)
-            let _ = addNoteToRecord(note: note, date: date, record: record!)
-
+            let _ = addRecordToHobby(record: record!, hobby: hobby)
+            let _ = await addNoteToRecord(note: note, date: date, record: record!)
         }
-        let _ = addRecordToHobby(record: record!, hobby: hobby)
-        return note
+        
+        return hobby
     }
-    func addNoteToRecord(note:Notes,date:String,record:Records) -> Bool {
+    func addNoteToRecord(note:Notes,date:String,record:Records) async {
         guard let noteID = note.id, let recordID = record.id else {
-            return false
+            return
         }
         if let newNoteRef = noteRef?.document(noteID) {
             recordRef?.document(recordID).updateData(
-                ["notes" : FieldValue.arrayUnion([newNoteRef])])
-        }
-        return true
+                ["notes" : FieldValue.arrayUnion([newNoteRef])]){ error in
+                    if let error = error{
+                        print(error)
+                    }else{
+                        print("records number\(record.notes.count)")
+                        return
+                    }
+                }
+            }
     }
     
     func addRecordToHobby(record: Records, hobby: Hobby) -> Bool {
@@ -270,7 +274,19 @@ class FirebaseController: NSObject,DatabaseProtocol{
         let timestamp = Timestamp(date: dateOnly)
         return timestamp
     }
-
+    func showCorrespondingRecord(hobby:Hobby){
+        self.notes = []
+        let records = hobby.records
+        for record in records {
+            self.notes.append(contentsOf:record.notes)
+        }
+        print(notes.count)
+        self.listeners.invoke { (listener) in
+            if listener.listenerType == ListenerType.record || listener.listenerType == ListenerType.all {
+                listener.onRecordChange(change: .update, record: self.notes)
+            }
+        }
+    }
     func setupHobbyListener() {
         hobbyRef = database.collection("hobby1")
         hobbyRef?.addSnapshotListener() { (querySnapshot, error) in
@@ -286,41 +302,53 @@ class FirebaseController: NSObject,DatabaseProtocol{
         }
     }
  
-    func addToHobbyList(change:DocumentChange,parsedHobby:Hobby){
-        if change.type == .added {
-            print("yyyyy")
-            self.hobbyList.insert(parsedHobby, at: Int(change.newIndex))
-        }
-        else if change.type == .modified {
-            self.hobbyList[Int(change.oldIndex)] = parsedHobby
-        }
-        else if change.type == .removed {
-            self.hobbyList.remove(at: Int(change.oldIndex))
+    func addToHobbyList(change:DocumentChange,parsedHobby:Hobby, completion: @escaping () -> Void){
+        let docRef = database.collection("hobby1").document(parsedHobby.id!)
+        docRef.getDocument{ (document, error) in
+            if let document = document, document.exists{
+                if change.type == .added {
+                    self.hobbyList.insert(parsedHobby, at: Int(change.newIndex))
+                }
+                else if change.type == .modified {
+                    self.hobbyList[Int(change.oldIndex)] = parsedHobby
+                }
+                else if change.type == .removed {
+                    self.hobbyList.remove(at: Int(change.oldIndex))
+                }
+            }
+            completion() //return, finished executing
         }
     }
  
     func parseHobbySnapshot(snapshot: QuerySnapshot, completion: @escaping () -> Void){
         snapshot.documentChanges.forEach{ (change) in
             var parsedHobby = Hobby()
-            parsedHobby.id = change.document.documentID
-            parsedHobby.name = change.document.data()["name"] as? String
-            let recordRef = change.document.data()["records"] as! [DocumentReference]
-            if recordRef == []{
-                parsedHobby.records = []
-                self.addToHobbyList(change: change, parsedHobby: parsedHobby)
-                self.listeners.invoke { (listener) in
-                    if listener.listenerType == ListenerType.hobby || listener.listenerType == ListenerType.all {
-                        listener.onHobbyChange(change: .update, hobbies: self.hobbyList)
+            if change.document.exists{
+                parsedHobby.id = change.document.documentID
+                parsedHobby.name = change.document.data()["name"] as? String
+                let recordRef = change.document.data()["records"] as! [DocumentReference]
+                if recordRef == []{
+                    parsedHobby.records = []
+                    self.addToHobbyList(change: change, parsedHobby: parsedHobby){ [weak self] in
+                        //[weak self] and the next line make sure the following line execute after addToHobbyList finished executing
+                        guard let self = self else { return }
+                        self.listeners.invoke { (listener) in
+                            if listener.listenerType == ListenerType.hobby || listener.listenerType == ListenerType.all {
+                                listener.onHobbyChange(change: .update, hobbies: self.hobbyList)
+                            }
+                        }
                     }
                 }
-            }
-            else{
-                self.parseSpecificRecord(recordRefArray: recordRef){ resultRecords in
-                    parsedHobby.records = resultRecords
-                    self.addToHobbyList(change: change, parsedHobby: parsedHobby)
-                    self.listeners.invoke { (listener) in
-                        if listener.listenerType == ListenerType.hobby || listener.listenerType == ListenerType.all {
-                            listener.onHobbyChange(change: .update, hobbies: self.hobbyList)
+                else{
+                    self.parseSpecificRecord(recordRefArray: recordRef){ resultRecords in
+                        parsedHobby.records = resultRecords
+                        self.addToHobbyList(change: change, parsedHobby: parsedHobby){ [weak self] in
+                            guard let self = self else { return }
+                            self.listeners.invoke { (listener) in
+                                if listener.listenerType == ListenerType.hobby || listener.listenerType == ListenerType.all {
+                                    listener.onHobbyChange(change: .update, hobbies: self.hobbyList)
+                                }
+                            }
                         }
                     }
                 }
@@ -328,7 +356,6 @@ class FirebaseController: NSObject,DatabaseProtocol{
         }
     }
     func parseSpecificRecord(recordRefArray:[DocumentReference], completion: @escaping ([Records]) -> Void){
-        print(recordList.count)
         var counter = 0
         var resultRecordsList:[Records] = []
         recordRefArray.forEach{ oneRecordRef in
@@ -341,7 +368,6 @@ class FirebaseController: NSObject,DatabaseProtocol{
                         oneRecordObj.notes = allNotes
                         resultRecordsList.append(oneRecordObj)
                         self.recordList.append(oneRecordObj)
-                        print(self.recordList.count)
                         counter += 1
                         if counter == recordRefArray.count{
                             completion(resultRecordsList)
@@ -412,7 +438,6 @@ class FirebaseController: NSObject,DatabaseProtocol{
     }
     func addToRecordList(change:DocumentChange,parsedRecord:Records){
         if change.type == .added {
-            print("index\(change.newIndex)")
             self.recordList.insert(parsedRecord, at: Int(change.newIndex))
         }
         else if change.type == .modified {

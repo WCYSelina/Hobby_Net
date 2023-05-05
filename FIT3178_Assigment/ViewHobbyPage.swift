@@ -36,7 +36,12 @@ class viewHobbyPageListener: NSObject, DatabaseListener {
     }
     
     func onRecordChange(change: DatabaseChange, record: [Notes]) {
-        notesList = record
+        Task{
+            DispatchQueue.main.async{
+                print("onRecordChange")
+                self.notesList = record
+            }
+        }
     }
     
     func onNoteChange(change: DatabaseChange, notes: [Notes]) {
@@ -77,7 +82,10 @@ struct ViewHobbyPage: View{
                         }
                     }
                 DatePicker("", selection: $selectedDate, displayedComponents: [.date])
-                    .datePickerStyle(.graphical).offset(x:0,y:-20)
+                    .datePickerStyle(.graphical).offset(x:0,y:-20).onChange(of: selectedDate){ date in
+                        databaseModel.databaseController?.showCorrespondingRecord(hobby: hobbyRecords)
+                        
+                    }
                 Text("Records on \(selectedDate, formatter: dateFormatter)").font(.title3.bold())
                 ScrollView(.vertical,showsIndicators: true){
                     VStack{
@@ -95,6 +103,7 @@ struct ViewHobbyPage: View{
             let appDelegate = UIApplication.shared.delegate as? AppDelegate
             databaseModel.databaseController = appDelegate?.databaseController
             databaseModel.databaseController?.addListener(listener: listener)
+//            databaseModel.databaseController?.showCorrespondingRecord(hobby: hobbyRecords)
         }.onDisappear{
             databaseModel.databaseController?.removeListener(listener: listener)
         }.onReceive(listener.$notesList) { notes in //subcribe to the publisher variable

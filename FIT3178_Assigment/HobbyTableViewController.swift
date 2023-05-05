@@ -12,6 +12,7 @@ import FirebaseAuth
 class HobbyTableViewController: UITableViewController,DatabaseListener{
     
     func onHobbyChange(change: DatabaseChange, hobbies: [Hobby]) {
+        print("hhhhh")
         allHobbies = hobbies
         tableView.reloadData()
     }
@@ -106,9 +107,10 @@ class HobbyTableViewController: UITableViewController,DatabaseListener{
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         currentHobby = allHobbies[indexPath.row]
+        databaseController?.defaultHobby = currentHobby!
+        databaseController?.showCorrespondingRecord(hobby: currentHobby!)
         let swiftUIView = ViewHobbyPage(hobbyRecords: currentHobby!)
         let hostingController = UIHostingController(rootView: swiftUIView) //UIHostingController allow swiftUI to be embedded into UIKit
-        databaseController?.defaultHobby = currentHobby!
         present(hostingController, animated: true, completion: nil)
     }
 
