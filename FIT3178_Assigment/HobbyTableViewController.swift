@@ -107,7 +107,11 @@ class HobbyTableViewController: UITableViewController,DatabaseListener{
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         currentHobby = allHobbies[indexPath.row]
         databaseController?.defaultHobby = currentHobby!
-        databaseController?.showCorrespondingRecord(hobby: currentHobby!){() in
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "dd MMM yyyy"
+        let date = dateFormatter.string(from: Date())
+        databaseController?.currentDate = date
+        databaseController?.showCorrespondingRecord(hobby: currentHobby!,date: date){() in
             //
         }
         let swiftUIView = ViewHobbyPage(hobbyRecords: currentHobby!)

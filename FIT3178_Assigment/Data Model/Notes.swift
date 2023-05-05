@@ -6,12 +6,9 @@
 //
 
 import UIKit
+import FirebaseFirestoreSwift
 
 class Notes: NSObject,Codable,Identifiable{
-    var id:String?
+    @DocumentID var id:String?
     var noteDetails:String?
-    enum CodingKeys: String, CodingKey {
-        case noteDetails
-    }
-
 }

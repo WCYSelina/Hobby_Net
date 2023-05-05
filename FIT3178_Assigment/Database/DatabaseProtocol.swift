@@ -44,10 +44,11 @@ protocol DatabaseProtocol: AnyObject {
     var hasLogin:Bool? {get set}
     var hasCreated:Bool? {get set}
     var error:String? {get set}
+    var currentDate:String?{get set}
     func addRecordToHobby(record: Records, hobby: Hobby) -> Bool
     func removeRecordFromHobby(record: Records, hobby: Hobby)
-    func showCorrespondingRecord(hobby:Hobby, completion: @escaping () -> Void)
-    func addNoteToRecord(note:Notes,date:String,record:Records, completion: @escaping () -> Void)
+    func showCorrespondingRecord(hobby:Hobby,date:String,completion: @escaping () -> Void)
+    func addNoteToRecord(note:Notes,date:String,record:Records, completion: @escaping (Records) -> Void)
     func removeNoteFromRecord(note: Notes, record: Records)
 //    func createAccount(email:String,password:String) async
 //    func loginAccount(email:String,password:String) async

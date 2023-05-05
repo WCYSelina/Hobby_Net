@@ -59,6 +59,11 @@ class DatabaseControllerModel: ObservableObject {
 
 struct ViewHobbyPage: View{
     @State private var selectedDate = Date() //@State triggers update in the view when its value is changed
+    private let dateToString: DateFormatter = {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "dd MMM yyyy"
+        return formatter
+    }()
     @State private var navigateToAddRecord = false
     @State private var notesList:[Notes] = []
     @StateObject var databaseModel = DatabaseControllerModel()
@@ -83,7 +88,7 @@ struct ViewHobbyPage: View{
                     }
                 DatePicker("", selection: $selectedDate, displayedComponents: [.date])
                     .datePickerStyle(.graphical).offset(x:0,y:-20).onChange(of: selectedDate){ date in
-                        databaseModel.databaseController?.showCorrespondingRecord(hobby: hobbyRecords){() in
+                        databaseModel.databaseController?.showCorrespondingRecord(hobby: hobbyRecords,date: dateToString.string(from: date)){() in
                             //
                         }
                     }
