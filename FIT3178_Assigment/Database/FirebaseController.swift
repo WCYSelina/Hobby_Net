@@ -79,11 +79,9 @@ class FirebaseController: NSObject,DatabaseProtocol{
             let record = records.first(where: {$0.date == currentDate})
             if record != nil {
                 self.notes.append(contentsOf:record!.notes)
-                print("yyyy")
                 currentRecNotesList = self.notes
             }
             else{
-                print("nooo")
                 currentRecNotesList = []
             }
             listener.onRecordChange(change: .update, record: currentRecNotesList!)
@@ -125,6 +123,7 @@ class FirebaseController: NSObject,DatabaseProtocol{
                     notes.append(contentsOf: record.notes)
                     self.deleteRecord(record: record)
                 }
+                print(notes)
                 for note in notes {
                     self.deleteNote(note: note)
                 }
@@ -513,7 +512,9 @@ class FirebaseController: NSObject,DatabaseProtocol{
     }
     func addToRecordList(change:DocumentChange,parsedRecord:Records){
         if change.type == .added {
-            self.recordList.insert(parsedRecord, at: Int(change.newIndex))
+            if self.recordList.count == change.newIndex{
+                self.recordList.insert(parsedRecord, at: Int(change.newIndex))
+            }
         }
         else if change.type == .modified {
             let dateFormatter = DateFormatter()
