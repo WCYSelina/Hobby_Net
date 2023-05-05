@@ -107,7 +107,9 @@ class HobbyTableViewController: UITableViewController,DatabaseListener{
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         currentHobby = allHobbies[indexPath.row]
         databaseController?.defaultHobby = currentHobby!
-        databaseController?.showCorrespondingRecord(hobby: currentHobby!)
+        databaseController?.showCorrespondingRecord(hobby: currentHobby!){() in
+            //
+        }
         let swiftUIView = ViewHobbyPage(hobbyRecords: currentHobby!)
         let hostingController = UIHostingController(rootView: swiftUIView) //UIHostingController allow swiftUI to be embedded into UIKit
         present(hostingController, animated: true, completion: nil)

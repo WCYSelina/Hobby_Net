@@ -83,8 +83,9 @@ struct ViewHobbyPage: View{
                     }
                 DatePicker("", selection: $selectedDate, displayedComponents: [.date])
                     .datePickerStyle(.graphical).offset(x:0,y:-20).onChange(of: selectedDate){ date in
-                        databaseModel.databaseController?.showCorrespondingRecord(hobby: hobbyRecords)
-                        
+                        databaseModel.databaseController?.showCorrespondingRecord(hobby: hobbyRecords){() in
+                            //
+                        }
                     }
                 Text("Records on \(selectedDate, formatter: dateFormatter)").font(.title3.bold())
                 ScrollView(.vertical,showsIndicators: true){

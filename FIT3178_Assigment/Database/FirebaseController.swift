@@ -34,7 +34,9 @@ class FirebaseController: NSObject,DatabaseProtocol{
     var records: [Records] = []
     var hobbyData: [String: Any]?
     var notes:[Notes] = []
+    var currentHobby:Hobby?
 //    var allRecords:[]
+    var currentRecNotesList: [Notes]?
 
     
     override init(){
@@ -113,7 +115,16 @@ class FirebaseController: NSObject,DatabaseProtocol{
     }
     func deleteHobby(hobby: Hobby) {
         if let hobbyID = hobby.id {
-            hobbyRef?.document(hobbyID).delete()
+            hobbyRef?.document(hobbyID).delete(){ delete in
+                self.hobbyList.removeAll(where: {$0.id == hobbyID})
+                print(self.hobbyList.count)
+                self.listeners.invoke{ listener in
+                    if listener.listenerType == ListenerType.hobby || listener.listenerType == ListenerType.all {
+                        listener.onHobbyChange(change: .update, hobbies: self.hobbyList)
+                        
+                    }
+                }
+            }
         }
     }
     func addNote(noteDetails:String,date:String,hobby:Hobby, completion: @escaping (Hobby) -> Void) {
@@ -123,8 +134,20 @@ class FirebaseController: NSObject,DatabaseProtocol{
             note.id = noteRef.documentID
         }
         var record = getRecordByTimestamp(date: date)
+        if defaultHobby.records.count != 0{
+            var rec = self.defaultHobby.records.first(where: {$0.date == record?.date})
+            if rec != nil{
+                rec?.notes.append(note)
+                self.currentRecNotesList = rec?.notes
+                self.listeners.invoke{ listener in
+                    if listener.listenerType == ListenerType.record || listener.listenerType == ListenerType.all {
+                        listener.onRecordChange(change: .update, record: rec!.notes)
+                        
+                    }
+                }
+            }
+        }
         if record != nil {
-            print("aaaaa")
             let _ = addNoteToRecord(note: note, date: date, record: record!){
                 completion(hobby)
             }
@@ -132,6 +155,8 @@ class FirebaseController: NSObject,DatabaseProtocol{
             record = self.addRecord(date: date)
             let _ = self.addRecordToHobby(record: record!, hobby: hobby)
             let _ = self.addNoteToRecord(note: note, date: date, record: record!){
+//                self.setupRecordListener()
+                
                 completion(hobby)
             }
         }
@@ -141,6 +166,7 @@ class FirebaseController: NSObject,DatabaseProtocol{
             return
         }
         if let newNoteRef = noteRef?.document(noteID) {
+            
             recordRef?.document(recordID).updateData(
                 ["notes" : FieldValue.arrayUnion([newNoteRef])]){ error in
                     if let error = error{
@@ -151,7 +177,6 @@ class FirebaseController: NSObject,DatabaseProtocol{
                                 print(error.localizedDescription)
                                 completion()
                             }else{
-                                print("record document modified")
                                 completion()
                                 }
                             }
@@ -178,12 +203,11 @@ class FirebaseController: NSObject,DatabaseProtocol{
         do{
             if let recordRef = try recordRef?.addDocument(from: record) {
                 record.id = recordRef.documentID
+                self.defaultHobby.records.append(record)
             }
-//            let _ = self.addHobbyToUser(hobby: hobby, user: defaultUser)
         } catch {
             print("Failed to serialize hero")
         }
-        
         return record
     }
 
@@ -278,21 +302,35 @@ class FirebaseController: NSObject,DatabaseProtocol{
         let timestamp = Timestamp(date: dateOnly)
         return timestamp
     }
-    func showCorrespondingRecord(hobby:Hobby){
-        var currentHobby = getHobbyByID(hobby.id!)
+    func showCorrespondingRecord(hobby:Hobby, completion: @escaping () -> Void) {
+        self.currentHobby = hobby
         self.notes = []
-        let records = currentHobby!.records
+        let records = hobby.records
         for record in records {
             self.notes.append(contentsOf:record.notes)
-        }
-        self.listeners.invoke { (listener) in
-            if listener.listenerType == ListenerType.record || listener.listenerType == ListenerType.all {
-                listener.onRecordChange(change: .update, record: self.notes)
+            self.listeners.invoke { (listener) in
+                if listener.listenerType == ListenerType.record || listener.listenerType == ListenerType.all {
+                    print(self.notes.count)
+                    listener.onRecordChange(change: .update, record: self.currentRecNotesList!)
+//                    var noteListAtNow:[Notes] = []
+//                    self.defaultHobby.records.forEach{ hob in
+//                        noteListAtNow.append(contentsOf: hob.notes)
+//                        listener.onRecordChange(change: .update, record: noteListAtNow)
+//                    }
+                    
+                }
             }
         }
+//        self.listeners.invoke { (listener) in
+//            if listener.listenerType == ListenerType.record || listener.listenerType == ListenerType.all {
+//                listener.onRecordChange(change: .update, record: self.notes)
+//            }
+//        }
+        
+            completion()
     }
     func setupHobbyListener() {
-        hobbyRef = database.collection("hobby1")
+        hobbyRef = database.collection("hobby3")
         hobbyRef?.addSnapshotListener() { (querySnapshot, error) in
             guard let querySnapshot = querySnapshot else {
                 print("Failed to fetch documents with error: \(String(describing: error))")
@@ -307,7 +345,7 @@ class FirebaseController: NSObject,DatabaseProtocol{
     }
  
     func addToHobbyList(change:DocumentChange,parsedHobby:Hobby, completion: @escaping () -> Void){
-        let docRef = database.collection("hobby1").document(parsedHobby.id!)
+        let docRef = database.collection("hobby3").document(parsedHobby.id!)
         docRef.getDocument{ (document, error) in
             if let document = document, document.exists{
                 if change.type == .added {
@@ -337,6 +375,7 @@ class FirebaseController: NSObject,DatabaseProtocol{
                         //[weak self] and the next line make sure the following line execute after addToHobbyList finished executing
                         guard let self = self else { return }
                         self.listeners.invoke { (listener) in
+                            print("hobby del")
                             if listener.listenerType == ListenerType.hobby || listener.listenerType == ListenerType.all {
                                 listener.onHobbyChange(change: .update, hobbies: self.hobbyList)
                             }
@@ -408,7 +447,7 @@ class FirebaseController: NSObject,DatabaseProtocol{
         }
     }
     func setupRecordListener() {
-        recordRef = database.collection("record1")
+        recordRef = database.collection("record3")
         recordRef?.addSnapshotListener() { (querySnapshot, error) in
             guard let querySnapshot = querySnapshot else {
                 print("Failed to fetch documents with error: \(String(describing: error))")
@@ -447,15 +486,18 @@ class FirebaseController: NSObject,DatabaseProtocol{
             self.recordList.insert(parsedRecord, at: Int(change.newIndex))
         }
         else if change.type == .modified {
-            print("called add record1")
-            self.recordList[Int(change.oldIndex)] = parsedRecord
+            self.showCorrespondingRecord(hobby: self.currentHobby!){ [weak self] in
+                guard let self = self else { return }
+                print("modified")
+                self.recordList[Int(change.oldIndex)] = parsedRecord
+            }
         }
         else if change.type == .removed {
             self.recordList.remove(at: Int(change.oldIndex))
         }
     }
     func setupNotesListener() {
-        noteRef = database.collection("notes1")
+        noteRef = database.collection("notes3")
         noteRef?.addSnapshotListener() { (querySnapshot, error) in
             guard let querySnapshot = querySnapshot else {
                 print("Failed to fetch documents with error: \(String(describing: error))")
