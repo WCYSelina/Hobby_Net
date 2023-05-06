@@ -118,10 +118,11 @@ class HobbyTableViewController: UITableViewController,DatabaseListener{
             //
         }
         let currentDate = Date()
+        print(currentDate.timeIntervalSinceNow)
         let calendar = Calendar.current
-        let oneWeekAgo = calendar.date(byAdding: .weekOfYear, value: -1, to: currentDate)!
-        let dateString = "\(dateFormatter.string(from: oneWeekAgo)) - \(dateFormatter.string(from: Date()))"
-        let swiftUIView = ViewHobbyPage(dateString: dateString,today: Date(),weekAgo: oneWeekAgo, hobby: currentHobby!)
+        let oneWeekAfter = calendar.date(byAdding: .weekOfYear, value: 1, to: currentDate)!
+        let dateString = "\(dateFormatter.string(from: oneWeekAfter)) - \(dateFormatter.string(from: currentDate))"
+        let swiftUIView = ViewHobbyPage(dateString: dateString,startOfWeek: currentDate,endOfWeek: oneWeekAfter, hobby: currentHobby!)
         let hostingController = UIHostingController(rootView: swiftUIView) //UIHostingController allow swiftUI to be embedded into UIKit
         present(hostingController, animated: true, completion: nil)
     }

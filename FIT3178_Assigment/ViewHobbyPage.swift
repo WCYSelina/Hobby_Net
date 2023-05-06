@@ -27,9 +27,6 @@ struct ViewControllerWrapper: UIViewControllerRepresentable{
 }
 
 class viewHobbyPageListener: NSObject, DatabaseListener {
-
-    
-    
     var listenerType = ListenerType.record
     @Published var notesList:[Notes] = []
     @Published var hobby:Hobby?
@@ -51,11 +48,22 @@ class viewHobbyPageListener: NSObject, DatabaseListener {
     func onHobbyRecordFirstChange(change:DatabaseChange, hobby:Hobby){
         self.hobby = hobby
     }
+}
+
+class weeklyViewHobbyNSObject:NSObject, DatabaseListener {
+    func onHobbyChange(change: DatabaseChange, hobbies: [Hobby]) {
+    }
     
+    func onRecordChange(change: DatabaseChange, record: [Notes]) {
+    }
     
+    func onNoteChange(change: DatabaseChange, notes: [Notes]) {
+    }
     
-    // Implement the required functions and properties of the protocol
-    // ...
+    func onHobbyRecordFirstChange(change: DatabaseChange, hobby: Hobby) {
+    }
+    
+    var listenerType = ListenerType.record
 }
 
 class DatabaseControllerModel: ObservableObject {
@@ -64,8 +72,8 @@ class DatabaseControllerModel: ObservableObject {
 
 struct ViewHobbyPage: View{
     var dateString:String
-    var today:Date
-    var weekAgo:Date
+    var startOfWeek:Date
+    var endOfWeek:Date
     @State private var navigateToAddRecord = false
     @State private var notesList:[Notes] = []
     @StateObject private var databaseModel = DatabaseControllerModel() //@StateObject ensures that the object is only created once during the view's lifecycle and is not destroyed and recreated during updates.
@@ -110,7 +118,7 @@ struct ViewHobbyPage: View{
                             }
                             
                         case 1:
-                            WeeklyPage(weekToAssign: (weekAgo,today,dateString))
+                            WeeklyPage(hobby: hobby,weekToAssign: (endOfWeek,startOfWeek,dateString))
                         default:
                             Text("none")
                         }
@@ -176,12 +184,11 @@ struct DailyPage:View{
 
 
 struct WeeklyPage:View{
-    @State var hobby:Hobby?
+    @State var hobby:Hobby
     @State private var currentDate = Date()
     @StateObject var databaseModel = DatabaseControllerModel()
-    @State var startWeek:Date?
-    @State var endWeek:Date?
     @State var weekToAssign:(startWeek:Date,endWeek:Date,dateString:String)
+    let listener = viewHobbyPageListener()
 
     var body: some View{
         NavigationView{
@@ -190,7 +197,7 @@ struct WeeklyPage:View{
                     Button(action: {
                         updateCurrentDate(byAddingWeeks: -1)
                         weekToAssign = weekRange(for: currentDate)
-                        databaseModel.databaseController?.showRecordWeekly(hobby: hobby!, startWeek: startWeek!, endWeek: endWeek!) {
+                        databaseModel.databaseController?.showRecordWeekly(hobby: hobby, startWeek: weekToAssign.startWeek, endWeek: weekToAssign.endWeek) {
                             // completion handler code
                         }
                     }) {
@@ -203,7 +210,7 @@ struct WeeklyPage:View{
                     Button(action: {
                         updateCurrentDate(byAddingWeeks: 1)
                         weekToAssign = weekRange(for: currentDate)
-                        databaseModel.databaseController?.showRecordWeekly(hobby: hobby!, startWeek: startWeek!, endWeek: endWeek!) {
+                        databaseModel.databaseController?.showRecordWeekly(hobby: hobby, startWeek: weekToAssign.startWeek, endWeek: weekToAssign.endWeek) {
                             // completion handler code 
                         }
                     }) {
@@ -216,14 +223,17 @@ struct WeeklyPage:View{
                 
             }
         }.onAppear{
+            let appDelegate = UIApplication.shared.delegate as? AppDelegate
+            databaseModel.databaseController = appDelegate?.databaseController
+            databaseModel.databaseController?.addListener(listener: listener)
             weekToAssign = weekRange(for: Date())
-            print("eeee")
-            if let hobby = hobby{
-                print("yyyy")
-                databaseModel.databaseController?.showRecordWeekly(hobby: hobby, startWeek: startWeek!, endWeek: endWeek!) {
-                    // completion handler code
+            databaseModel.databaseController?.showRecordWeekly(hobby: hobby, startWeek: weekToAssign.startWeek, endWeek: weekToAssign.endWeek) {() in
+                // completion handler code
+                print("000")
+                
             }
-            }
+        }.onDisappear{
+                databaseModel.databaseController?.removeListener(listener: listener)
         }
     }
     private func updateCurrentDate(byAddingWeeks weeks: Int) {
@@ -234,6 +244,7 @@ struct WeeklyPage:View{
     private func weekRange(for date: Date) -> (startWeek:Date,endWeek:Date,dateString:String) {
         let calendar = Calendar.current
         let startOfWeek = calendar.date(from: calendar.dateComponents([.yearForWeekOfYear, .weekOfYear], from: date))!
+        print("startOfWeek\(startOfWeek)")
         let endOfWeek = calendar.date(byAdding: .day, value: 6, to: startOfWeek)!
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "dd MMM yyyy"
