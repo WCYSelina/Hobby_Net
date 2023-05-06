@@ -117,7 +117,11 @@ class HobbyTableViewController: UITableViewController,DatabaseListener{
         databaseController?.showCorrespondingRecord(hobby: currentHobby!,date: date){() in
             //
         }
-        let swiftUIView = ViewHobbyPage(hobby: currentHobby!)
+        let currentDate = Date()
+        let calendar = Calendar.current
+        let oneWeekAgo = calendar.date(byAdding: .weekOfYear, value: -1, to: currentDate)!
+        let dateString = "\(dateFormatter.string(from: oneWeekAgo)) - \(dateFormatter.string(from: Date()))"
+        let swiftUIView = ViewHobbyPage(dateString: dateString,today: Date(),weekAgo: oneWeekAgo, hobby: currentHobby!)
         let hostingController = UIHostingController(rootView: swiftUIView) //UIHostingController allow swiftUI to be embedded into UIKit
         present(hostingController, animated: true, completion: nil)
     }

@@ -49,6 +49,7 @@ protocol DatabaseProtocol: AnyObject {
     func addRecordToHobby(record: Records, hobby: Hobby) -> Bool
     func removeRecordFromHobby(record: Records, hobby: Hobby)
     func showCorrespondingRecord(hobby:Hobby,date:String,completion: @escaping () -> Void)
+    func showRecordWeekly(hobby:Hobby,startWeek:Date, endWeek:Date,completion: @escaping () -> Void)
     func addNoteToRecord(note:Notes,date:String,record:Records, completion: @escaping (Records) -> Void)
     func removeNoteFromRecord(note: Notes, record: Records)
 //    func createAccount(email:String,password:String) async

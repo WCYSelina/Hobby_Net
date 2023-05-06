@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import Combine
 
 struct ViewControllerWrapper: UIViewControllerRepresentable{
     
@@ -39,7 +40,6 @@ class viewHobbyPageListener: NSObject, DatabaseListener {
     func onRecordChange(change: DatabaseChange, record: [Notes]) {
         Task{
             DispatchQueue.main.async{
-                print("onRecordChange")
                 self.notesList = record
             }
         }
@@ -63,51 +63,58 @@ class DatabaseControllerModel: ObservableObject {
 }
 
 struct ViewHobbyPage: View{
-    @State private var selectedDate = Date() //@State triggers update in the view when its value is changed
-    private let dateToString: DateFormatter = {
-        let formatter = DateFormatter()
-        formatter.dateFormat = "dd MMM yyyy"
-        return formatter
-    }()
+    var dateString:String
+    var today:Date
+    var weekAgo:Date
     @State private var navigateToAddRecord = false
     @State private var notesList:[Notes] = []
-    @StateObject var databaseModel = DatabaseControllerModel()
+    @StateObject private var databaseModel = DatabaseControllerModel() //@StateObject ensures that the object is only created once during the view's lifecycle and is not destroyed and recreated during updates.
     let listener = viewHobbyPageListener()
 //    var hobbyRecords:Hobby
     @State var hobby:Hobby
+    @State private var selectedSegmentedIndex = 0
+    private let segments = ["Daily","Weekly"]
     var body: some View {
         NavigationView{
-            VStack {
-                Text("").navigationBarTitle(hobby.name ?? "",displayMode: .inline)
-                    .toolbar {
-                        ToolbarItem(placement: .navigationBarTrailing) {
-                            Button(action: {
-                                // Handle action
-                                self.navigateToAddRecord = true
-                                
-                            }) {
-                                Label("Add", systemImage: "plus")
-                            }.sheet(isPresented: $navigateToAddRecord){
-                                ViewControllerWrapper(currentHobby :hobby)
+            ZStack{
+                VStack {
+                    Text("").navigationBarTitle(hobby.name ?? "",displayMode: .inline)
+                        .toolbar {
+                            ToolbarItem(placement: .navigationBarTrailing) {
+                                Button(action: {
+                                    // Handle action
+                                    self.navigateToAddRecord = true
+                                    
+                                }) {
+                                    Label("Add", systemImage: "plus")
+                                }.sheet(isPresented: $navigateToAddRecord){
+                                    ViewControllerWrapper(currentHobby :hobby)
+                                }
                             }
                         }
-                    }
-                DatePicker("", selection: $selectedDate, displayedComponents: [.date])
-                    .datePickerStyle(.graphical).offset(x:0,y:-20).onChange(of: selectedDate){ date in
-                        databaseModel.databaseController?.showCorrespondingRecord(hobby: hobby,date: dateToString.string(from: date)){() in
-                            //
+                    Picker(selection: $selectedSegmentedIndex, label: Text("Select a segment")){
+                        ForEach(0..<segments.count) { index in
+                            Text(segments[index])
                         }
                     }
-                Text("Records on \(selectedDate, formatter: dateFormatter)").font(.title3.bold())
-                ScrollView(.vertical,showsIndicators: true){
+                    .pickerStyle(SegmentedPickerStyle())
                     VStack{
-                        Text("")
-                        ForEach(notesList.indices, id: \.self) { index in
-                            Text(notesList[index].noteDetails ?? "")
-                                .frame(maxWidth: .infinity, alignment: .leading)
-                                .background(RoundedRectangle(cornerRadius: 5).fill(Color.gray.opacity(0.2)))
-                            Text("")
+                        switch selectedSegmentedIndex{
+                        case 0:
+                            DailyPage(hobby: hobby, databaseModel: databaseModel, notesList: $notesList).onAppear{
+                                let dateFormatter = DateFormatter()
+                                dateFormatter.dateFormat = "dd MMM yyyy"
+                                databaseModel.databaseController?.showCorrespondingRecord(hobby: hobby,date: dateFormatter.string(from: Date())){() in
+                                    //
+                                }
+                            }
+                            
+                        case 1:
+                            WeeklyPage(weekToAssign: (weekAgo,today,dateString))
+                        default:
+                            Text("none")
                         }
+                        Spacer()
                     }
                 }
             }
@@ -127,7 +134,38 @@ struct ViewHobbyPage: View{
             }
         }
     }
-    
+}
+
+struct DailyPage:View{
+    private let dateToString: DateFormatter = {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "dd MMM yyyy"
+        return formatter
+    }()
+    @State var hobby:Hobby
+    @State private var selectedDate = Date() //@State triggers update in the view when its value is changed
+    @StateObject var databaseModel:DatabaseControllerModel
+    @Binding var notesList:[Notes]
+    var body: some View{
+        DatePicker("", selection: $selectedDate, displayedComponents: [.date])
+            .datePickerStyle(.graphical).offset(x:0,y:-20).onChange(of: selectedDate){ date in
+                databaseModel.databaseController?.showCorrespondingRecord(hobby: hobby,date: dateToString.string(from: date)){() in
+                    //
+                }
+            }
+        Text("Records on \(selectedDate, formatter: dateFormatter)").font(.title3.bold())
+        ScrollView(.vertical,showsIndicators: true){
+            VStack{
+                Text("")
+                ForEach(notesList.indices, id: \.self) { index in
+                    Text(notesList[index].noteDetails ?? "")
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .background(RoundedRectangle(cornerRadius: 5).fill(Color.gray.opacity(0.2)))
+                    Text("")
+                }
+            }
+        }
+    }
     private let dateFormatter: DateFormatter = {
             let formatter = DateFormatter()
             formatter.dateStyle = .long
@@ -136,8 +174,76 @@ struct ViewHobbyPage: View{
         }()
 }
 
-struct ViewHobbyPage_Previews: PreviewProvider {
-    static var previews: some View {
-        ViewHobbyPage(hobby: Hobby())
+
+struct WeeklyPage:View{
+    @State var hobby:Hobby?
+    @State private var currentDate = Date()
+    @StateObject var databaseModel = DatabaseControllerModel()
+    @State var startWeek:Date?
+    @State var endWeek:Date?
+    @State var weekToAssign:(startWeek:Date,endWeek:Date,dateString:String)
+
+    var body: some View{
+        NavigationView{
+            VStack{
+                HStack {
+                    Button(action: {
+                        updateCurrentDate(byAddingWeeks: -1)
+                        weekToAssign = weekRange(for: currentDate)
+                        databaseModel.databaseController?.showRecordWeekly(hobby: hobby!, startWeek: startWeek!, endWeek: endWeek!) {
+                            // completion handler code
+                        }
+                    }) {
+                        Image(systemName: "arrow.left")
+                            .font(.title)
+                    }
+                    .padding(.horizontal)
+                    Text(weekToAssign.dateString)
+                    
+                    Button(action: {
+                        updateCurrentDate(byAddingWeeks: 1)
+                        weekToAssign = weekRange(for: currentDate)
+                        databaseModel.databaseController?.showRecordWeekly(hobby: hobby!, startWeek: startWeek!, endWeek: endWeek!) {
+                            // completion handler code 
+                        }
+                    }) {
+                        Image(systemName: "arrow.right")
+                            .font(.title)
+                    }
+                    .padding(.horizontal)
+                }
+                Spacer()
+                
+            }
+        }.onAppear{
+            weekToAssign = weekRange(for: Date())
+            print("eeee")
+            if let hobby = hobby{
+                print("yyyy")
+                databaseModel.databaseController?.showRecordWeekly(hobby: hobby, startWeek: startWeek!, endWeek: endWeek!) {
+                    // completion handler code
+            }
+            }
+        }
+    }
+    private func updateCurrentDate(byAddingWeeks weeks: Int) {
+        let newDate = Calendar.current.date(byAdding: .weekOfYear, value: weeks, to: currentDate)!
+        currentDate = newDate
+    }
+    
+    private func weekRange(for date: Date) -> (startWeek:Date,endWeek:Date,dateString:String) {
+        let calendar = Calendar.current
+        let startOfWeek = calendar.date(from: calendar.dateComponents([.yearForWeekOfYear, .weekOfYear], from: date))!
+        let endOfWeek = calendar.date(byAdding: .day, value: 6, to: startOfWeek)!
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "dd MMM yyyy"
+        let dateString = "\(dateFormatter.string(from: startOfWeek)) - \(dateFormatter.string(from: endOfWeek))"
+
+        return (startOfWeek,endOfWeek,dateString)
     }
 }
+//struct ViewHobbyPage_Previews: PreviewProvider {
+//    static var previews: some View {
+//        ViewHobbyPage(hobby: Hobby(),startWeek: ,endWeek: )
+//    }
+//}

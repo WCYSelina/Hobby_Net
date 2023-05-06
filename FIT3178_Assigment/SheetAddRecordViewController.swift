@@ -21,10 +21,10 @@ class SheetAddRecordViewController: UIViewController {
         Task{
             do{
                 self.databaseController?.addNote(noteDetails: note,date: self.choosenDate!,hobby: self.hobby!){ hobby in
-                    self.databaseController?.showCorrespondingRecord(hobby: hobby,date: self.choosenDate!){
-                        //
-                        self.dismiss(animated: true)
-                    }
+//                    self.databaseController?.showCorrespondingRecord(hobby: hobby,date: self.choosenDate!){
+//                        //
+                    self.dismiss(animated: true)
+//                    }
                 }
             }
                 

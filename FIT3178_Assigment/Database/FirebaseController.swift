@@ -167,10 +167,10 @@ class FirebaseController: NSObject,DatabaseProtocol{
         if record != nil {
             record?.notes.append(note)
             self.listeners.invoke{ listener in
-                if listener.listenerType == ListenerType.record || listener.listenerType == ListenerType.all {print("dddd")
-                    listener.onRecordChange(change: .update, record: record!.notes)
-
-                }
+//                if listener.listenerType == ListenerType.record || listener.listenerType == ListenerType.all {print("dddd")
+//                    listener.onRecordChange(change: .update, record: record!.notes)
+//
+//                }
             }
             let _ = addNoteToRecord(note: note, date: date, record: record!){ oneRecord in
                 completion(hobby)
@@ -182,13 +182,13 @@ class FirebaseController: NSObject,DatabaseProtocol{
                 self.defaultRecord = oneRecord
                 
                 let _ = self.addRecordToHobby(record: oneRecord, hobby: hobby)
-                self.listeners.invoke{ listener in
-                    if listener.listenerType == ListenerType.record || listener.listenerType == ListenerType.all {print("dddd")
-                        print(oneRecord.notes)
-                        listener.onRecordChange(change: .update, record: oneRecord.notes)
+//                self.listeners.invoke{ listener in
+//                    if listener.listenerType == ListenerType.record || listener.listenerType == ListenerType.all {print("dddd")
+//                        print(oneRecord.notes)
+//                        listener.onRecordChange(change: .update, record: oneRecord.notes)
                         completion(hobby)
-                    }
-                }
+//                    }
+//                }
             }
         }
     }
@@ -341,10 +341,14 @@ class FirebaseController: NSObject,DatabaseProtocol{
         let timestamp = Timestamp(date: dateOnly)
         return timestamp
     }
+    func showRecordWeekly(hobby:Hobby,startWeek:Date, endWeek:Date,completion: @escaping () -> Void) {
+        print(startWeek)
+        completion()
+    }
     func showCorrespondingRecord(hobby:Hobby,date:String,completion: @escaping () -> Void) {
         self.currentHobby = hobby
         self.notes = []
-        var records = hobby.records
+        let records = hobby.records
         var record = records.first(where: {$0.date == date})
 //        print("recordF:\(record)")
         if defaultRecord != nil , record == nil{
