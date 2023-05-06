@@ -116,22 +116,31 @@ class FirebaseController: NSObject,DatabaseProtocol{
     }
     func deleteHobby(hobby: Hobby) {
         if let hobbyID = hobby.id {
-            hobbyRef?.document(hobbyID).delete(){ delete in
-                let records = hobby.records
-                self.hobbyList.removeAll(where: {$0.id == hobbyID})
-                var notes:[Notes] = []
-                for record in records {
-                    notes.append(contentsOf: record.notes)
-                    self.deleteRecord(record: record)
-                }
-                print(notes)
-                for note in notes {
-                    self.deleteNote(note: note)
-                }
-                self.listeners.invoke{ listener in
-                    if listener.listenerType == ListenerType.hobby || listener.listenerType == ListenerType.all {
-                        listener.onHobbyChange(change: .update, hobbies: self.hobbyList)
-                        
+            let recordRef = self.database.collection("hobby4").document(hobbyID)
+            recordRef.getDocument{ (document,error) in
+                let oneHobbyRecords = document!.data()!["records"] as! [DocumentReference]
+                self.parseSpecificRecord(recordRefArray: oneHobbyRecords){ allRecords in
+                    let records = allRecords
+                    self.hobbyRef?.document(hobbyID).delete(){ delete in
+                        self.hobbyList.removeAll(where: {$0.id == hobbyID})
+                        for record in records {
+                            let docRef = self.database.collection("record4").document((record.id)!)
+                            docRef.getDocument{ (document, error) in
+                                let oneRecordNotes = document!.data()!["notes"] as! [DocumentReference]
+                                self.parseSpecificNote(noteRefArray: oneRecordNotes){ allNotes in
+                                    for note in allNotes {
+                                        self.deleteNote(note: note)
+                                    }
+                                }
+                                self.deleteRecord(record: record)
+                            }
+                            self.listeners.invoke{ listener in
+                                if listener.listenerType == ListenerType.hobby || listener.listenerType == ListenerType.all {
+                                    listener.onHobbyChange(change: .update, hobbies: self.hobbyList)
+
+                                }
+                            }
+                        }
                     }
                 }
             }
@@ -336,15 +345,12 @@ class FirebaseController: NSObject,DatabaseProtocol{
         self.currentHobby = hobby
         self.notes = []
         var records = hobby.records
-        print("length:\(records.count)")
         var record = records.first(where: {$0.date == date})
 //        print("recordF:\(record)")
         if defaultRecord != nil , record == nil{
-            print("defaultRecord:\(defaultRecord)")
             record = defaultRecord
             defaultRecord = nil
         }
-        print("record\(record)")
         if record != nil {
             let docRef = database.collection("record4").document((record?.id)!)
             docRef.getDocument{ (document, error) in
