@@ -31,6 +31,7 @@ class viewHobbyPageListener: NSObject, DatabaseListener {
     
     var listenerType = ListenerType.record
     @Published var notesList:[Notes] = []
+    @Published var hobby:Hobby?
     func onHobbyChange(change: DatabaseChange, hobbies: [Hobby]) {
 
     }
@@ -45,6 +46,10 @@ class viewHobbyPageListener: NSObject, DatabaseListener {
     }
     
     func onNoteChange(change: DatabaseChange, notes: [Notes]) {
+    }
+    
+    func onHobbyRecordFirstChange(change:DatabaseChange, hobby:Hobby){
+        self.hobby = hobby
     }
     
     
@@ -68,11 +73,12 @@ struct ViewHobbyPage: View{
     @State private var notesList:[Notes] = []
     @StateObject var databaseModel = DatabaseControllerModel()
     let listener = viewHobbyPageListener()
-    var hobbyRecords:Hobby
+//    var hobbyRecords:Hobby
+    @State var hobby:Hobby
     var body: some View {
         NavigationView{
             VStack {
-                Text("").navigationBarTitle(hobbyRecords.name ?? "",displayMode: .inline)
+                Text("").navigationBarTitle(hobby.name ?? "",displayMode: .inline)
                     .toolbar {
                         ToolbarItem(placement: .navigationBarTrailing) {
                             Button(action: {
@@ -82,13 +88,13 @@ struct ViewHobbyPage: View{
                             }) {
                                 Label("Add", systemImage: "plus")
                             }.sheet(isPresented: $navigateToAddRecord){
-                                ViewControllerWrapper(currentHobby :hobbyRecords)
+                                ViewControllerWrapper(currentHobby :hobby)
                             }
                         }
                     }
                 DatePicker("", selection: $selectedDate, displayedComponents: [.date])
                     .datePickerStyle(.graphical).offset(x:0,y:-20).onChange(of: selectedDate){ date in
-                        databaseModel.databaseController?.showCorrespondingRecord(hobby: hobbyRecords,date: dateToString.string(from: date)){() in
+                        databaseModel.databaseController?.showCorrespondingRecord(hobby: hobby,date: dateToString.string(from: date)){() in
                             //
                         }
                     }
@@ -115,6 +121,10 @@ struct ViewHobbyPage: View{
         }.onReceive(listener.$notesList) { notes in //subcribe to the publisher variable
             // Update the notesList
             self.notesList = notes
+        }.onReceive(listener.$hobby) { hobby in
+            if let hobby = hobby{
+                self.hobby = hobby
+            }
         }
     }
     
@@ -128,6 +138,6 @@ struct ViewHobbyPage: View{
 
 struct ViewHobbyPage_Previews: PreviewProvider {
     static var previews: some View {
-        ViewHobbyPage(hobbyRecords: Hobby())
+        ViewHobbyPage(hobby: Hobby())
     }
 }

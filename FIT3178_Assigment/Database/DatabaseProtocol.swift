@@ -28,6 +28,7 @@ protocol DatabaseListener: AnyObject {
     func onHobbyChange(change: DatabaseChange, hobbies: [Hobby])
     func onRecordChange(change: DatabaseChange, record: [Notes])
     func onNoteChange(change: DatabaseChange, notes: [Notes])
+    func onHobbyRecordFirstChange(change:DatabaseChange, hobby:Hobby)
 //    func onAuthAccount(change:DatabaseChange,user:FirebaseAuth.User?)
 //    func onCreateAccount(change:DatabaseChange,user:FirebaseAuth.User?)
 }
