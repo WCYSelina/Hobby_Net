@@ -121,6 +121,7 @@ struct ViewHobbyPage: View{
                             
                         case 1:
                             WeeklyViewControllerWrapper(hobby: hobby)
+                            
                         default:
                             Text("none")
                         }

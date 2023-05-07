@@ -48,9 +48,12 @@ protocol DatabaseProtocol: AnyObject {
     var hasCreated:Bool? {get set}
     var error:String? {get set}
     var currentDate:String?{get set}
+    var startWeek:Date?{get set}
+    var endWeek:Date?{get set}
+    func onWeeklyChange(records:[Records])
     func addRecordToHobby(record: Records, hobby: Hobby) -> Bool
     func showCorrespondingRecord(hobby:Hobby,date:String,completion: @escaping () -> Void)
-    func showRecordWeekly(hobby:Hobby,startWeek:Date, endWeek:Date,completion: @escaping () -> Void)
+    func showRecordWeekly(hobby:Hobby,startWeek:Date, endWeek:Date,completion: @escaping ([Records],[String]) -> Void)
     func addNoteToRecord(note:Notes,date:String,record:Records, completion: @escaping (Records) -> Void)
     func removeNoteFromRecord(note: Notes, record: Records)
 //    func createAccount(email:String,password:String) async

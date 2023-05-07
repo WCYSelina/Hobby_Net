@@ -9,7 +9,10 @@ import UIKit
 
 class WeeklyRecordViewController: UIViewController,DatabaseListener,UITableViewDataSource,UITableViewDelegate{
     func numberOfSections(in tableView: UITableView) -> Int {
-        return records!.count
+        if let records = records{
+            return records.count
+        }
+        return 0
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -19,11 +22,12 @@ class WeeklyRecordViewController: UIViewController,DatabaseListener,UITableViewD
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: VerticalTableViewCell.reuseIdentifier, for: indexPath) as! VerticalTableViewCell
         var notesText: [String] = []
-        records![indexPath.section].notes.forEach{ note in
-            if let noteDetail = note.noteDetails{
-                notesText.append(noteDetail)
+        if records != nil{
+            records![indexPath.section].notes.forEach{ note in
+                if let noteDetail = note.noteDetails{
+                    notesText.append(noteDetail)
+                }
             }
-            
         }
 //        let notesText = records![indexPath.row].notes.map {
 //            if let noteDetail = $0.noteDetails{
@@ -64,7 +68,7 @@ class WeeklyRecordViewController: UIViewController,DatabaseListener,UITableViewD
         40
     }
     
-    override func viewDidLayoutSubviews() {
+    override func viewDidLayoutSubviews() { //adjusting the contraints of subviews
         super.viewDidLayoutSubviews()
         let weekPickerHeight: CGFloat = 50
         weekPickerstackView.frame = CGRect(x: 0, y: view.safeAreaInsets.top, width: view.bounds.width, height: weekPickerHeight)
@@ -76,6 +80,7 @@ class WeeklyRecordViewController: UIViewController,DatabaseListener,UITableViewD
     
     func onWeeklyRecordChange(change: DatabaseChange, records: [Records]) {
         self.records = records
+        self.tableView.reloadData()
     }
     
     func onHobbyChange(change: DatabaseChange, hobbies: [Hobby]) {
@@ -88,6 +93,7 @@ class WeeklyRecordViewController: UIViewController,DatabaseListener,UITableViewD
     }
     
     func onHobbyRecordFirstChange(change: DatabaseChange, hobby: Hobby) {
+        self.hobby = hobby
     }
     
 
@@ -137,12 +143,25 @@ class WeeklyRecordViewController: UIViewController,DatabaseListener,UITableViewD
         weekPickerstackView.addArrangedSubview(weekRange)
         weekPickerstackView.addArrangedSubview(rightArrowButton)
         
-        view.addSubview(weekPickerstackView)
+        databaseController?.startWeek = startWeek
+        databaseController?.endWeek = endWeek
         
+        view.addSubview(weekPickerstackView)
+        print("ddddddd")
+        databaseController?.showRecordWeekly(hobby: hobby!, startWeek: startWeek!, endWeek: endWeek!){ (records,dateInRange) in
+            self.records = []
+            for range in dateInRange {
+                for record in records {
+                    if record.date == range{
+                        self.records?.append(record)
+                        break
+                    }
+                }
+            }
+            self.tableView.reloadData()
+        }
     }
     override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        
         databaseController?.addListener(listener: self)
     }
     
@@ -169,8 +188,17 @@ class WeeklyRecordViewController: UIViewController,DatabaseListener,UITableViewD
         let end = formatter.string(from: week.end)
         self.endWeek = week.end
         self.weekRange.text = "\(start) - \(end)"
-        databaseController?.showRecordWeekly(hobby: hobby!, startWeek: startWeek!, endWeek: endWeek!){
-            //
+        databaseController?.showRecordWeekly(hobby: hobby!, startWeek: startWeek!, endWeek: endWeek!){(records,dateInRange) in
+            self.records = []
+            for range in dateInRange {
+                for record in records {
+                    if record.date == range{
+                        self.records?.append(record)
+                        break
+                    }
+                }
+            }
+            self.tableView.reloadData()
         }
     }
 

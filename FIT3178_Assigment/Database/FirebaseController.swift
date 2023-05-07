@@ -12,7 +12,8 @@ import Foundation
 import SwiftUI
 
 class FirebaseController: NSObject,DatabaseProtocol{
-    
+    var startWeek: Date?
+    var endWeek: Date?
     var hasLogin: Bool? = nil
     var hasCreated: Bool? = nil
     var error: String?
@@ -40,6 +41,7 @@ class FirebaseController: NSObject,DatabaseProtocol{
     var currentRecNotesList: [Notes]?
     var currentDate:String?
     var tempRecord:Records?
+    var defaultRecordWeekly:Records?
     
     
     override init(){
@@ -155,6 +157,9 @@ class FirebaseController: NSObject,DatabaseProtocol{
                                     }
                                 }
                                 self.deleteRecord(record: record)
+                                
+                                //
+//                                self.defaultRecord = nil
                             }
                             self.listeners.invoke{ listener in
                                 if listener.listenerType == ListenerType.hobby || listener.listenerType == ListenerType.all {
@@ -188,12 +193,12 @@ class FirebaseController: NSObject,DatabaseProtocol{
         var record = getRecordByTimestamp(date: date)
         if record != nil {
             record?.notes.append(note)
-            self.listeners.invoke{ listener in
+//            self.listeners.invoke{ listener in
 //                if listener.listenerType == ListenerType.record || listener.listenerType == ListenerType.all {print("dddd")
 //                    listener.onRecordChange(change: .update, record: record!.notes)
 //
 //                }
-            }
+//            }
             let _ = addNoteToRecord(note: note, date: date, record: record!){ oneRecord in
                 completion(hobby)
             }
@@ -201,7 +206,7 @@ class FirebaseController: NSObject,DatabaseProtocol{
             record = self.addRecord(date: date)
             let _ = self.addNoteToRecord(note: note, date: date, record: record!){oneRecord in
                 self.defaultRecord = oneRecord
-                
+                self.defaultRecordWeekly = oneRecord
                 let _ = self.addRecordToHobby(record: oneRecord, hobby: hobby)
 //                self.listeners.invoke{ listener in
 //                    if listener.listenerType == ListenerType.record || listener.listenerType == ListenerType.all {print("dddd")
@@ -310,6 +315,15 @@ class FirebaseController: NSObject,DatabaseProtocol{
         }
         return nil
     }
+    func onWeeklyChange(records:[Records]){
+        print("siccccc")
+        print(records)
+        self.listeners.invoke { (listener) in
+            if listener.listenerType == ListenerType.record || listener.listenerType == ListenerType.all {
+                listener.onWeeklyRecordChange(change: .update, records: records)
+            }
+        }
+    }
     func convertToDateOnly(date:Date) -> Timestamp {
         let calendar = Calendar.current
         let year = calendar.component(.year, from: date)
@@ -324,7 +338,8 @@ class FirebaseController: NSObject,DatabaseProtocol{
         return timestamp
     }
     
-    func showRecordWeekly(hobby:Hobby,startWeek:Date, endWeek:Date,completion: @escaping () -> Void) {
+    func showRecordWeekly(hobby:Hobby,startWeek:Date, endWeek:Date,completion: @escaping ([Records],[String]) -> Void) {
+        print("startWeek\(startWeek)")
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "dd MMM yyyy"
         
@@ -336,7 +351,11 @@ class FirebaseController: NSObject,DatabaseProtocol{
             currentDate = Calendar.current.date(byAdding: .day, value: 1, to: currentDate)!
         }
         
-        let records = hobby.records
+        var records = hobby.records
+        if defaultRecordWeekly != nil{
+            records.append(defaultRecordWeekly!)
+            defaultRecordWeekly = nil
+        }
         var recordsCorrespondToDates:[Records] = []
         for range in datesInRange {
             let recordToAdd = records.first(where: {$0.date == range})
@@ -344,12 +363,19 @@ class FirebaseController: NSObject,DatabaseProtocol{
                 recordsCorrespondToDates.append(recordToAdd!)
             }
         }
-        self.listeners.invoke { (listener) in
-            if listener.listenerType == ListenerType.record || listener.listenerType == ListenerType.all {
-                listener.onRecordChange(change: .update, record: self.currentRecNotesList!)
-            }
+        var recordReference:[DocumentReference] = []
+        for recordsCorrespondToDate in recordsCorrespondToDates {
+            let docRef = database.collection("record5").document(recordsCorrespondToDate.id!)
+            recordReference.append(docRef)
         }
-        completion()
+        if recordReference.count != 0{
+            self.parseSpecificRecord(recordRefArray: recordReference){ records in
+                completion(records,datesInRange)
+            }
+        }else{
+            records = []
+            completion(records,datesInRange)
+        }
     }
     func showCorrespondingRecord(hobby:Hobby,date:String,completion: @escaping () -> Void) {
         self.currentHobby = hobby
@@ -358,6 +384,7 @@ class FirebaseController: NSObject,DatabaseProtocol{
         var record = records.first(where: {$0.date == date})
 //        print("recordF:\(record)")
         if defaultRecord != nil , record == nil{
+            print("yyyyy")
             record = defaultRecord
             defaultRecord = nil
         }

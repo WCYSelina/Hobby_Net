@@ -19,6 +19,7 @@ class HobbyTableViewController: UITableViewController,DatabaseListener{
     
     
     func onHobbyChange(change: DatabaseChange, hobbies: [Hobby]) {
+        print(hobbies)
         allHobbies = hobbies
         tableView.reloadData()
     }
@@ -136,6 +137,7 @@ class HobbyTableViewController: UITableViewController,DatabaseListener{
     override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
         if editingStyle == .delete {
             // Delete the row from the data source
+            print(allHobbies[indexPath.row])
             self.databaseController?.deleteHobby(hobby: allHobbies[indexPath.row])
         }
     }
