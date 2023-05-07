@@ -140,7 +140,7 @@ class FirebaseController: NSObject,DatabaseProtocol{
     }
     func deleteHobby(hobby: Hobby) {
         if let hobbyID = hobby.id {
-            let recordRef = self.database.collection("hobby4").document(hobbyID)
+            let recordRef = self.database.collection("hobby5").document(hobbyID)
             recordRef.getDocument{ (document,error) in
                 let oneHobbyRecords = document!.data()!["records"] as! [DocumentReference]
                 self.parseSpecificRecord(recordRefArray: oneHobbyRecords){ allRecords in
@@ -415,7 +415,7 @@ class FirebaseController: NSObject,DatabaseProtocol{
         }
     }
     func setupHobbyListener() {
-        hobbyRef = database.collection("hobby4")
+        hobbyRef = database.collection("hobby5")
         hobbyRef?.addSnapshotListener() { (querySnapshot, error) in
             guard let querySnapshot = querySnapshot else {
                 print("Failed to fetch documents with error: \(String(describing: error))")
@@ -429,18 +429,40 @@ class FirebaseController: NSObject,DatabaseProtocol{
     }
  
     func addToHobbyList(change:DocumentChange,parsedHobby:Hobby, completion: @escaping () -> Void){
-        let docRef = database.collection("hobby4").document(parsedHobby.id!)
+        let docRef = database.collection("hobby5").document(parsedHobby.id!)
+        
         docRef.getDocument{ (document, error) in
             if let document = document, document.exists{
+                print(document.documentID)
+                print(change.newIndex)
                 if change.type == .added {
-                    self.hobbyList.insert(parsedHobby, at: Int(change.newIndex))
+                    if let index = self.hobbyList.firstIndex(where: { $0.id == parsedHobby.id }) {
+                        // If the parsedHobby already exists in the list, update it
+                        self.hobbyList[index] = parsedHobby
+                    } else {
+                        // If the parsedHobby doesn't exist in the list, add it
+                        self.hobbyList.append(parsedHobby)
+                    }
+                } else if change.type == .modified {
+                    if let index = self.hobbyList.firstIndex(where: { $0.id == parsedHobby.id }) {
+                        // If the parsedHobby exists in the list, update it
+                        self.hobbyList[index] = parsedHobby
+                    }
+                } else if change.type == .removed {
+                    if let index = self.hobbyList.firstIndex(where: { $0.id == parsedHobby.id }) {
+                        // If the parsedHobby exists in the list, remove it
+                        self.hobbyList.remove(at: index)
+                    }
                 }
-                else if change.type == .modified {
-                    self.hobbyList[Int(change.oldIndex)] = parsedHobby
-                }
-                else if change.type == .removed {
-                    self.hobbyList.remove(at: Int(change.oldIndex))
-                }
+//                if change.type == .added {
+//                    self.hobbyList.insert(parsedHobby, at: Int(0))
+//                }
+//                else if change.type == .modified {
+//                    self.hobbyList[Int(change.oldIndex)] = parsedHobby
+//                }
+//                else if change.type == .removed {
+//                    self.hobbyList.remove(at: Int(change.oldIndex))
+//                }
             }
             completion() //return, finished executing
         }
