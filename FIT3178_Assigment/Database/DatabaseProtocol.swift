@@ -8,6 +8,7 @@
 import Foundation
 import FirebaseAuth
 import Firebase
+import SwiftUI
 enum DatabaseChange {
     case add
     case remove

@@ -8,8 +8,12 @@
 import UIKit
 import Firebase
 import FirebaseFirestoreSwift
+import Foundation
+import SwiftUI
 
 class FirebaseController: NSObject,DatabaseProtocol{
+    
+    
     var hasLogin: Bool? = nil
     var hasCreated: Bool? = nil
     var error: String?
@@ -342,7 +346,19 @@ class FirebaseController: NSObject,DatabaseProtocol{
         return timestamp
     }
     func showRecordWeekly(hobby:Hobby,startWeek:Date, endWeek:Date,completion: @escaping () -> Void) {
-        print(startWeek)
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "dd MMM yyyy"
+        
+        var datesInRange:[String] = []
+        var currentDate = startWeek
+        
+        while currentDate <= endWeek{ // get the all the dates between startWeek and endWeek
+            datesInRange.append(dateFormatter.string(from: currentDate))
+            currentDate = Calendar.current.date(byAdding: .day, value: 1, to: currentDate)!
+        }
+        
+        
+        
         completion()
     }
     func showCorrespondingRecord(hobby:Hobby,date:String,completion: @escaping () -> Void) {

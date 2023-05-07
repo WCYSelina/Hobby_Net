@@ -26,6 +26,21 @@ struct ViewControllerWrapper: UIViewControllerRepresentable{
     }
 }
 
+struct WeeklyViewControllerWrapper: UIViewControllerRepresentable{
+    var hobby:Hobby
+    func makeUIViewController(context: Context) -> UIViewController {
+        let storyboard = UIStoryboard(name: "Main", bundle: nil)
+        let viewController = storyboard.instantiateViewController(withIdentifier: "WeeklyRecordViewController") as! WeeklyRecordViewController
+        viewController.hobby = hobby
+        return viewController
+    }
+
+    func updateUIViewController(_ uiViewController: UIViewController, context: Context) {
+        // Update the view controller
+    }
+    
+}
+
 class viewHobbyPageListener: NSObject, DatabaseListener {
     var listenerType = ListenerType.record
     @Published var notesList:[Notes] = []
@@ -49,23 +64,6 @@ class viewHobbyPageListener: NSObject, DatabaseListener {
         self.hobby = hobby
     }
 }
-
-class weeklyViewHobbyNSObject:NSObject, DatabaseListener {
-    func onHobbyChange(change: DatabaseChange, hobbies: [Hobby]) {
-    }
-    
-    func onRecordChange(change: DatabaseChange, record: [Notes]) {
-    }
-    
-    func onNoteChange(change: DatabaseChange, notes: [Notes]) {
-    }
-    
-    func onHobbyRecordFirstChange(change: DatabaseChange, hobby: Hobby) {
-    }
-    
-    var listenerType = ListenerType.record
-}
-
 class DatabaseControllerModel: ObservableObject {
     weak var databaseController: DatabaseProtocol?
 }
@@ -118,7 +116,7 @@ struct ViewHobbyPage: View{
                             }
                             
                         case 1:
-                            WeeklyPage(hobby: hobby,weekToAssign: (endOfWeek,startOfWeek,dateString))
+                            WeeklyViewControllerWrapper(hobby: hobby)
                         default:
                             Text("none")
                         }
@@ -181,80 +179,3 @@ struct DailyPage:View{
             return formatter
         }()
 }
-
-
-struct WeeklyPage:View{
-    @State var hobby:Hobby
-    @State private var currentDate = Date()
-    @StateObject var databaseModel = DatabaseControllerModel()
-    @State var weekToAssign:(startWeek:Date,endWeek:Date,dateString:String)
-    let listener = viewHobbyPageListener()
-
-    var body: some View{
-        NavigationView{
-            VStack{
-                HStack {
-                    Button(action: {
-                        updateCurrentDate(byAddingWeeks: -1)
-                        weekToAssign = weekRange(for: currentDate)
-                        databaseModel.databaseController?.showRecordWeekly(hobby: hobby, startWeek: weekToAssign.startWeek, endWeek: weekToAssign.endWeek) {
-                            // completion handler code
-                        }
-                    }) {
-                        Image(systemName: "arrow.left")
-                            .font(.title)
-                    }
-                    .padding(.horizontal)
-                    Text(weekToAssign.dateString)
-                    
-                    Button(action: {
-                        updateCurrentDate(byAddingWeeks: 1)
-                        weekToAssign = weekRange(for: currentDate)
-                        databaseModel.databaseController?.showRecordWeekly(hobby: hobby, startWeek: weekToAssign.startWeek, endWeek: weekToAssign.endWeek) {
-                            // completion handler code 
-                        }
-                    }) {
-                        Image(systemName: "arrow.right")
-                            .font(.title)
-                    }
-                    .padding(.horizontal)
-                }
-                Spacer()
-                
-            }
-        }.onAppear{
-            let appDelegate = UIApplication.shared.delegate as? AppDelegate
-            databaseModel.databaseController = appDelegate?.databaseController
-            databaseModel.databaseController?.addListener(listener: listener)
-            weekToAssign = weekRange(for: Date())
-            databaseModel.databaseController?.showRecordWeekly(hobby: hobby, startWeek: weekToAssign.startWeek, endWeek: weekToAssign.endWeek) {() in
-                // completion handler code
-                print("000")
-                
-            }
-        }.onDisappear{
-                databaseModel.databaseController?.removeListener(listener: listener)
-        }
-    }
-    private func updateCurrentDate(byAddingWeeks weeks: Int) {
-        let newDate = Calendar.current.date(byAdding: .weekOfYear, value: weeks, to: currentDate)!
-        currentDate = newDate
-    }
-    
-    private func weekRange(for date: Date) -> (startWeek:Date,endWeek:Date,dateString:String) {
-        let calendar = Calendar.current
-        let startOfWeek = calendar.date(from: calendar.dateComponents([.yearForWeekOfYear, .weekOfYear], from: date))!
-        print("startOfWeek\(startOfWeek)")
-        let endOfWeek = calendar.date(byAdding: .day, value: 6, to: startOfWeek)!
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "dd MMM yyyy"
-        let dateString = "\(dateFormatter.string(from: startOfWeek)) - \(dateFormatter.string(from: endOfWeek))"
-
-        return (startOfWeek,endOfWeek,dateString)
-    }
-}
-//struct ViewHobbyPage_Previews: PreviewProvider {
-//    static var previews: some View {
-//        ViewHobbyPage(hobby: Hobby(),startWeek: ,endWeek: )
-//    }
-//}
