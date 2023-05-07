@@ -35,6 +35,9 @@ class WeeklyRecordViewController: UIViewController,DatabaseListener,UITableViewD
 //        }
         return cell
     }
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        return UIScreen.main.bounds.height * 0.5
+    }
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         let weekPickerHeight: CGFloat = 50
@@ -150,17 +153,29 @@ class WeeklyRecordViewController: UIViewController,DatabaseListener,UITableViewD
 class HorizontalCollectionViewCell: UICollectionViewCell{
     static let reuseIdentifier = "HorizontalCollectionViewCell"
     
+    private let card: UIView = {
+        let view = UIView()
+        view.backgroundColor = UIColor(red: 0.9, green: 0.9, blue: 0.9, alpha: 1.0)
+        view.layer.cornerRadius = 10
+        view.layer.shadowColor = UIColor.black.cgColor
+        view.layer.shadowOffset = CGSize(width: 0, height: 1)
+        view.layer.shadowOpacity = 0.1
+        view.layer.shadowRadius = 4
+        return view
+    }()
+    
     private let label:UILabel = {
         let label = UILabel()
         label.numberOfLines = 0
-        label.textAlignment = .center
+        label.textAlignment = .left
         return label
     }()
     
     override init(frame: CGRect) {
-           super.init(frame: frame)
-           contentView.addSubview(label)
-       }
+        super.init(frame: frame)
+        contentView.addSubview(card)
+        card.addSubview(label)
+    }
        
    required init?(coder: NSCoder) {
        fatalError("init(coder:) has not been implemented")
@@ -168,8 +183,10 @@ class HorizontalCollectionViewCell: UICollectionViewCell{
    
    override func layoutSubviews() {
        super.layoutSubviews()
-       label.frame = contentView.bounds
-   }
+       let margin: CGFloat = 10
+       card.frame = CGRect(x: margin, y: margin, width: contentView.bounds.width - 2 * margin, height: contentView.bounds.height - 2 * margin)
+       label.frame = CGRect(x: 8, y: 8, width: card.bounds.width - 16, height: card.bounds.height - 16)
+    }
    
    func configure(text: String) {
        label.text = text
@@ -197,6 +214,13 @@ class VerticalTableViewCell:UITableViewCell,UICollectionViewDelegate,UICollectio
         collectionView.dataSource = self
         collectionView.register(HorizontalCollectionViewCell.self, forCellWithReuseIdentifier: HorizontalCollectionViewCell.reuseIdentifier)
         contentView.addSubview(collectionView)
+        
+        NSLayoutConstraint.activate([
+            collectionView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
+            collectionView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
+            collectionView.topAnchor.constraint(equalTo: contentView.topAnchor),
+            collectionView.heightAnchor.constraint(equalToConstant: UIScreen.main.bounds.height * 0.5), // Set the height to half of the screen height
+        ])
     }
     
     required init?(coder: NSCoder) {
@@ -223,6 +247,10 @@ class VerticalTableViewCell:UITableViewCell,UICollectionViewDelegate,UICollectio
         return cell
     }
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-            return CGSize(width: 100, height: collectionView.bounds.height)
+        let screenWidth = UIScreen.main.bounds.width
+        let screenHeight = UIScreen.main.bounds.height
+        let cardWidth: CGFloat = screenWidth // Set the card width to the screen width
+        let cardHeight: CGFloat = screenHeight * 0.5 // Set the card height to half of the screen height
+        return CGSize(width: cardWidth, height: cardHeight)
         }
 }
