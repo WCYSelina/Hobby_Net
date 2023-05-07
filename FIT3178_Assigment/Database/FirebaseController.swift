@@ -190,7 +190,7 @@ class FirebaseController: NSObject,DatabaseProtocol{
         if let noteRef =  noteRef?.addDocument(data: ["noteDetails" : noteDetails]) {
             note.id = noteRef.documentID
         }
-        var record = getRecordByTimestamp(date: date)
+        var record = getRecordByTimestamp(date: date,hobby: hobby)
         if record != nil {
             record?.notes.append(note)
 //            self.listeners.invoke{ listener in
@@ -307,9 +307,9 @@ class FirebaseController: NSObject,DatabaseProtocol{
         }
         return nil
     }
-    func getRecordByTimestamp(date:String) -> Records? {
+    func getRecordByTimestamp(date:String,hobby:Hobby) -> Records? {
         for record in recordList {
-            if record.date == date {
+            if record.date == date, hobby.records.contains(where: {$0.id == record.id}){
                 return record
             }
         }
