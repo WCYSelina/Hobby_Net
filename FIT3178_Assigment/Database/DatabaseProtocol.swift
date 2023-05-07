@@ -30,6 +30,7 @@ protocol DatabaseListener: AnyObject {
     func onRecordChange(change: DatabaseChange, record: [Notes])
     func onNoteChange(change: DatabaseChange, notes: [Notes])
     func onHobbyRecordFirstChange(change:DatabaseChange, hobby:Hobby)
+    func onWeeklyRecordChange(change:DatabaseChange, records:[Records])
 //    func onAuthAccount(change:DatabaseChange,user:FirebaseAuth.User?)
 //    func onCreateAccount(change:DatabaseChange,user:FirebaseAuth.User?)
 }
@@ -48,7 +49,6 @@ protocol DatabaseProtocol: AnyObject {
     var error:String? {get set}
     var currentDate:String?{get set}
     func addRecordToHobby(record: Records, hobby: Hobby) -> Bool
-    func removeRecordFromHobby(record: Records, hobby: Hobby)
     func showCorrespondingRecord(hobby:Hobby,date:String,completion: @escaping () -> Void)
     func showRecordWeekly(hobby:Hobby,startWeek:Date, endWeek:Date,completion: @escaping () -> Void)
     func addNoteToRecord(note:Notes,date:String,record:Records, completion: @escaping (Records) -> Void)

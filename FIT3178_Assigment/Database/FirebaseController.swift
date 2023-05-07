@@ -13,7 +13,6 @@ import SwiftUI
 
 class FirebaseController: NSObject,DatabaseProtocol{
     
-    
     var hasLogin: Bool? = nil
     var hasCreated: Bool? = nil
     var error: String?
@@ -38,7 +37,6 @@ class FirebaseController: NSObject,DatabaseProtocol{
     var hobbyData: [String: Any]?
     var notes:[Notes] = []
     var currentHobby:Hobby?
-//    var allRecords:[]
     var currentRecNotesList: [Notes]?
     var currentDate:String?
     var tempRecord:Records?
@@ -88,8 +86,28 @@ class FirebaseController: NSObject,DatabaseProtocol{
             else{
                 currentRecNotesList = []
             }
+            
+            let dateFormatter = DateFormatter()
+            dateFormatter.dateFormat = "dd MMM yyyy"
+            
+            var datesInRange:[String] = []
+            var today = Date()
+            
+            for _ in 0..<7 {
+                datesInRange.append(dateFormatter.string(from: today))
+                today = Calendar.current.date(byAdding: .day, value: 1, to: today)!
+            }
+            var recordsCorrespondToDates:[Records] = []
+            for range in datesInRange {
+                let recordToAdd = records.first(where: {$0.date == range})
+                if recordToAdd != nil{
+                    recordsCorrespondToDates.append(recordToAdd!)
+                }
+            }
+ 
             listener.onRecordChange(change: .update, record: currentRecNotesList!)
             listener.onHobbyRecordFirstChange(change: .update, hobby: defaultHobby)
+            listener.onWeeklyRecordChange(change: .update, records: recordsCorrespondToDates)
         }
         if listener.listenerType == .note || listener.listenerType == .all {
             listener.onNoteChange(change: .update, notes: notesList)
@@ -128,7 +146,7 @@ class FirebaseController: NSObject,DatabaseProtocol{
                     self.hobbyRef?.document(hobbyID).delete(){ delete in
                         self.hobbyList.removeAll(where: {$0.id == hobbyID})
                         for record in records {
-                            let docRef = self.database.collection("record4").document((record.id)!)
+                            let docRef = self.database.collection("record5").document((record.id)!)
                             docRef.getDocument{ (document, error) in
                                 let oneRecordNotes = document!.data()!["notes"] as! [DocumentReference]
                                 self.parseSpecificNote(noteRefArray: oneRecordNotes){ allNotes in
@@ -182,7 +200,6 @@ class FirebaseController: NSObject,DatabaseProtocol{
         }else{
             record = self.addRecord(date: date)
             let _ = self.addNoteToRecord(note: note, date: date, record: record!){oneRecord in
-                print(oneRecord.notes.count)
                 self.defaultRecord = oneRecord
                 
                 let _ = self.addRecordToHobby(record: oneRecord, hobby: hobby)
@@ -201,7 +218,6 @@ class FirebaseController: NSObject,DatabaseProtocol{
             return
         }
         if let newNoteRef = noteRef?.document(noteID) {
-            print("ffefefefe\(noteID)")
             recordRef?.document(recordID).updateData(
                 ["notes" : FieldValue.arrayUnion([newNoteRef])]){ error in
                     if let error = error{
@@ -266,27 +282,6 @@ class FirebaseController: NSObject,DatabaseProtocol{
         return true
     }
     
-    func removeRecordFromHobby(record: Records, hobby: Hobby) {
-//        if hobby.records.contains(record), let hobbyID = hobby.id, let recordID = record.id {
-//            if let removedRecordRef = recordRef?.document(recordID) {
-//                hobbyRef?.document(hobbyID).updateData(
-//                    ["records": FieldValue.arrayRemove([removedRecordRef])]
-//                )
-//            }
-//        }
-    }
-    
-//    func addNoteToRecord(note: Notes, record: Records) -> Bool {
-//        guard let noteID = note.id, let recordID = record.id else {
-//            return false
-//        }
-//        if let newNoteRef = noteRef?.document(noteID) {
-//            recordRef?.document(recordID).updateData(
-//                ["notes" : FieldValue.arrayUnion([newNoteRef])])
-//        }
-//
-//        return true
-//    }
     
     func removeNoteFromRecord(note: Notes, record: Records) {
         if record.notes.contains(note), let recordID = record.id, let noteID = note.id {
@@ -298,15 +293,6 @@ class FirebaseController: NSObject,DatabaseProtocol{
         }
     }
     func cleanup() {}
-    // MARK: - Firebase Controller Specific m=Methods
-//    func getRecordsByID(_ id: String) -> Records? {
-//        for record in recordList {
-//            if record.id == id {
-//                return record
-//            }
-//        }
-//        return nil
-//    }
 
     func getHobbyByID(_ id: String) -> Hobby? {
         for hobby in hobbyList {
@@ -316,14 +302,6 @@ class FirebaseController: NSObject,DatabaseProtocol{
         }
         return nil
     }
-//    func getNotesByID(_ id: String) -> Notes? {
-//        for note in notesList {
-//            if note.rootRecord == id {
-//                return note
-//            }
-//        }
-//        return nil
-//    }
     func getRecordByTimestamp(date:String) -> Records? {
         for record in recordList {
             if record.date == date {
@@ -345,6 +323,7 @@ class FirebaseController: NSObject,DatabaseProtocol{
         let timestamp = Timestamp(date: dateOnly)
         return timestamp
     }
+    
     func showRecordWeekly(hobby:Hobby,startWeek:Date, endWeek:Date,completion: @escaping () -> Void) {
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "dd MMM yyyy"
@@ -357,8 +336,19 @@ class FirebaseController: NSObject,DatabaseProtocol{
             currentDate = Calendar.current.date(byAdding: .day, value: 1, to: currentDate)!
         }
         
-        
-        
+        let records = hobby.records
+        var recordsCorrespondToDates:[Records] = []
+        for range in datesInRange {
+            let recordToAdd = records.first(where: {$0.date == range})
+            if recordToAdd != nil{
+                recordsCorrespondToDates.append(recordToAdd!)
+            }
+        }
+        self.listeners.invoke { (listener) in
+            if listener.listenerType == ListenerType.record || listener.listenerType == ListenerType.all {
+                listener.onRecordChange(change: .update, record: self.currentRecNotesList!)
+            }
+        }
         completion()
     }
     func showCorrespondingRecord(hobby:Hobby,date:String,completion: @escaping () -> Void) {
@@ -372,7 +362,7 @@ class FirebaseController: NSObject,DatabaseProtocol{
             defaultRecord = nil
         }
         if record != nil {
-            let docRef = database.collection("record4").document((record?.id)!)
+            let docRef = database.collection("record5").document((record?.id)!)
             docRef.getDocument{ (document, error) in
                 let oneRecordNotes = document!.data()!["notes"] as! [DocumentReference]
                 self.parseSpecificNote(noteRefArray: oneRecordNotes){ allNotes in
@@ -404,7 +394,6 @@ class FirebaseController: NSObject,DatabaseProtocol{
                 print("Failed to fetch documents with error: \(String(describing: error))")
                 return
             }
-//            self.parseHobbySnapshot(snapshot: querySnapshot)
             self.parseHobbySnapshot(snapshot: querySnapshot){ () in
                 // nothing to do
                 
@@ -514,7 +503,7 @@ class FirebaseController: NSObject,DatabaseProtocol{
         }
     }
     func setupRecordListener() {
-        recordRef = database.collection("record4")
+        recordRef = database.collection("record5")
         recordRef?.addSnapshotListener() { (querySnapshot, error) in
             guard let querySnapshot = querySnapshot else {
                 print("Failed to fetch documents with error: \(String(describing: error))")

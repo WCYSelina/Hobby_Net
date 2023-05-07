@@ -8,6 +8,10 @@
 import UIKit
 
 class WeeklyRecordViewController: UIViewController,DatabaseListener {
+    func onWeeklyRecordChange(change: DatabaseChange, records: [Records]) {
+        self.records = records
+    }
+    
     func onHobbyChange(change: DatabaseChange, hobbies: [Hobby]) {
     }
     
@@ -21,9 +25,10 @@ class WeeklyRecordViewController: UIViewController,DatabaseListener {
     }
     
 
-    @IBOutlet weak var stackView: UIStackView!
+    @IBOutlet weak var weekPickerstackView: UIStackView!
     weak var databaseController:DatabaseProtocol?
     var listenerType = ListenerType.record
+    var records:[Records]?
     var startWeek:Date?
     var endWeek:Date?
     let weekRange = UILabel()
@@ -52,13 +57,14 @@ class WeeklyRecordViewController: UIViewController,DatabaseListener {
         rightArrowButton.setTitle(">", for: .normal)
         rightArrowButton.addTarget(self, action: #selector(moveForward), for: .touchUpInside)
         
-        stackView.addArrangedSubview(leftArrowButton)
-        stackView.addArrangedSubview(weekRange)
-        stackView.addArrangedSubview(rightArrowButton)
+        weekPickerstackView.addArrangedSubview(leftArrowButton)
+        weekPickerstackView.addArrangedSubview(weekRange)
+        weekPickerstackView.addArrangedSubview(rightArrowButton)
         
     }
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        
         databaseController?.addListener(listener: self)
     }
     

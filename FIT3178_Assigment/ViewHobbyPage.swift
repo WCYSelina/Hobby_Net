@@ -42,6 +42,10 @@ struct WeeklyViewControllerWrapper: UIViewControllerRepresentable{
 }
 
 class viewHobbyPageListener: NSObject, DatabaseListener {
+    
+    func onWeeklyRecordChange(change: DatabaseChange,records:[Records]) {
+    }
+    
     var listenerType = ListenerType.record
     @Published var notesList:[Notes] = []
     @Published var hobby:Hobby?

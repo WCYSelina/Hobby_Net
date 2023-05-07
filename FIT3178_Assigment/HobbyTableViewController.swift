@@ -10,6 +10,10 @@ import SwiftUI
 import FirebaseAuth
 
 class HobbyTableViewController: UITableViewController,DatabaseListener{
+    
+    func onWeeklyRecordChange(change: DatabaseChange, records:[Records]) {
+    }
+    
     func onHobbyRecordFirstChange(change: DatabaseChange, hobby: Hobby) {
     }
     

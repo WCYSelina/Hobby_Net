@@ -73,33 +73,33 @@
             <point key="canvasLocation" x="4790.0763358778622" y="-27.464788732394368"/>
         </scene>
         <!--Weekly Record View Controller-->
-        <scene sceneID="PGO-mD-or7">
+        <scene sceneID="WbJ-Gw-y4G">
             <objects>
-                <viewController storyboardIdentifier="WeeklyRecordViewController" id="cvn-PF-2pH" customClass="WeeklyRecordViewController" customModule="FIT3178_Assignment" customModuleProvider="target" sceneMemberID="viewController">
-                    <view key="view" contentMode="scaleToFill" id="xmn-Km-FIz">
+                <viewController storyboardIdentifier="WeeklyRecordViewController" id="ohW-mb-v5s" customClass="WeeklyRecordViewController" customModule="FIT3178_Assignment" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="EeQ-s8-k2J">
                         <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <stackView opaque="NO" contentMode="scaleToFill" ambiguous="YES" distribution="equalSpacing" translatesAutoresizingMaskIntoConstraints="NO" id="BWl-dS-Tb3">
-                                <rect key="frame" x="20" y="103" width="353" height="43"/>
+                            <stackView opaque="NO" contentMode="scaleToFill" ambiguous="YES" distribution="equalSpacing" translatesAutoresizingMaskIntoConstraints="NO" id="3yS-Jw-ex7">
+                                <rect key="frame" x="0.0" y="103" width="393" height="61"/>
                             </stackView>
                         </subviews>
-                        <viewLayoutGuide key="safeArea" id="HaL-Zh-LbZ"/>
+                        <viewLayoutGuide key="safeArea" id="MO0-eq-j2H"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <constraints>
-                            <constraint firstItem="HaL-Zh-LbZ" firstAttribute="trailing" secondItem="BWl-dS-Tb3" secondAttribute="trailing" constant="20" id="TRP-yf-4ob"/>
-                            <constraint firstItem="BWl-dS-Tb3" firstAttribute="top" secondItem="HaL-Zh-LbZ" secondAttribute="top" constant="20" id="c24-rk-ek8"/>
-                            <constraint firstItem="BWl-dS-Tb3" firstAttribute="leading" secondItem="HaL-Zh-LbZ" secondAttribute="leading" constant="20" id="jJa-Zs-7zx"/>
+                            <constraint firstItem="3yS-Jw-ex7" firstAttribute="leading" secondItem="MO0-eq-j2H" secondAttribute="leading" id="HxV-cr-AsW"/>
+                            <constraint firstItem="3yS-Jw-ex7" firstAttribute="top" secondItem="MO0-eq-j2H" secondAttribute="top" id="Jef-cM-zHU"/>
+                            <constraint firstItem="3yS-Jw-ex7" firstAttribute="trailing" secondItem="MO0-eq-j2H" secondAttribute="trailing" id="Rg4-Ju-VlF"/>
                         </constraints>
                     </view>
-                    <navigationItem key="navigationItem" id="Hwo-Bs-4r0"/>
+                    <navigationItem key="navigationItem" id="17U-nb-rbc"/>
                     <connections>
-                        <outlet property="stackView" destination="BWl-dS-Tb3" id="shp-SR-Ncc"/>
+                        <outlet property="weekPickerstackView" destination="3yS-Jw-ex7" id="b9m-Vn-8pY"/>
                     </connections>
                 </viewController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="ohx-f8-lA1" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="sj5-8D-iv6" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="7034.3511450381675" y="-27.464788732394368"/>
+            <point key="canvasLocation" x="7816.0305343511445" y="-27.464788732394368"/>
         </scene>
         <!--Sheet View Controller-->
         <scene sceneID="i9O-4L-20B">
@@ -271,23 +271,24 @@
             </objects>
             <point key="canvasLocation" x="3864.8854961832058" y="-27.464788732394368"/>
         </scene>
-        <!--Navigation Controller-->
-        <scene sceneID="SEu-6E-WQ2">
+        <!--Item-->
+        <scene sceneID="bjB-zO-Xas">
             <objects>
-                <navigationController automaticallyAdjustsScrollViewInsets="NO" id="Sqb-j3-loc" sceneMemberID="viewController">
+                <navigationController automaticallyAdjustsScrollViewInsets="NO" id="Xyp-Ap-fkL" sceneMemberID="viewController">
+                    <tabBarItem key="tabBarItem" title="Item" id="fi5-6k-d79"/>
                     <toolbarItems/>
-                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="PSK-0f-KuK">
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="jJ3-Qt-Dj8">
                         <rect key="frame" x="0.0" y="59" width="393" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
                     <nil name="viewControllers"/>
                     <connections>
-                        <segue destination="cvn-PF-2pH" kind="relationship" relationship="rootViewController" id="JGt-ai-J19"/>
+                        <segue destination="ohW-mb-v5s" kind="relationship" relationship="rootViewController" id="y5b-4l-d7y"/>
                     </connections>
                 </navigationController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="nqO-KW-XMK" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="tg6-f3-uZ6" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="6107.6335877862593" y="-27.464788732394368"/>
+            <point key="canvasLocation" x="6889.3129770992364" y="-27.464788732394368"/>
         </scene>
     </scenes>
     <resources>
