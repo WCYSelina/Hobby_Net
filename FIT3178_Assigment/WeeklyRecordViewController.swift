@@ -7,7 +7,44 @@
 
 import UIKit
 
-class WeeklyRecordViewController: UIViewController,DatabaseListener {
+class WeeklyRecordViewController: UIViewController,DatabaseListener,UITableViewDataSource,UITableViewDelegate{
+    func numberOfSections(in tableView: UITableView) -> Int {
+        return 1
+    }
+    
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        records!.count
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: VerticalTableViewCell.reuseIdentifier, for: indexPath) as! VerticalTableViewCell
+        var notesText: [String] = []
+        records![indexPath.row].notes.forEach{ note in
+            if let noteDetail = note.noteDetails{
+                notesText.append(noteDetail)
+            }
+            
+        }
+//        let notesText = records![indexPath.row].notes.map {
+//            if let noteDetail = $0.noteDetails{
+//                $0.noteDetails
+//            }
+//        }
+//        if let notesText = notesText{ [String]? -> [String]  [String?] -x [String]
+        cell.configure(data: notesText)
+//        }
+        return cell
+    }
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        let weekPickerHeight: CGFloat = 50
+        weekPickerstackView.frame = CGRect(x: 0, y: view.safeAreaInsets.top, width: view.bounds.width, height: weekPickerHeight)
+
+        // Set the frame for the tableView
+        tableView.frame = CGRect(x: 0, y: weekPickerstackView.frame.maxY, width: view.bounds.width, height: view.bounds.height - weekPickerHeight - view.safeAreaInsets.top)
+        tableView.frame = view.bounds
+    }
+    
     func onWeeklyRecordChange(change: DatabaseChange, records: [Records]) {
         self.records = records
     }
@@ -38,8 +75,18 @@ class WeeklyRecordViewController: UIViewController,DatabaseListener {
             updateWeekLabel()
         }
     }
+    private let tableView: UITableView = {
+        let tableView = UITableView()
+        return tableView
+    }()
     override func viewDidLoad() {
         super.viewDidLoad()
+        view.addSubview(tableView)
+        tableView.contentInset = UIEdgeInsets(top: 30, left: 0, bottom: 0, right: 0) // so that the table view is below the week picker and does not overlay
+        tableView.register(VerticalTableViewCell.self, forCellReuseIdentifier: VerticalTableViewCell.reuseIdentifier)
+        tableView.dataSource = self
+        tableView.delegate = self
+ 
         let appDelegate = UIApplication.shared.delegate as? AppDelegate
         databaseController = appDelegate?.databaseController
         
@@ -60,6 +107,8 @@ class WeeklyRecordViewController: UIViewController,DatabaseListener {
         weekPickerstackView.addArrangedSubview(leftArrowButton)
         weekPickerstackView.addArrangedSubview(weekRange)
         weekPickerstackView.addArrangedSubview(rightArrowButton)
+        
+        view.addSubview(weekPickerstackView)
         
     }
     override func viewWillAppear(_ animated: Bool) {
@@ -96,4 +145,84 @@ class WeeklyRecordViewController: UIViewController,DatabaseListener {
         }
     }
 
+}
+
+class HorizontalCollectionViewCell: UICollectionViewCell{
+    static let reuseIdentifier = "HorizontalCollectionViewCell"
+    
+    private let label:UILabel = {
+        let label = UILabel()
+        label.numberOfLines = 0
+        label.textAlignment = .center
+        return label
+    }()
+    
+    override init(frame: CGRect) {
+           super.init(frame: frame)
+           contentView.addSubview(label)
+       }
+       
+   required init?(coder: NSCoder) {
+       fatalError("init(coder:) has not been implemented")
+   }
+   
+   override func layoutSubviews() {
+       super.layoutSubviews()
+       label.frame = contentView.bounds
+   }
+   
+   func configure(text: String) {
+       label.text = text
+   }
+}
+
+class VerticalTableViewCell:UITableViewCell,UICollectionViewDelegate,UICollectionViewDataSource,UICollectionViewDelegateFlowLayout{
+    static let reuseIdentifier = "VerticalTableViewCell"
+    
+    private let collectionView: UICollectionView = {
+           let layout = UICollectionViewFlowLayout()
+           layout.scrollDirection = .horizontal
+           layout.minimumInteritemSpacing = 0
+           layout.minimumLineSpacing = 0
+           let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
+           collectionView.showsHorizontalScrollIndicator = false
+           collectionView.backgroundColor = .white
+           return collectionView
+       }()
+    private var data: [String] = []
+    
+    override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
+        super.init(style: style, reuseIdentifier: reuseIdentifier)
+        collectionView.delegate = self
+        collectionView.dataSource = self
+        collectionView.register(HorizontalCollectionViewCell.self, forCellWithReuseIdentifier: HorizontalCollectionViewCell.reuseIdentifier)
+        contentView.addSubview(collectionView)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        collectionView.frame = contentView.bounds
+    }
+    
+    func configure(data: [String]) {
+        self.data = data
+        collectionView.reloadData()
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        return data.count
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: HorizontalCollectionViewCell.reuseIdentifier, for: indexPath) as! HorizontalCollectionViewCell
+        cell.configure(text: data[indexPath.row])
+        return cell
+    }
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+            return CGSize(width: 100, height: collectionView.bounds.height)
+        }
 }

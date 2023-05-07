@@ -80,7 +80,7 @@
                         <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <stackView opaque="NO" contentMode="scaleToFill" ambiguous="YES" distribution="equalSpacing" translatesAutoresizingMaskIntoConstraints="NO" id="3yS-Jw-ex7">
+                            <stackView opaque="NO" contentMode="scaleToFill" ambiguous="YES" distribution="equalSpacing" spacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="3yS-Jw-ex7">
                                 <rect key="frame" x="0.0" y="103" width="393" height="61"/>
                             </stackView>
                         </subviews>
@@ -99,7 +99,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="sj5-8D-iv6" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="7816.0305343511445" y="-27.464788732394368"/>
+            <point key="canvasLocation" x="6706" y="-27"/>
         </scene>
         <!--Sheet View Controller-->
         <scene sceneID="i9O-4L-20B">
@@ -288,7 +288,7 @@
                 </navigationController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="tg6-f3-uZ6" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="6889.3129770992364" y="-27.464788732394368"/>
+            <point key="canvasLocation" x="5769" y="-27"/>
         </scene>
     </scenes>
     <resources>
