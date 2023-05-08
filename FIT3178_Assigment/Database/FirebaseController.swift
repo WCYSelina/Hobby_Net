@@ -143,29 +143,41 @@ class FirebaseController: NSObject,DatabaseProtocol{
             let recordRef = self.database.collection("hobby5").document(hobbyID)
             recordRef.getDocument{ (document,error) in
                 let oneHobbyRecords = document!.data()!["records"] as! [DocumentReference]
-                self.parseSpecificRecord(recordRefArray: oneHobbyRecords){ allRecords in
-                    let records = allRecords
-                    self.hobbyRef?.document(hobbyID).delete(){ delete in
-                        self.hobbyList.removeAll(where: {$0.id == hobbyID})
-                        for record in records {
-                            let docRef = self.database.collection("record5").document((record.id)!)
-                            docRef.getDocument{ (document, error) in
-                                let oneRecordNotes = document!.data()!["notes"] as! [DocumentReference]
-                                self.parseSpecificNote(noteRefArray: oneRecordNotes){ allNotes in
-                                    for note in allNotes {
-                                        self.deleteNote(note: note)
+                if !oneHobbyRecords.isEmpty{
+                    self.parseSpecificRecord(recordRefArray: oneHobbyRecords){ allRecords in
+                        let records = allRecords
+                        self.hobbyRef?.document(hobbyID).delete(){ delete in
+                            self.hobbyList.removeAll(where: {$0.id == hobbyID})
+                            for record in records {
+                                let docRef = self.database.collection("record5").document((record.id)!)
+                                docRef.getDocument{ (document, error) in
+                                    let oneRecordNotes = document!.data()!["notes"] as! [DocumentReference]
+                                    self.parseSpecificNote(noteRefArray: oneRecordNotes){ allNotes in
+                                        for note in allNotes {
+                                            self.deleteNote(note: note)
+                                        }
+                                    }
+                                    self.deleteRecord(record: record)
+                                    
+                                    //
+                                    //                                self.defaultRecord = nil
+                                }
+                                self.listeners.invoke{ listener in
+                                    if listener.listenerType == ListenerType.hobby || listener.listenerType == ListenerType.all {
+                                        listener.onHobbyChange(change: .update, hobbies: self.hobbyList)
+                                        
                                     }
                                 }
-                                self.deleteRecord(record: record)
-                                
-                                //
-//                                self.defaultRecord = nil
                             }
-                            self.listeners.invoke{ listener in
-                                if listener.listenerType == ListenerType.hobby || listener.listenerType == ListenerType.all {
-                                    listener.onHobbyChange(change: .update, hobbies: self.hobbyList)
-
-                                }
+                        }
+                    }
+                }
+                else{
+                    self.hobbyRef?.document(hobbyID).delete { delete in
+                        self.hobbyList.removeAll(where: { $0.id == hobbyID })
+                        self.listeners.invoke { listener in
+                            if listener.listenerType == ListenerType.hobby || listener.listenerType == ListenerType.all {
+                                listener.onHobbyChange(change: .update, hobbies: self.hobbyList)
                             }
                         }
                     }
