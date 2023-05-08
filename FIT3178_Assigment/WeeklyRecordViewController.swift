@@ -258,14 +258,16 @@ class HorizontalCollectionViewCell: UICollectionViewCell{
    
     func configure(text: String, image:String) {
         label.text = text
-        let storageRef = Storage.storage().reference(forURL: image)
-        storageRef.getData(maxSize: 10*1024*1024){ data,error in
-            if let error = error{
-                print(error.localizedDescription)
-            } else{
-                let image = UIImage(data: data!)
-                print("download hahahah")
-                self.imageView.image = image
+        if image != ""{
+            let storageRef = Storage.storage().reference(forURL: image)
+            storageRef.getData(maxSize: 10*1024*1024){ data,error in
+                if let error = error{
+                    print(error.localizedDescription)
+                } else{
+                    let image = UIImage(data: data!)
+                    print("download hahahah")
+                    self.imageView.image = image
+                }
             }
         }
    }

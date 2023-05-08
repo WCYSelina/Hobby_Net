@@ -35,36 +35,43 @@ class SheetAddRecordViewController: UIViewController {
             do{
                 let folderPath = "images/"
                 let image = databaseController?.selectedImage
-                databaseController?.uploadImageToStorage(folderPath: folderPath, image: image!){ imageString in
-                    self.databaseController?.addNote(noteDetails: note,date: self.choosenDate!,hobby: self.hobby!,image: imageString){ hobby in
-                        var startWeek = self.databaseController?.startWeek
-                        var endWeek = self.databaseController?.endWeek
-                        if startWeek == nil, endWeek == nil{
-                            let week = Calendar.current.dateInterval(of: .weekOfYear, for: Date())!
-                            startWeek = week.start
-                            endWeek = week.end
-                        }
-                        self.databaseController?.showRecordWeekly(hobby: hobby, startWeek: startWeek!, endWeek: endWeek!){ (records,dateInRange) in
-                            var finalRecords:[Records] = []
-                            print(dateInRange)
-                            print(records)
-                            for range in dateInRange {
-                                for record in records {
-                                    if record.date == range{
-                                        finalRecords.append(record)
-                                        break
-                                    }
-                                }
-                            }
-                            self.databaseController?.onWeeklyChange(records: finalRecords)
-                            self.dismiss(animated: true)
-                        }
+                if let image = image{
+                    databaseController?.uploadImageToStorage(folderPath: folderPath, image: image){ imageString in
+                        self.addNote(noteDetails: note,imageString: imageString)
                     }
+                }else{
+                    self.addNote(noteDetails: note,imageString: "")
                 }
-                
                 
             }
                 
+        }
+    }
+    
+    func addNote(noteDetails:String,imageString:String){
+        self.databaseController?.addNote(noteDetails: noteDetails,date: self.choosenDate!,hobby: self.hobby!,image: imageString){ hobby in
+            var startWeek = self.databaseController?.startWeek
+            var endWeek = self.databaseController?.endWeek
+            if startWeek == nil, endWeek == nil{
+                let week = Calendar.current.dateInterval(of: .weekOfYear, for: Date())!
+                startWeek = week.start
+                endWeek = week.end
+            }
+            self.databaseController?.showRecordWeekly(hobby: hobby, startWeek: startWeek!, endWeek: endWeek!){ (records,dateInRange) in
+                var finalRecords:[Records] = []
+                print(dateInRange)
+                print(records)
+                for range in dateInRange {
+                    for record in records {
+                        if record.date == range{
+                            finalRecords.append(record)
+                            break
+                        }
+                    }
+                }
+                self.databaseController?.onWeeklyChange(records: finalRecords)
+                self.dismiss(animated: true)
+            }
         }
     }
     
