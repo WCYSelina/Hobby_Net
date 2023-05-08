@@ -40,7 +40,7 @@ protocol DatabaseProtocol: AnyObject {
     func addListener(listener: DatabaseListener)
     func removeListener(listener: DatabaseListener)
     func addHobby(name:String) -> Hobby
-    func addNote(noteDetails:String,date:String,hobby:Hobby, completion: @escaping (Hobby) -> Void)
+    func addNote(noteDetails:String,date:String,hobby:Hobby,image: String,completion: @escaping (Hobby) -> Void)
     func addRecord(date:String) -> Records
     func deleteHobby(hobby: Hobby)
     var defaultHobby: Hobby {get set}
@@ -50,7 +50,7 @@ protocol DatabaseProtocol: AnyObject {
     var currentDate:String?{get set}
     var startWeek:Date?{get set}
     var endWeek:Date?{get set}
-    var image:[UIImage]?{get set}
+    var selectedImage: UIImage? {get set}
     func onWeeklyChange(records:[Records])
     func uploadImageToStorage(folderPath:String, image:UIImage, completion:@escaping (String) -> Void)
     func addRecordToHobby(record: Records, hobby: Hobby) -> Bool

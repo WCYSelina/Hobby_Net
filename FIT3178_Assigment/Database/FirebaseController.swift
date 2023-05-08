@@ -13,8 +13,7 @@ import SwiftUI
 import FirebaseStorage
 
 class FirebaseController: NSObject,DatabaseProtocol{
-    var image: [UIImage]?
-    
+    var selectedImage: UIImage?
     var startWeek: Date?
     var endWeek: Date?
     var hasLogin: Bool? = nil
@@ -150,7 +149,7 @@ class FirebaseController: NSObject,DatabaseProtocol{
 //                }
 //            }
             // Upload image
-            let uploadTask = storageRef.putData(imageData, metadata: nil) { _, error in
+            let uploadTask = storageRef.putData(imageData, metadata: nil) { metaData, error in
                 if let error = error {
                     print("Error uploading image: \(error)")
                     return
@@ -160,15 +159,23 @@ class FirebaseController: NSObject,DatabaseProtocol{
                         print("Error getting download URL: \(error)")
                         return
                     }
-                    if let url = url {
-                        completion(url.absoluteString)
+                    if let _ = url {
+                        storageRef.getMetadata { metadata, error in
+                            if let error = error {
+                                print("Error getting metadata: \(error)")
+                                return
+                            }
+                            if let _ = metadata {
+                                let fullPath = "gs://fit3178assignment-7ce28.appspot.com/images/" + (metaData?.path)!
+                                completion(fullPath)
+                            }
+                        }
                     }
                 }
             }
             uploadTask.observe(.progress) { storageTaskSnapshot in
                 let progress = storageTaskSnapshot.progress
                 let percentComplete = 100 * Double(progress!.completedUnitCount) / Double(progress!.totalUnitCount)
-                print("percent: \(percentComplete)")
             }
         }
     }
@@ -243,21 +250,16 @@ class FirebaseController: NSObject,DatabaseProtocol{
         }
     }
     
-    func addNote(noteDetails:String,date:String,hobby:Hobby, completion: @escaping (Hobby) -> Void) {
+    func addNote(noteDetails:String,date:String,hobby:Hobby,image:String, completion: @escaping (Hobby) -> Void) {
         let note = Notes()
         note.noteDetails = noteDetails
-        if let noteRef =  noteRef?.addDocument(data: ["noteDetails" : noteDetails]) {
+        note.image = image
+        if let noteRef =  noteRef?.addDocument(data: ["noteDetails" : noteDetails, "image" : image]) {
             note.id = noteRef.documentID
         }
         var record = getRecordByTimestamp(date: date,hobby: hobby)
         if record != nil {
             record?.notes.append(note)
-//            self.listeners.invoke{ listener in
-//                if listener.listenerType == ListenerType.record || listener.listenerType == ListenerType.all {print("dddd")
-//                    listener.onRecordChange(change: .update, record: record!.notes)
-//
-//                }
-//            }
             let _ = addNoteToRecord(note: note, date: date, record: record!){ oneRecord in
                 completion(hobby)
             }
@@ -267,13 +269,7 @@ class FirebaseController: NSObject,DatabaseProtocol{
                 self.defaultRecord = oneRecord
                 self.defaultRecordWeekly = oneRecord
                 let _ = self.addRecordToHobby(record: oneRecord, hobby: hobby)
-//                self.listeners.invoke{ listener in
-//                    if listener.listenerType == ListenerType.record || listener.listenerType == ListenerType.all {print("dddd")
-//                        print(oneRecord.notes)
-//                        listener.onRecordChange(change: .update, record: oneRecord.notes)
                         completion(hobby)
-//                    }
-//                }
             }
         }
     }
