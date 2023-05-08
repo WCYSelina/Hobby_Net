@@ -129,7 +129,7 @@ class FirebaseController: NSObject,DatabaseProtocol{
     func removeListener(listener: DatabaseListener){
         listeners.removeDelegate(listener)
     }
-    func uploadImageToStorage(folderPath:String, image:UIImage, completion:@escaping (String) -> Void){
+    func uploadImageToStorage(folderPath:String, image:UIImage, completion:@escaping (String) -> Void) {
         Task{
             //build storage reference
             let path = folderPath + "images_\(Int(Date().timeIntervalSince1970))_\(UUID().uuidString).jpeg"
@@ -138,15 +138,37 @@ class FirebaseController: NSObject,DatabaseProtocol{
             guard let imageData = image.jpegData(compressionQuality: 1) else{
                 return
             }
-            //upload image
-            let uploadTask = storageRef.putData(imageData)
-            uploadTask.observe(.progress){ storageTaskSnapshot in
-                let progress = storageTaskSnapshot.progress
-                let percentComplete = 100 * Double(progress!.completedUnitCount) / Double (progress!.totalUnitCount)
-                if percentComplete == 100.0{
-                    //check and get storage location
-                    completion(storageTaskSnapshot.reference.fullPath)
+//            //upload image
+//            let uploadTask = storageRef.putData(imageData)
+//            uploadTask.observe(.progress){ storageTaskSnapshot in
+//                let progress = storageTaskSnapshot.progress
+//                let percentComplete = 100 * Double(progress!.completedUnitCount) / Double (progress!.totalUnitCount)
+//                print("percent: \(percentComplete)")
+//                if percentComplete == 100.0{
+//                    //check and get storage location
+//                    completion(storageTaskSnapshot.reference.fullPath)
+//                }
+//            }
+            // Upload image
+            let uploadTask = storageRef.putData(imageData, metadata: nil) { _, error in
+                if let error = error {
+                    print("Error uploading image: \(error)")
+                    return
                 }
+                storageRef.downloadURL { url, error in
+                    if let error = error {
+                        print("Error getting download URL: \(error)")
+                        return
+                    }
+                    if let url = url {
+                        completion(url.absoluteString)
+                    }
+                }
+            }
+            uploadTask.observe(.progress) { storageTaskSnapshot in
+                let progress = storageTaskSnapshot.progress
+                let percentComplete = 100 * Double(progress!.completedUnitCount) / Double(progress!.totalUnitCount)
+                print("percent: \(percentComplete)")
             }
         }
     }

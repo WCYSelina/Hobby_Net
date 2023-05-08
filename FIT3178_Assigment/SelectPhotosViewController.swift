@@ -38,11 +38,7 @@ class SelectPhotosViewController: UIViewController, PHPickerViewControllerDelega
             result.itemProvider.loadObject(ofClass: UIImage.self) { [weak self] (object, error) in
                 if let image = object as? UIImage {
                     DispatchQueue.main.async {
-                        let folderPath = "images/"
-                        print("ffff")
-                        self!.databaseController?.uploadImageToStorage(folderPath: folderPath, image: image){ _ in
-                            print("hhhh")
-                        }
+                        
                     }
                 } else {
                     print("Failed to load image: \(String(describing: error))")
