@@ -10,6 +10,7 @@
 		6A0217712A01121000AF7C4E /* SocialNetViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A0217702A01121000AF7C4E /* SocialNetViewController.swift */; };
 		6A14BD6A29F6567C0099C45D /* SheetAddRecordViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A14BD6929F6567C0099C45D /* SheetAddRecordViewController.swift */; };
 		6A30EEBA2A08D2590063ED97 /* FirebaseStorage in Frameworks */ = {isa = PBXBuildFile; productRef = 6A30EEB92A08D2590063ED97 /* FirebaseStorage */; };
+		6A30EEBC2A09563B0063ED97 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 6A30EEBB2A09563B0063ED97 /* GoogleService-Info.plist */; };
 		6A48A37D29F7FA7700F9BC55 /* MulticastDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A48A37C29F7FA7700F9BC55 /* MulticastDelegate.swift */; };
 		6A48A37F29F7FFE200F9BC55 /* FirebaseController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A48A37E29F7FFE200F9BC55 /* FirebaseController.swift */; };
 		6A48A38829F8010800F9BC55 /* DatabaseProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A48A38729F8010800F9BC55 /* DatabaseProtocol.swift */; };
@@ -30,13 +31,13 @@
 		6A6CE0A329F80F5E00BD7150 /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = 6A6CE0A229F80F5E00BD7150 /* FirebaseAuth */; };
 		6A6CE0A529F80F5E00BD7150 /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = 6A6CE0A429F80F5E00BD7150 /* FirebaseFirestore */; };
 		6A6CE0A729F80F5E00BD7150 /* FirebaseFirestoreSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 6A6CE0A629F80F5E00BD7150 /* FirebaseFirestoreSwift */; };
-		6A873B5729F826CE00911AA4 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 6A873B5629F826CE00911AA4 /* GoogleService-Info.plist */; };
 		6A8BADF12A08988700CBAF9B /* SelectPhotosViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A8BADF02A08988700CBAF9B /* SelectPhotosViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		6A0217702A01121000AF7C4E /* SocialNetViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SocialNetViewController.swift; sourceTree = "<group>"; };
 		6A14BD6929F6567C0099C45D /* SheetAddRecordViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SheetAddRecordViewController.swift; sourceTree = "<group>"; };
+		6A30EEBB2A09563B0063ED97 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "GoogleService-Info.plist"; path = "../../../../../../../Desktop/GoogleService-Info.plist"; sourceTree = "<group>"; };
 		6A48A37C29F7FA7700F9BC55 /* MulticastDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MulticastDelegate.swift; sourceTree = "<group>"; };
 		6A48A37E29F7FFE200F9BC55 /* FirebaseController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirebaseController.swift; sourceTree = "<group>"; };
 		6A48A38729F8010800F9BC55 /* DatabaseProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DatabaseProtocol.swift; sourceTree = "<group>"; };
@@ -56,7 +57,6 @@
 		6A561DA329F4105100138ABE /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		6A561DA629F4105100138ABE /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		6A561DA829F4105100138ABE /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		6A873B5629F826CE00911AA4 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "GoogleService-Info.plist"; path = "../../../../../../../Downloads/GoogleService-Info.plist"; sourceTree = "<group>"; };
 		6A8BADF02A08988700CBAF9B /* SelectPhotosViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectPhotosViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -123,7 +123,7 @@
 		6A561D9929F4105000138ABE /* FIT3178_Assigment */ = {
 			isa = PBXGroup;
 			children = (
-				6A873B5629F826CE00911AA4 /* GoogleService-Info.plist */,
+				6A30EEBB2A09563B0063ED97 /* GoogleService-Info.plist */,
 				6A48A38929F8015400F9BC55 /* Data Model */,
 				6A48A37B29F7FA4200F9BC55 /* Database */,
 				6A561D9A29F4105000138ABE /* AppDelegate.swift */,
@@ -212,9 +212,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				6A561DA729F4105100138ABE /* LaunchScreen.storyboard in Resources */,
-				6A873B5729F826CE00911AA4 /* GoogleService-Info.plist in Resources */,
 				6A561DA429F4105100138ABE /* Assets.xcassets in Resources */,
 				6A561DA229F4105000138ABE /* Main.storyboard in Resources */,
+				6A30EEBC2A09563B0063ED97 /* GoogleService-Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

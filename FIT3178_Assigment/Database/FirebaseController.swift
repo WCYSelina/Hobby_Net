@@ -166,7 +166,7 @@ class FirebaseController: NSObject,DatabaseProtocol{
                                 return
                             }
                             if let _ = metadata {
-                                let fullPath = "gs://fit3178assignment-7ce28.appspot.com/" + (metaData?.path)!
+                                let fullPath = "gs://fit3178assignment-ed2ba.appspot.com/" + (metaData?.path)!
                                 completion(fullPath)
                             }
                         }
@@ -194,7 +194,7 @@ class FirebaseController: NSObject,DatabaseProtocol{
     }
     func deleteHobby(hobby: Hobby) {
         if let hobbyID = hobby.id {
-            let recordRef = self.database.collection("hobby5").document(hobbyID)
+            let recordRef = self.database.collection("hobby").document(hobbyID)
             recordRef.getDocument{ (document,error) in
                 let oneHobbyRecords = document!.data()!["records"] as! [DocumentReference]
                 if !oneHobbyRecords.isEmpty{
@@ -203,7 +203,7 @@ class FirebaseController: NSObject,DatabaseProtocol{
                         self.hobbyRef?.document(hobbyID).delete(){ delete in
                             self.hobbyList.removeAll(where: {$0.id == hobbyID})
                             for record in records {
-                                let docRef = self.database.collection("record5").document((record.id)!)
+                                let docRef = self.database.collection("record").document((record.id)!)
                                 docRef.getDocument{ (document, error) in
                                     let oneRecordNotes = document!.data()!["notes"] as! [DocumentReference]
                                     self.parseSpecificNote(noteRefArray: oneRecordNotes){ allNotes in
@@ -420,7 +420,7 @@ class FirebaseController: NSObject,DatabaseProtocol{
         }
         var recordReference:[DocumentReference] = []
         for recordsCorrespondToDate in recordsCorrespondToDates {
-            let docRef = database.collection("record5").document(recordsCorrespondToDate.id!)
+            let docRef = database.collection("record").document(recordsCorrespondToDate.id!)
             recordReference.append(docRef)
         }
         if recordReference.count != 0{
@@ -443,7 +443,7 @@ class FirebaseController: NSObject,DatabaseProtocol{
             defaultRecord = nil
         }
         if record != nil {
-            let docRef = database.collection("record5").document((record?.id)!)
+            let docRef = database.collection("record").document((record?.id)!)
             docRef.getDocument{ (document, error) in
                 let oneRecordNotes = document!.data()!["notes"] as! [DocumentReference]
                 self.parseSpecificNote(noteRefArray: oneRecordNotes){ allNotes in
@@ -469,7 +469,7 @@ class FirebaseController: NSObject,DatabaseProtocol{
         }
     }
     func setupHobbyListener() {
-        hobbyRef = database.collection("hobby5")
+        hobbyRef = database.collection("hobby")
         hobbyRef?.addSnapshotListener() { (querySnapshot, error) in
             guard let querySnapshot = querySnapshot else {
                 print("Failed to fetch documents with error: \(String(describing: error))")
@@ -483,7 +483,7 @@ class FirebaseController: NSObject,DatabaseProtocol{
     }
  
     func addToHobbyList(change:DocumentChange,parsedHobby:Hobby, completion: @escaping () -> Void){
-        let docRef = database.collection("hobby5").document(parsedHobby.id!)
+        let docRef = database.collection("hobby").document(parsedHobby.id!)
         
         docRef.getDocument{ (document, error) in
             if let document = document, document.exists{
@@ -606,7 +606,7 @@ class FirebaseController: NSObject,DatabaseProtocol{
         }
     }
     func setupRecordListener() {
-        recordRef = database.collection("record5")
+        recordRef = database.collection("record")
         recordRef?.addSnapshotListener() { (querySnapshot, error) in
             guard let querySnapshot = querySnapshot else {
                 print("Failed to fetch documents with error: \(String(describing: error))")
@@ -659,7 +659,7 @@ class FirebaseController: NSObject,DatabaseProtocol{
         }
     }
     func setupNotesListener() {
-        noteRef = database.collection("notes4")
+        noteRef = database.collection("note")
         noteRef?.addSnapshotListener() { (querySnapshot, error) in
             guard let querySnapshot = querySnapshot else {
                 print("Failed to fetch documents with error: \(String(describing: error))")
