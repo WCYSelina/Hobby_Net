@@ -46,7 +46,7 @@
         <!--Add Record View Controller-->
         <scene sceneID="Xhf-ze-nb2">
             <objects>
-                <viewController storyboardIdentifier="AddRecordViewController" id="fYe-Oj-eD4" customClass="AddRecordViewController" customModule="FIT3178_Assignment" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="AddRecordViewController" useStoryboardIdentifierAsRestorationIdentifier="YES" id="fYe-Oj-eD4" customClass="AddRecordViewController" customModule="FIT3178_Assignment" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="wQR-oK-6tk">
                         <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -179,7 +179,7 @@
         <!--Sheet Add Record View Controller-->
         <scene sceneID="4qL-PG-VLP">
             <objects>
-                <viewController storyboardIdentifier="SheetAddRecordViewController" id="J6z-S4-SeQ" customClass="SheetAddRecordViewController" customModule="FIT3178_Assignment" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="SheetAddRecordViewController" useStoryboardIdentifierAsRestorationIdentifier="YES" id="J6z-S4-SeQ" customClass="SheetAddRecordViewController" customModule="FIT3178_Assignment" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="qM4-as-Nnn">
                         <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -202,7 +202,7 @@
                                 <textInputTraits key="textInputTraits"/>
                             </textField>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="huT-qB-9Bp">
-                                <rect key="frame" x="298.33333333333331" y="209" width="74.666666666666686" height="35"/>
+                                <rect key="frame" x="298.33333333333331" y="263.33333333333331" width="74.666666666666686" height="35"/>
                                 <state key="normal" title="Button"/>
                                 <buttonConfiguration key="configuration" style="filled" title="Create"/>
                                 <connections>
@@ -210,16 +210,26 @@
                                     <action selector="createHobby:" destination="nI3-MN-4L7" eventType="touchUpInside" id="xfk-dX-IYI"/>
                                 </connections>
                             </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="pI9-eM-X9k" userLabel="Button">
+                                <rect key="frame" x="20" y="209" width="353" height="34.333333333333343"/>
+                                <buttonConfiguration key="configuration" style="gray" image="tray.and.arrow.up.fill" catalog="system" title="Upload Image"/>
+                                <connections>
+                                    <action selector="uploadImage:" destination="J6z-S4-SeQ" eventType="touchUpInside" id="vGh-fg-uBx"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="e7V-yR-54S"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <constraints>
+                            <constraint firstItem="huT-qB-9Bp" firstAttribute="top" secondItem="pI9-eM-X9k" secondAttribute="bottom" constant="20" id="19t-P3-f5k"/>
                             <constraint firstItem="Vsd-qR-k0S" firstAttribute="top" secondItem="Mnt-eE-KfE" secondAttribute="bottom" constant="8" id="5Ny-eP-rKr"/>
                             <constraint firstItem="fxy-nE-TsW" firstAttribute="top" secondItem="e7V-yR-54S" secondAttribute="top" constant="20" id="IrF-Bz-cCE"/>
                             <constraint firstItem="Mnt-eE-KfE" firstAttribute="top" secondItem="fxy-nE-TsW" secondAttribute="bottom" constant="20" id="KQC-lL-PNa"/>
-                            <constraint firstItem="huT-qB-9Bp" firstAttribute="top" secondItem="Vsd-qR-k0S" secondAttribute="bottom" constant="20" id="P1D-AG-jG2"/>
+                            <constraint firstItem="pI9-eM-X9k" firstAttribute="top" secondItem="Vsd-qR-k0S" secondAttribute="bottom" constant="20" id="Kzy-Oj-pqW"/>
+                            <constraint firstItem="e7V-yR-54S" firstAttribute="trailing" secondItem="pI9-eM-X9k" secondAttribute="trailing" constant="20" id="bVs-t6-L1j"/>
                             <constraint firstItem="Mnt-eE-KfE" firstAttribute="leading" secondItem="e7V-yR-54S" secondAttribute="leading" constant="20" id="dGa-hC-PoL"/>
                             <constraint firstItem="Vsd-qR-k0S" firstAttribute="leading" secondItem="e7V-yR-54S" secondAttribute="leading" constant="20" id="faf-xp-J6V"/>
+                            <constraint firstItem="pI9-eM-X9k" firstAttribute="leading" secondItem="e7V-yR-54S" secondAttribute="leading" constant="20" id="fah-1l-Ipq"/>
                             <constraint firstItem="fxy-nE-TsW" firstAttribute="leading" secondItem="e7V-yR-54S" secondAttribute="leading" constant="20" id="ijt-Rh-Qqc"/>
                             <constraint firstItem="e7V-yR-54S" firstAttribute="trailing" secondItem="Mnt-eE-KfE" secondAttribute="trailing" constant="20" id="l8n-mG-qfc"/>
                             <constraint firstItem="e7V-yR-54S" firstAttribute="trailing" secondItem="fxy-nE-TsW" secondAttribute="trailing" constant="20" id="rjA-y6-qUn"/>
@@ -227,13 +237,24 @@
                             <constraint firstItem="e7V-yR-54S" firstAttribute="trailing" secondItem="huT-qB-9Bp" secondAttribute="trailing" constant="20" id="ybx-C3-Zk1"/>
                         </constraints>
                     </view>
+                    <navigationItem key="navigationItem" id="Bq4-12-J14"/>
                     <connections>
                         <outlet property="notesRecord" destination="Vsd-qR-k0S" id="vfk-oU-cpx"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="M3f-v2-W1y" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="3687.7862595419847" y="-689.43661971830988"/>
+            <point key="canvasLocation" x="4614.5038167938928" y="-689.43661971830988"/>
+        </scene>
+        <!--Select Photos View Controller-->
+        <scene sceneID="Nf7-Bq-esi">
+            <objects>
+                <viewController storyboardIdentifier="SelectPhotosViewController" useStoryboardIdentifierAsRestorationIdentifier="YES" id="rqC-5M-F4t" customClass="SelectPhotosViewController" customModule="FIT3178_Assignment" customModuleProvider="target" sceneMemberID="viewController">
+                    <navigationItem key="navigationItem" id="YUB-FN-Vbz"/>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="m8k-GX-rkY" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="5446.5648854961828" y="-695.07042253521126"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="boQ-qb-ot4">
@@ -292,6 +313,7 @@
         </scene>
     </scenes>
     <resources>
+        <image name="tray.and.arrow.up.fill" catalog="system" width="128" height="115"/>
         <systemColor name="systemBackgroundColor">
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
         </systemColor>

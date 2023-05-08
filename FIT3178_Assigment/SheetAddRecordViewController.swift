@@ -14,6 +14,21 @@ class SheetAddRecordViewController: UIViewController {
     var choosenDate:String?
     
     
+    @IBAction func uploadImage(_ sender: Any) {
+        let viewController = SelectPhotosViewController()
+//        let navigationController = UINavigationController(rootViewController: viewController)
+//        viewController.viewDidLoad()
+//        present(navigationController, animated: true)
+//        performSegue(withIdentifier: "SelectPhotoIdentifier", sender: nil)
+//        let storyboard = UIStoryboard(name: "Main", bundle: nil)
+//        let destinationVC = storyboard.instantiateViewController(withIdentifier: "SelectPhotosViewController")
+        present(viewController, animated: true){ () in
+            self.dismiss(animated: true)
+            
+        }
+//        navigationController?.pushViewController(destinationVC, animated: true)
+    }
+    
     @IBAction func addRecord(_ sender: Any) {
         guard let note = notesRecord.text else{
             return
@@ -58,7 +73,7 @@ class SheetAddRecordViewController: UIViewController {
         let appDelegate = UIApplication.shared.delegate as? AppDelegate
         databaseController = appDelegate?.databaseController
         sheetPresentationController?.detents = [.custom{
-            _ in return 200
+            _ in return 220
         }]
         sheetPresentationController?.prefersGrabberVisible = true //show the line on top of the bottom sheet
         sheetPresentationController?.preferredCornerRadius = 24

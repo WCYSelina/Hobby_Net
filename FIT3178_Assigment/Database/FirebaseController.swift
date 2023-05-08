@@ -132,7 +132,6 @@ class FirebaseController: NSObject,DatabaseProtocol{
             if let hobbyRef = try hobbyRef?.addDocument(from: hobby) {
                 hobby.id = hobbyRef.documentID
             }
-//            let _ = self.addHobbyToUser(hobby: hobby, user: defaultUser)
         } catch {
             print("Failed to serialize hero")
         }
@@ -394,8 +393,7 @@ class FirebaseController: NSObject,DatabaseProtocol{
         self.notes = []
         let records = hobby.records
         var record = records.first(where: {$0.date == date})
-//        print("recordF:\(record)")
-        if defaultRecord != nil , record == nil{
+        if defaultRecord != nil , record == nil, currentDate == date{
             print("yyyyy")
             record = defaultRecord
             defaultRecord = nil
@@ -570,7 +568,6 @@ class FirebaseController: NSObject,DatabaseProtocol{
                 print("Failed to fetch documents with error: \(String(describing: error))")
                 return
             }
-//            self.parseHobbySnapshot(snapshot: querySnapshot)
             self.parseRecordSnapshot(snapshot: querySnapshot){ () in
                 // nothing to do
                 
