@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import FirebaseStorage
 
 class WeeklyRecordViewController: UIViewController,DatabaseListener,UITableViewDataSource,UITableViewDelegate{
     func numberOfSections(in tableView: UITableView) -> Int {
@@ -21,11 +22,14 @@ class WeeklyRecordViewController: UIViewController,DatabaseListener,UITableViewD
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: VerticalTableViewCell.reuseIdentifier, for: indexPath) as! VerticalTableViewCell
-        var notesText: [String] = []
+        var notesText: [(String,String?)] = []
         if records != nil{
             records![indexPath.section].notes.forEach{ note in
-                if let noteDetail = note.noteDetails{
-                    notesText.append(noteDetail)
+                if let noteDetail = note.noteDetails, let image = note.image{
+                    notesText.append((noteDetail,image))
+                }
+                else if let noteDetail = note.noteDetails,note.image == nil{
+                    notesText.append((noteDetail,nil))
                 }
             }
         }
@@ -147,7 +151,6 @@ class WeeklyRecordViewController: UIViewController,DatabaseListener,UITableViewD
         databaseController?.endWeek = endWeek
         
         view.addSubview(weekPickerstackView)
-        print("ddddddd")
         databaseController?.showRecordWeekly(hobby: hobby!, startWeek: startWeek!, endWeek: endWeek!){ (records,dateInRange) in
             self.records = []
             for range in dateInRange {
@@ -225,10 +228,17 @@ class HorizontalCollectionViewCell: UICollectionViewCell{
         return label
     }()
     
+    private let imageView:UIImageView = {
+        let imageView = UIImageView()
+        imageView.contentMode = .scaleAspectFit
+        return imageView
+    }()
+    
     override init(frame: CGRect) {
         super.init(frame: frame)
         contentView.addSubview(card)
         card.addSubview(label)
+        card.addSubview(imageView)
     }
        
    required init?(coder: NSCoder) {
@@ -239,11 +249,25 @@ class HorizontalCollectionViewCell: UICollectionViewCell{
        super.layoutSubviews()
        let margin: CGFloat = 10
        card.frame = CGRect(x: margin, y: margin, width: contentView.bounds.width - 2 * margin, height: contentView.bounds.height - 2 * margin)
-       label.frame = CGRect(x: 8, y: 8, width: card.bounds.width - 16, height: card.bounds.height - 16)
+       let imageSize = CGSize(width: self.card.bounds.width * 0.75, height: self.card.bounds.height * 0.75)
+       let imageX = (self.card.bounds.width - imageSize.width) / 2.0
+       let imageY = margin
+       self.imageView.frame = CGRect(x: imageX, y: imageY, width: imageSize.width, height: imageSize.height)
+       label.frame = CGRect(x: 8, y: imageView.frame.maxY, width: card.bounds.width - 16, height: card.bounds.height * 0.25 - 16)
     }
    
-   func configure(text: String) {
-       label.text = text
+    func configure(text: String, image:String) {
+        label.text = text
+        let storageRef = Storage.storage().reference(forURL: image)
+        storageRef.getData(maxSize: 10*1024*1024){ data,error in
+            if let error = error{
+                print(error.localizedDescription)
+            } else{
+                let image = UIImage(data: data!)
+                print("download hahahah")
+                self.imageView.image = image
+            }
+        }
    }
 }
 
@@ -260,7 +284,7 @@ class VerticalTableViewCell:UITableViewCell,UICollectionViewDelegate,UICollectio
            collectionView.backgroundColor = .white
            return collectionView
        }()
-    private var data: [String] = []
+    private var data: [(String,String?)] = []
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -286,7 +310,7 @@ class VerticalTableViewCell:UITableViewCell,UICollectionViewDelegate,UICollectio
         collectionView.frame = contentView.bounds
     }
     
-    func configure(data: [String]) {
+    func configure(data: [(String,String?)]) {
         self.data = data
         collectionView.reloadData()
     }
@@ -297,7 +321,7 @@ class VerticalTableViewCell:UITableViewCell,UICollectionViewDelegate,UICollectio
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: HorizontalCollectionViewCell.reuseIdentifier, for: indexPath) as! HorizontalCollectionViewCell
-        cell.configure(text: data[indexPath.row])
+        cell.configure(text: data[indexPath.row].0,image: data[indexPath.row].1!)
         return cell
     }
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {

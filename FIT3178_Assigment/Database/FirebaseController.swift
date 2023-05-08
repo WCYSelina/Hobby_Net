@@ -166,7 +166,7 @@ class FirebaseController: NSObject,DatabaseProtocol{
                                 return
                             }
                             if let _ = metadata {
-                                let fullPath = "gs://fit3178assignment-7ce28.appspot.com/images/" + (metaData?.path)!
+                                let fullPath = "gs://fit3178assignment-7ce28.appspot.com/" + (metaData?.path)!
                                 completion(fullPath)
                             }
                         }
