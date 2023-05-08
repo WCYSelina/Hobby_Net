@@ -52,6 +52,7 @@ protocol DatabaseProtocol: AnyObject {
     var endWeek:Date?{get set}
     var image:[UIImage]?{get set}
     func onWeeklyChange(records:[Records])
+    func uploadImageToStorage(folderPath:String, image:UIImage, completion:@escaping (String) -> Void)
     func addRecordToHobby(record: Records, hobby: Hobby) -> Bool
     func showCorrespondingRecord(hobby:Hobby,date:String,completion: @escaping () -> Void)
     func showRecordWeekly(hobby:Hobby,startWeek:Date, endWeek:Date,completion: @escaping ([Records],[String]) -> Void)

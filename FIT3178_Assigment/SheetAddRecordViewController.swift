@@ -57,6 +57,7 @@ class SheetAddRecordViewController: UIViewController {
                         self.dismiss(animated: true)
                     }
                 }
+                
             }
                 
         }

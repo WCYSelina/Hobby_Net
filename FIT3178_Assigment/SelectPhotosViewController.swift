@@ -1,8 +1,10 @@
 
 import UIKit
 import PhotosUI
+import FirebaseStorage
 
 class SelectPhotosViewController: UIViewController, PHPickerViewControllerDelegate {
+    var selectedImages = [UIImage]()
     weak var databaseController:DatabaseProtocol?
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -11,6 +13,7 @@ class SelectPhotosViewController: UIViewController, PHPickerViewControllerDelega
         showPhotoPicker()
         // Do any additional setup after loading the view.
     }
+
     
     private func showPhotoPicker() {
         var configuration = PHPickerConfiguration()
@@ -27,19 +30,19 @@ class SelectPhotosViewController: UIViewController, PHPickerViewControllerDelega
             self.dismiss(animated: true)
         }
         
-//        if results.isEmpty{
-//            let storyboard = UIStoryboard(name: "Main", bundle: nil)
-//            let destinationVC = storyboard.instantiateViewController(withIdentifier: "AddRecordViewController")
-//            navigationController?.pushViewController(destinationVC, animated: true)
-//            return
-//        }
+        if results.isEmpty{
+            self.selectedImages = []
+        }
         
         for result in results {
             result.itemProvider.loadObject(ofClass: UIImage.self) { [weak self] (object, error) in
                 if let image = object as? UIImage {
                     DispatchQueue.main.async {
-                        self?.databaseController?.image?.append(image)
-                        print(self?.databaseController?.image)
+                        let folderPath = "images/"
+                        print("ffff")
+                        self!.databaseController?.uploadImageToStorage(folderPath: folderPath, image: image){ _ in
+                            print("hhhh")
+                        }
                     }
                 } else {
                     print("Failed to load image: \(String(describing: error))")

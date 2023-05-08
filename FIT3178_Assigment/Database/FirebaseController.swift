@@ -10,6 +10,7 @@ import Firebase
 import FirebaseFirestoreSwift
 import Foundation
 import SwiftUI
+import FirebaseStorage
 
 class FirebaseController: NSObject,DatabaseProtocol{
     var image: [UIImage]?
@@ -28,6 +29,7 @@ class FirebaseController: NSObject,DatabaseProtocol{
     var defaultRecord: Records?
     var authController: Auth
     var database: Firestore
+    var firebaseStorage:Storage
     var hobbyRef: CollectionReference?
     var recordRef: CollectionReference?
     var noteRef: CollectionReference?
@@ -49,6 +51,7 @@ class FirebaseController: NSObject,DatabaseProtocol{
     override init(){
         FirebaseApp.configure()
         authController = Auth.auth()
+        firebaseStorage = Storage.storage()
         database = Firestore.firestore()
         hobbyList = [Hobby]()
         defaultHobby = Hobby()
@@ -125,6 +128,27 @@ class FirebaseController: NSObject,DatabaseProtocol{
     }
     func removeListener(listener: DatabaseListener){
         listeners.removeDelegate(listener)
+    }
+    func uploadImageToStorage(folderPath:String, image:UIImage, completion:@escaping (String) -> Void){
+        Task{
+            //build storage reference
+            let path = folderPath + "images_\(Int(Date().timeIntervalSince1970))_\(UUID().uuidString).jpeg"
+            let storageRef = self.firebaseStorage.reference(withPath: path)
+            //build imageData
+            guard let imageData = image.jpegData(compressionQuality: 1) else{
+                return
+            }
+            //upload image
+            let uploadTask = storageRef.putData(imageData)
+            uploadTask.observe(.progress){ storageTaskSnapshot in
+                let progress = storageTaskSnapshot.progress
+                let percentComplete = 100 * Double(progress!.completedUnitCount) / Double (progress!.totalUnitCount)
+                if percentComplete == 100.0{
+                    //check and get storage location
+                    completion(storageTaskSnapshot.reference.fullPath)
+                }
+            }
+        }
     }
     func addHobby(name: String) -> Hobby {
         var hobby = Hobby()
