@@ -11,4 +11,5 @@ import FirebaseFirestoreSwift
 class Notes: NSObject,Codable,Identifiable{
     @DocumentID var id:String?
     var noteDetails:String?
+    var image:String?
 }

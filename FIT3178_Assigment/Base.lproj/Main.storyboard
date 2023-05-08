@@ -67,6 +67,9 @@
                         </constraints>
                     </view>
                     <navigationItem key="navigationItem" id="C6x-O9-GVV"/>
+                    <connections>
+                        <segue destination="J6z-S4-SeQ" kind="show" identifier="addRecordNavigate" id="Bgd-eT-tHf"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Qmm-RH-A2W" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
@@ -185,24 +188,24 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Add Record" textAlignment="center" lineBreakMode="tailTruncation" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="fxy-nE-TsW">
-                                <rect key="frame" x="20" y="79" width="353" height="27"/>
+                                <rect key="frame" x="20" y="123" width="353" height="27"/>
                                 <fontDescription key="fontDescription" type="boldSystem" pointSize="22"/>
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Add Notes:" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Mnt-eE-KfE">
-                                <rect key="frame" x="20" y="126" width="353" height="21"/>
+                                <rect key="frame" x="20" y="170" width="353" height="21"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
                             <textField opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="248" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="Vsd-qR-k0S">
-                                <rect key="frame" x="20" y="155" width="353" height="34"/>
+                                <rect key="frame" x="20" y="199" width="353" height="34"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                 <textInputTraits key="textInputTraits"/>
                             </textField>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="huT-qB-9Bp">
-                                <rect key="frame" x="298.33333333333331" y="263.33333333333331" width="74.666666666666686" height="35"/>
+                                <rect key="frame" x="298.33333333333331" y="307.33333333333331" width="74.666666666666686" height="35"/>
                                 <state key="normal" title="Button"/>
                                 <buttonConfiguration key="configuration" style="filled" title="Create"/>
                                 <connections>
@@ -211,7 +214,7 @@
                                 </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="pI9-eM-X9k" userLabel="Button">
-                                <rect key="frame" x="20" y="209" width="353" height="34.333333333333343"/>
+                                <rect key="frame" x="20" y="253.00000000000003" width="353" height="34.333333333333343"/>
                                 <buttonConfiguration key="configuration" style="gray" image="tray.and.arrow.up.fill" catalog="system" title="Upload Image"/>
                                 <connections>
                                     <action selector="uploadImage:" destination="J6z-S4-SeQ" eventType="touchUpInside" id="vGh-fg-uBx"/>
@@ -240,11 +243,12 @@
                     <navigationItem key="navigationItem" id="Bq4-12-J14"/>
                     <connections>
                         <outlet property="notesRecord" destination="Vsd-qR-k0S" id="vfk-oU-cpx"/>
+                        <segue destination="rqC-5M-F4t" kind="show" id="RXQ-6Q-gAc"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="M3f-v2-W1y" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="4614.5038167938928" y="-689.43661971830988"/>
+            <point key="canvasLocation" x="5541.221374045801" y="-689.43661971830988"/>
         </scene>
         <!--Select Photos View Controller-->
         <scene sceneID="Nf7-Bq-esi">
@@ -254,7 +258,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="m8k-GX-rkY" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="5446.5648854961828" y="-695.07042253521126"/>
+            <point key="canvasLocation" x="6373.2824427480909" y="-695.07042253521126"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="boQ-qb-ot4">

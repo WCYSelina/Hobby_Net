@@ -23,8 +23,6 @@ class SheetAddRecordViewController: UIViewController {
 //        let storyboard = UIStoryboard(name: "Main", bundle: nil)
 //        let destinationVC = storyboard.instantiateViewController(withIdentifier: "SelectPhotosViewController")
         present(viewController, animated: true){ () in
-            self.dismiss(animated: true)
-            
         }
 //        navigationController?.pushViewController(destinationVC, animated: true)
     }

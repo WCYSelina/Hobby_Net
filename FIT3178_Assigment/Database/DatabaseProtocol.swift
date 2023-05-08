@@ -50,7 +50,7 @@ protocol DatabaseProtocol: AnyObject {
     var currentDate:String?{get set}
     var startWeek:Date?{get set}
     var endWeek:Date?{get set}
-//    var image:String?
+    var image:[UIImage]?{get set}
     func onWeeklyChange(records:[Records])
     func addRecordToHobby(record: Records, hobby: Hobby) -> Bool
     func showCorrespondingRecord(hobby:Hobby,date:String,completion: @escaping () -> Void)

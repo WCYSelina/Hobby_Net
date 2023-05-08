@@ -12,19 +12,18 @@ class AddRecordViewController: UIViewController {
     weak var databaseConroller:DatabaseProtocol?
     var currentHobby:Hobby?
     var passedDate:String?
+    var selectedDate:String?
     
     @IBAction func datePickedAddRecord(_ sender: UIDatePicker) {
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "dd MMMM yyyy"
-        let selectedDate = dateFormatter.string(from: sender.date)
+        selectedDate = dateFormatter.string(from: sender.date)
         print("Selected date: \(selectedDate)")
         
-        let storyboard = UIStoryboard(name: "Main", bundle: nil)
-        let sheetPresentationControler = storyboard.instantiateViewController(withIdentifier: "SheetAddRecordViewController") as! SheetAddRecordViewController
-        sheetPresentationControler.hobby = currentHobby
-        sheetPresentationControler.choosenDate = selectedDate
+//        let storyboard = UIStoryboard(name: "Main", bundle: nil)
+//        let sheetPresentationControler = storyboard.instantiateViewController(withIdentifier: "SheetAddRecordViewController") as! SheetAddRecordViewController
+        performSegue(withIdentifier: "addRecordNavigate", sender: nil)
 //        sheetPresentationControler.hobbyDelegate = self
-        present(sheetPresentationControler, animated: true, completion: nil)
         
     }
     
@@ -32,6 +31,14 @@ class AddRecordViewController: UIViewController {
         super.viewDidLoad()
 
         // Do any additional setup after loading the view.
+    }
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if segue.identifier == "addRecordNavigate", let destinationVC = segue.destination as? SheetAddRecordViewController{
+            destinationVC.hobby = currentHobby
+            destinationVC.choosenDate = selectedDate
+        }
+            
     }
     
 

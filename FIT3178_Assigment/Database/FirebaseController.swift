@@ -12,6 +12,8 @@ import Foundation
 import SwiftUI
 
 class FirebaseController: NSObject,DatabaseProtocol{
+    var image: [UIImage]?
+    
     var startWeek: Date?
     var endWeek: Date?
     var hasLogin: Bool? = nil

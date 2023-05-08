@@ -3,8 +3,11 @@ import UIKit
 import PhotosUI
 
 class SelectPhotosViewController: UIViewController, PHPickerViewControllerDelegate {
+    weak var databaseController:DatabaseProtocol?
     override func viewDidLoad() {
         super.viewDidLoad()
+        let appDelegate = UIApplication.shared.delegate as? AppDelegate
+        databaseController = appDelegate?.databaseController
         showPhotoPicker()
         // Do any additional setup after loading the view.
     }
@@ -16,11 +19,13 @@ class SelectPhotosViewController: UIViewController, PHPickerViewControllerDelega
         
         let picker = PHPickerViewController(configuration: configuration)
         picker.delegate = self
-        present(picker, animated: true, completion: nil)
+        present(picker, animated: true)
     }
     
     func picker(_ picker: PHPickerViewController, didFinishPicking results: [PHPickerResult]) {
-        picker.dismiss(animated: true, completion: nil)
+        picker.dismiss(animated: true) { () in
+            self.dismiss(animated: true)
+        }
         
 //        if results.isEmpty{
 //            let storyboard = UIStoryboard(name: "Main", bundle: nil)
@@ -33,7 +38,8 @@ class SelectPhotosViewController: UIViewController, PHPickerViewControllerDelega
             result.itemProvider.loadObject(ofClass: UIImage.self) { [weak self] (object, error) in
                 if let image = object as? UIImage {
                     DispatchQueue.main.async {
-                        
+                        self?.databaseController?.image?.append(image)
+                        print(self?.databaseController?.image)
                     }
                 } else {
                     print("Failed to load image: \(String(describing: error))")
