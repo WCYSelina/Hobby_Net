@@ -186,6 +186,7 @@ class FirebaseController: NSObject,DatabaseProtocol{
             if let hobbyRef = try hobbyRef?.addDocument(from: hobby) {
                 hobby.id = hobbyRef.documentID
             }
+            let _ = addHobbyToUser(hobby: hobby)
         } catch {
             print("Failed to serialize hero")
         }
@@ -202,7 +203,7 @@ class FirebaseController: NSObject,DatabaseProtocol{
                         self.hobbyRef?.document(hobbyID).delete(){ delete in
                             self.hobbyList.removeAll(where: {$0.id == hobbyID})
                             for record in records {
-                                let docRef = self.database.collection("record").document((record.id)!)
+                                let docRef = self.database.collection("records").document((record.id)!)
                                 docRef.getDocument{ (document, error) in
                                     let oneRecordNotes = document!.data()!["notes"] as! [DocumentReference]
                                     self.parseSpecificNote(noteRefArray: oneRecordNotes){ allNotes in
@@ -338,6 +339,7 @@ class FirebaseController: NSObject,DatabaseProtocol{
             userRef?.document(userID).updateData(
                 ["hobbies" : FieldValue.arrayUnion([newHobbyRef])])
         }
+        defaultUser.hobbies.append(hobby)
         self.listeners.invoke{ listener in
             if listener.listenerType == ListenerType.record || listener.listenerType == ListenerType.all {
                 listener.onHobbyChange(change: .update, hobbies: self.defaultUser.hobbies)
@@ -375,7 +377,6 @@ class FirebaseController: NSObject,DatabaseProtocol{
         return nil
     }
     func onWeeklyChange(records:[Records]){
-        print(records)
         self.listeners.invoke { (listener) in
             if listener.listenerType == ListenerType.record || listener.listenerType == ListenerType.all {
                 listener.onWeeklyRecordChange(change: .update, records: records)
@@ -423,7 +424,7 @@ class FirebaseController: NSObject,DatabaseProtocol{
         }
         var recordReference:[DocumentReference] = []
         for recordsCorrespondToDate in recordsCorrespondToDates {
-            let docRef = database.collection("record").document(recordsCorrespondToDate.id!)
+            let docRef = database.collection("records").document(recordsCorrespondToDate.id!)
             recordReference.append(docRef)
         }
         if recordReference.count != 0{
@@ -441,12 +442,11 @@ class FirebaseController: NSObject,DatabaseProtocol{
         let records = hobby.records
         var record = records.first(where: {$0.date == date})
         if defaultRecord != nil , record == nil, currentDate == date{
-            print("yyyyy")
             record = defaultRecord
             defaultRecord = nil
         }
         if record != nil {
-            let docRef = database.collection("record").document((record?.id)!)
+            let docRef = database.collection("records").document((record?.id)!)
             docRef.getDocument{ (document, error) in
                 let oneRecordNotes = document!.data()!["notes"] as! [DocumentReference]
                 self.parseSpecificNote(noteRefArray: oneRecordNotes){ allNotes in
@@ -478,76 +478,70 @@ class FirebaseController: NSObject,DatabaseProtocol{
                 print("Failed to fetch documents with error: \(String(describing: error))")
                 return
             }
-            self.parseUserSnapshot(snapshot: querySnapshot){ () in
+            self.parseUserSnapshot(snapshot: querySnapshot){ user in
+                print("kkkk\(user.hobbies)")
                 self.listeners.invoke { (listener) in
+                    print("hhhhhhhhh")
                     if listener.listenerType == ListenerType.hobby || listener.listenerType == ListenerType.all {
-                        self.defaultUser = self.findUserById(id: self.currentUser!.uid)!
-                        listener.onHobbyChange(change: .update, hobbies: self.defaultUser.hobbies)
-                        completion()
+                        listener.onHobbyChange(change: .update, hobbies: user.hobbies)
                     }
+                    completion()
                 }
             }
         }
     }
-    func parseUserSnapshot(snapshot: QuerySnapshot, completion: @escaping () -> Void){
-        var counter = 0
+    func parseUserSnapshot(snapshot: QuerySnapshot, completion: @escaping (User) -> Void){
+        print("Leave parseSpecificUser")
         snapshot.documentChanges.forEach{ (change) in
             var parsedUser = User()
             if change.document.exists{
-                parsedUser.id = change.document.documentID
-                parsedUser.name = change.document.data()["name"] as? String
-                let hobbyRef = change.document.data()["hobbies"] as! [DocumentReference]
-                if hobbyRef == []{
-                    parsedUser.hobbies = []
-                    counter += 1
-                    self.addToUserList(change: change, parsedUser: parsedUser) { () in
-                        if counter == snapshot.documentChanges.count{
-                            completion()
-                        }
+                if currentUser?.uid == change.document.documentID{
+                    parsedUser.id = change.document.documentID
+                    parsedUser.name = change.document.data()["name"] as? String
+                    let hobbyRef = change.document.data()["hobbies"] as! [DocumentReference]
+                    if hobbyRef == []{
+                        parsedUser.hobbies = []
                     }
-                }
-                else{
-                    self.parseSpecificHobby(hobbyRefArray: hobbyRef){ resultHobbies in
-                        counter += 1
-                        parsedUser.hobbies = resultHobbies
-                        self.addToUserList(change: change, parsedUser: parsedUser) { () in
-                            if counter == snapshot.documentChanges.count{
-                                completion()
-                            }
+                    else{
+                        self.parseSpecificHobby(hobbyRefArray: hobbyRef){ resultHobbies in
+                            parsedUser.hobbies = resultHobbies
+                            print("Leave parseSpecificUser")
+                            completion(parsedUser)
+                        
                         }
                     }
                 }
             }
         }
     }
-    func addToUserList(change:DocumentChange,parsedUser:User, completion: @escaping () -> Void){
-        let docRef = database.collection("user").document(parsedUser.id!)
-        docRef.getDocument{ (document, error) in
-            if let document = document, document.exists{
-                if change.type == .added {
-                    
-                    if let index = self.userList.firstIndex(where: { $0.id == parsedUser.id }) {
-                        // If the parsedHobby already exists in the list, update it
-                        self.userList[index] = parsedUser
-                    } else {
-                        // If the parsedHobby doesn't exist in the list, add it
-                        self.userList.append(parsedUser)
-                    }
-                } else if change.type == .modified {
-                    if let index = self.userList.firstIndex(where: { $0.id == parsedUser.id }) {
-                        // If the parsedHobby exists in the list, update it
-                        self.userList[index] = parsedUser
-                    }
-                } else if change.type == .removed {
-                    if let index = self.userList.firstIndex(where: { $0.id == parsedUser.id }) {
-                        // If the parsedHobby exists in the list, remove it
-                        self.userList.remove(at: index)
-                    }
-                }
-            }
-            completion() //return, finished executing
-        }
-    }
+//    func addToUserList(change:DocumentChange,parsedUser:User, completion: @escaping () -> Void){
+//        let docRef = database.collection("user").document(parsedUser.id!)
+//        docRef.getDocument{ (document, error) in
+//            if let document = document, document.exists{
+//                if change.type == .added {
+//
+//                    if let index = self.userList.firstIndex(where: { $0.id == parsedUser.id }) {
+//                        // If the parsedHobby already exists in the list, update it
+//                        self.userList[index] = parsedUser
+//                    } else {
+//                        // If the parsedHobby doesn't exist in the list, add it
+//                        self.userList.append(parsedUser)
+//                    }
+//                } else if change.type == .modified {
+//                    if let index = self.userList.firstIndex(where: { $0.id == parsedUser.id }) {
+//                        // If the parsedHobby exists in the list, update it
+//                        self.userList[index] = parsedUser
+//                    }
+//                } else if change.type == .removed {
+//                    if let index = self.userList.firstIndex(where: { $0.id == parsedUser.id }) {
+//                        // If the parsedHobby exists in the list, remove it
+//                        self.userList.remove(at: index)
+//                    }
+//                }
+//            }
+//            completion() //return, finished executing
+//        }
+//    }
     func setupHobbyListener() {
         hobbyRef = database.collection("hobby")
         hobbyRef?.addSnapshotListener() { (querySnapshot, error) in
@@ -567,8 +561,6 @@ class FirebaseController: NSObject,DatabaseProtocol{
         
         docRef.getDocument{ (document, error) in
             if let document = document, document.exists{
-                print(document.documentID)
-                print(change.newIndex)
                 if change.type == .added {
                     if let index = self.hobbyList.firstIndex(where: { $0.id == parsedHobby.id }) {
                         // If the parsedHobby already exists in the list, update it
@@ -629,6 +621,7 @@ class FirebaseController: NSObject,DatabaseProtocol{
         }
     }
     func parseSpecificHobby(hobbyRefArray:[DocumentReference], completion: @escaping ([Hobby]) -> Void){
+        print("Entry parseSpecificHobby")
         var counter = 0
         var resultHobbyList:[Hobby] = []
         hobbyRefArray.forEach{ oneHobbyRef in
@@ -642,6 +635,7 @@ class FirebaseController: NSObject,DatabaseProtocol{
                         resultHobbyList.append(oneHobbyObj)
                         counter += 1
                         if counter == hobbyRefArray.count{
+                            print("Leave parseSpecificHobby")
                             completion(resultHobbyList)
                         }
                     }
@@ -650,11 +644,13 @@ class FirebaseController: NSObject,DatabaseProtocol{
         }
     }
     func parseSpecificRecord(recordRefArray:[DocumentReference], completion: @escaping ([Records]) -> Void){
+        print("Entry parseSpecificRecord")
         var counter = 0
         var resultRecordsList:[Records] = []
         recordRefArray.forEach{ oneRecordRef in
             oneRecordRef.getDocument{ (oneRecordDoc,error)  in
                 if let document = oneRecordDoc, document.exists{
+                    print(document.documentID)
                     var oneRecordObj = Records()
                     oneRecordObj.id = document.documentID
                     oneRecordObj.date = document.data()!["date"] as? String
@@ -663,6 +659,7 @@ class FirebaseController: NSObject,DatabaseProtocol{
                         resultRecordsList.append(oneRecordObj)
                         counter += 1
                         if counter == recordRefArray.count{
+                            print("Leave parseSpecificRecord")
                             completion(resultRecordsList)
                         }
                     }
@@ -671,10 +668,12 @@ class FirebaseController: NSObject,DatabaseProtocol{
         }
     }
     func parseSpecificNote(noteRefArray:[DocumentReference], completion: @escaping ([Notes]) -> Void){
+        print("Entry parseSpecificNote")
         var NotesList:[Notes] = []
         var count = 0
         noteRefArray.forEach{ onoNoteRef in
             onoNoteRef.getDocument{ (oneNoteDoc,error) in
+                
                 if let document = oneNoteDoc, document.exists{
                     var parsedNote: Notes?
                     do {
@@ -690,6 +689,7 @@ class FirebaseController: NSObject,DatabaseProtocol{
                     NotesList.append(note)
                     count += 1
                     if count == noteRefArray.count{
+                        print("Leave parseSpecificNote")
                         completion(NotesList)
                     }
                 }
@@ -697,7 +697,7 @@ class FirebaseController: NSObject,DatabaseProtocol{
         }
     }
     func setupRecordListener() {
-        recordRef = database.collection("record")
+        recordRef = database.collection("records")
         recordRef?.addSnapshotListener() { (querySnapshot, error) in
             guard let querySnapshot = querySnapshot else {
                 print("Failed to fetch documents with error: \(String(describing: error))")
@@ -836,15 +836,15 @@ class FirebaseController: NSObject,DatabaseProtocol{
             hasLogin = true
         }
         self.setupUserListener(){ () in
-            
         }
 //        self.setupHobbyListener()
 //        self.setupRecordListener()
 //        self.setupNotesListener()
-        listeners.invoke { (listener) in
+        self.listeners.invoke { (listener) in
             if listener.listenerType == ListenerType.auth || listener.listenerType == ListenerType.all {
-                listener.onAuthAccount(change:.login,user: currentUser)
+                listener.onAuthAccount(change:.login,user: self.currentUser)
             }
         }
+        
     }
 }

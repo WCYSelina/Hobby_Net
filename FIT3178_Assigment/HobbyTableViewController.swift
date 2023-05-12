@@ -24,7 +24,6 @@ class HobbyTableViewController: UITableViewController,DatabaseListener{
     
     
     func onHobbyChange(change: DatabaseChange, hobbies: [Hobby]) {
-        print(hobbies)
         allHobbies = hobbies
         tableView.reloadData()
     }
