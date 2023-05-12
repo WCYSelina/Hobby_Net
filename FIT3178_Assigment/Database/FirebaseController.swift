@@ -508,6 +508,7 @@ class FirebaseController: NSObject,DatabaseProtocol{
                     else{
                         self.parseSpecificHobby(hobbyRefArray: hobbyRef){ resultHobbies in
                             parsedUser.hobbies = resultHobbies
+                            self.defaultUser.hobbies = resultHobbies
                             print("Leave parseSpecificUser")
                             self.addToUserList(change: change, parsedUser: parsedUser){
                                 print(parsedUser)
