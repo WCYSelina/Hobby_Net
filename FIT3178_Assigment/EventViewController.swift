@@ -1,19 +1,17 @@
 //
-//  SocialNetViewController.swift
+//  EventViewController.swift
 //  FIT3178_Assignment
 //
-//  Created by Ching Yee Selina Wong on 2/5/2023.
+//  Created by Ching Yee Selina Wong on 12/5/2023.
 //
 
 import UIKit
 
-class SocialNetViewController: UIViewController {
-    
-    
-    @IBOutlet weak var username: UILabel!
-    
+class EventViewController: UIViewController {
+
     override func viewDidLoad() {
         super.viewDidLoad()
+
         // Do any additional setup after loading the view.
     }
     

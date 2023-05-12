@@ -52,32 +52,6 @@ class HobbyTableViewController: UITableViewController,DatabaseListener{
         let appDelegate = UIApplication.shared.delegate as? AppDelegate
         databaseController = appDelegate?.databaseController
         
-        // Create the tab bar and set it as the table view's footer view
-        tabBar = UITabBar()
-        // add tab bar as subview of parent view
-        if let parentView = self.parent?.view {
-            tabBar.translatesAutoresizingMaskIntoConstraints = false
-            parentView.addSubview(tabBar)
-            // set constraints for tab bar
-            NSLayoutConstraint.activate([
-                tabBar.leadingAnchor.constraint(equalTo: parentView.leadingAnchor),
-                tabBar.trailingAnchor.constraint(equalTo: parentView.trailingAnchor),
-                tabBar.bottomAnchor.constraint(equalTo: parentView.safeAreaLayoutGuide.bottomAnchor),
-                tabBar.heightAnchor.constraint(equalToConstant: 49) // set height to standard 49 points
-            ])
-        }
-        
-        // Create the tab bar items
-        let hobbyPageBarItem = UITabBarItem(title: "Your Hobby", image: UIImage(systemName: "calendar"), tag: 0)
-        let socialPlatformPageBarItem = UITabBarItem(title: "Social Net", image: UIImage(systemName: "person.2.fill"), tag: 1)
-        let eventPageBarItem = UITabBarItem(title: "Event", image: UIImage(systemName: "megaphone.fill"), tag: 2)
-        let profilePage  = UITabBarItem(title: "Profile", image: UIImage(systemName: "person.fill"), tag: 2)
-        
-        // Add the items to the tab bar
-        tabBar.setItems([hobbyPageBarItem, socialPlatformPageBarItem, eventPageBarItem,profilePage], animated: false)
-        // Set the initial tab bar item
-        tabBar.selectedItem = hobbyPageBarItem
-        
     }
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)

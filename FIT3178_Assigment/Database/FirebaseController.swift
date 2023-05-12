@@ -13,6 +13,7 @@ import SwiftUI
 import FirebaseStorage
 
 class FirebaseController: NSObject,DatabaseProtocol{
+    var email: String?
     var selectedImage: UIImage?
     var startWeek: Date?
     var endWeek: Date?
@@ -398,7 +399,6 @@ class FirebaseController: NSObject,DatabaseProtocol{
     }
     
     func showRecordWeekly(hobby:Hobby,startWeek:Date, endWeek:Date,completion: @escaping ([Records],[String]) -> Void) {
-        print("startWeek\(startWeek)")
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "dd MMM yyyy"
         
@@ -479,9 +479,7 @@ class FirebaseController: NSObject,DatabaseProtocol{
                 return
             }
             self.parseUserSnapshot(snapshot: querySnapshot){ user in
-                print("kkkk\(user.hobbies)")
                 self.listeners.invoke { (listener) in
-                    print("hhhhhhhhh")
                     if listener.listenerType == ListenerType.hobby || listener.listenerType == ListenerType.all {
                         listener.onHobbyChange(change: .update, hobbies: user.hobbies)
                     }
@@ -491,7 +489,6 @@ class FirebaseController: NSObject,DatabaseProtocol{
         }
     }
     func parseUserSnapshot(snapshot: QuerySnapshot, completion: @escaping (User) -> Void){
-        print("Entry parseSpecificUser")
         snapshot.documentChanges.forEach{ (change) in
             var parsedUser = User()
             if change.document.exists{
@@ -509,9 +506,7 @@ class FirebaseController: NSObject,DatabaseProtocol{
                         self.parseSpecificHobby(hobbyRefArray: hobbyRef){ resultHobbies in
                             parsedUser.hobbies = resultHobbies
                             self.defaultUser.hobbies = resultHobbies
-                            print("Leave parseSpecificUser")
                             self.addToUserList(change: change, parsedUser: parsedUser){
-                                print(parsedUser)
                                 completion(parsedUser)
                             }
                         }
@@ -658,11 +653,9 @@ class FirebaseController: NSObject,DatabaseProtocol{
         }
         var counter = 0
         var resultRecordsList:[Records] = []
-        print(recordRefArray.count)
         recordRefArray.forEach{ oneRecordRef in
             oneRecordRef.getDocument{ (oneRecordDoc,error)  in
                 if let document = oneRecordDoc, document.exists{
-                    print(document.documentID)
                     var oneRecordObj = Records()
                     oneRecordObj.id = document.documentID
                     oneRecordObj.date = document.data()!["date"] as? String
@@ -837,6 +830,7 @@ class FirebaseController: NSObject,DatabaseProtocol{
 
     func loginAccount(email: String, password: String) async {
         do{
+            self.email = email
             let result = try await authController.signIn(withEmail: email, password: password)
             currentUser = result.user
         } catch{
