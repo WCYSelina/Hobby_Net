@@ -7,8 +7,16 @@
 
 import UIKit
 import FirebaseStorage
+import FirebaseAuth
 
 class WeeklyRecordViewController: UIViewController,DatabaseListener,UITableViewDataSource,UITableViewDelegate{
+    func onAuthAccount(change: DatabaseChange, user: FirebaseAuth.User?) {
+    }
+    
+    func onCreateAccount(change: DatabaseChange, user: FirebaseAuth.User?) {
+    }
+    
+    
     func numberOfSections(in tableView: UITableView) -> Int {
         if let records = records{
             return records.count

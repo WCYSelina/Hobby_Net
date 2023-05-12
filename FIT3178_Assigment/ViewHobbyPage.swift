@@ -7,6 +7,7 @@
 
 import SwiftUI
 import Combine
+import FirebaseAuth
 
 struct ViewControllerWrapper: UIViewControllerRepresentable{
     
@@ -42,6 +43,11 @@ struct WeeklyViewControllerWrapper: UIViewControllerRepresentable{
 }
 
 class viewHobbyPageListener: NSObject, DatabaseListener {
+    func onAuthAccount(change: DatabaseChange, user: FirebaseAuth.User?) {
+    }
+    
+    func onCreateAccount(change: DatabaseChange, user: FirebaseAuth.User?) {
+    }
     
     func onWeeklyRecordChange(change: DatabaseChange,records:[Records]) {
     }

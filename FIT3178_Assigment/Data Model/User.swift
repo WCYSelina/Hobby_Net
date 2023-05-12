@@ -12,9 +12,4 @@ struct User: Codable{
     @DocumentID var id:String?
     var name:String?
     var hobbies:[Hobby] = []
-    
-    enum CodingKeys: String,CodingKey{
-        case name
-        case hobbies
-    }
 }

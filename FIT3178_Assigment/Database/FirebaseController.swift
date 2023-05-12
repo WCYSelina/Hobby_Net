@@ -45,6 +45,7 @@ class FirebaseController: NSObject,DatabaseProtocol{
     var currentDate:String?
     var tempRecord:Records?
     var defaultRecordWeekly:Records?
+    var userList: [User]
     
     
     override init(){
@@ -53,27 +54,25 @@ class FirebaseController: NSObject,DatabaseProtocol{
         firebaseStorage = Storage.storage()
         database = Firestore.firestore()
         hobbyList = [Hobby]()
+        userList = [User]()
         defaultHobby = Hobby()
         defaultUser = User()
         notesList = [Notes]()
         recordList = [Records]()
         super.init()
         
-        Task {
-            do {
-                let authDataResult = try await authController.signInAnonymously()
-                currentUser = authDataResult.user
-                
-                try await database.collection("users").document(currentUser!.uid).setData(["name":"username"])
-            }
-            catch {
-                fatalError("Firebase Authentication Failed with Error\(String(describing: error))")
-            }
-            self.setupHobbyListener()
-            self.setupRecordListener()
-            self.setupNotesListener()
-
-        }
+//        Task {
+//            do {
+//                let authDataResult = try await authController.signInAnonymously()
+//                currentUser = authDataResult.user
+//
+//                try await database.collection("users").document(currentUser!.uid).setData(["name":"username"])
+//            }
+//            catch {
+//                fatalError("Firebase Authentication Failed with Error\(String(describing: error))")
+//            }
+//
+//        }
     }
     
     func addListener(listener: DatabaseListener){
@@ -118,12 +117,12 @@ class FirebaseController: NSObject,DatabaseProtocol{
         if listener.listenerType == .note || listener.listenerType == .all {
             listener.onNoteChange(change: .update, notes: notesList)
         }
-//        if listener.listenerType == .auth || listener.listenerType == .all {
-//            listener.onAuthAccount(change: .login, user: currentUser)
-//        }
-//        if listener.listenerType == .auth || listener.listenerType == .all {
-//            listener.onCreateAccount(change: .add, user: currentUser)
-//        }
+        if listener.listenerType == .auth || listener.listenerType == .all {
+            listener.onAuthAccount(change: .login, user: currentUser)
+        }
+        if listener.listenerType == .auth || listener.listenerType == .all {
+            listener.onCreateAccount(change: .add, user: currentUser)
+        }
     }
     func removeListener(listener: DatabaseListener){
         listeners.removeDelegate(listener)
@@ -468,6 +467,115 @@ class FirebaseController: NSObject,DatabaseProtocol{
             completion()
         }
     }
+    func setupUserListener(){
+        userRef = database.collection("user")
+        userRef?.addSnapshotListener() { (querySnapshot, error) in
+            guard let querySnapshot = querySnapshot else {
+                print("Failed to fetch documents with error: \(String(describing: error))")
+                return
+            }
+            self.parseUserSnapshot(snapshot: querySnapshot){ () in
+                // nothing to do
+                
+            }
+        }
+    }
+    func parseUserSnapshot(snapshot: QuerySnapshot, completion: @escaping () -> Void){
+        snapshot.documentChanges.forEach{ (change) in
+            var parsedUser = User()
+            if change.document.exists{
+                parsedUser.id = change.document.documentID
+                parsedUser.name = change.document.data()["name"] as? String
+                let hobbyRef = change.document.data()["hobbies"] as! [DocumentReference]
+                if hobbyRef == []{
+                    parsedUser.hobbies = []
+                    self.addToUserList(change: change, parsedUser: parsedUser){ [weak self] in
+                        //[weak self] and the next line make sure the following line execute after addToHobbyList finished executing
+                        guard let self = self else { return }
+                        self.listeners.invoke { (listener) in
+                            if listener.listenerType == ListenerType.hobby || listener.listenerType == ListenerType.all {
+                                self.defaultUser = self.findUserById(id: self.currentUser!.uid)!
+                                listener.onHobbyChange(change: .update, hobbies: self.defaultUser.hobbies)
+                            }
+                        }
+                    }
+                }
+                else{
+                    self.parseSpecificHobby(hobbyRefArray: hobbyRef){ resultHobbies in
+                        parsedUser.hobbies = resultHobbies
+                        self.addToUserList(change: change, parsedUser: parsedUser){ () in
+                            self.listeners.invoke { (listener) in
+                                if listener.listenerType == ListenerType.hobby || listener.listenerType == ListenerType.all {
+                                    self.defaultUser = self.findUserById(id: self.currentUser!.uid)!
+                                    listener.onHobbyChange(change: .update, hobbies: self.defaultUser.hobbies)
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+//            var parsedHobby = Hobby()
+//            if change.document.exists{
+//                parsedHobby.id = change.document.documentID
+//                parsedHobby.name = change.document.data()["name"] as? String
+//                let recordRef = change.document.data()["records"] as! [DocumentReference]
+//                if recordRef == []{
+//                    parsedHobby.records = []
+//                    self.addToHobbyList(change: change, parsedHobby: parsedHobby){ [weak self] in
+//                        //[weak self] and the next line make sure the following line execute after addToHobbyList finished executing
+//                        guard let self = self else { return }
+//                        self.listeners.invoke { (listener) in
+//                            if listener.listenerType == ListenerType.hobby || listener.listenerType == ListenerType.all {
+//                                listener.onHobbyChange(change: .update, hobbies: self.hobbyList)
+//                            }
+//                        }
+//                    }
+//                }
+//                else{
+//                    self.parseSpecificRecord(recordRefArray: recordRef){ resultRecords in
+//                        parsedHobby.records = resultRecords
+//                        self.addToHobbyList(change: change, parsedHobby: parsedHobby){ [weak self] in
+//                            guard let self = self else { return }
+//                            self.listeners.invoke { (listener) in
+//                                if listener.listenerType == ListenerType.hobby || listener.listenerType == ListenerType.all {
+//                                    listener.onHobbyChange(change: .update, hobbies: self.hobbyList)
+//                                }
+//                            }
+//                        }
+//                    }
+//                }
+//            }
+//        }
+    }
+    func addToUserList(change:DocumentChange,parsedUser:User, completion: @escaping () -> Void){
+        let docRef = database.collection("user").document(parsedUser.id!)
+        docRef.getDocument{ (document, error) in
+            if let document = document, document.exists{
+                if change.type == .added {
+                    
+                    if let index = self.userList.firstIndex(where: { $0.id == parsedUser.id }) {
+                        // If the parsedHobby already exists in the list, update it
+                        self.userList[index] = parsedUser
+                    } else {
+                        // If the parsedHobby doesn't exist in the list, add it
+                        self.userList.append(parsedUser)
+                    }
+                } else if change.type == .modified {
+                    if let index = self.userList.firstIndex(where: { $0.id == parsedUser.id }) {
+                        // If the parsedHobby exists in the list, update it
+                        self.userList[index] = parsedUser
+                    }
+                } else if change.type == .removed {
+                    if let index = self.userList.firstIndex(where: { $0.id == parsedUser.id }) {
+                        // If the parsedHobby exists in the list, remove it
+                        self.userList.remove(at: index)
+                    }
+                }
+            }
+            completion() //return, finished executing
+        }
+    }
     func setupHobbyListener() {
         hobbyRef = database.collection("hobby")
         hobbyRef?.addSnapshotListener() { (querySnapshot, error) in
@@ -508,15 +616,6 @@ class FirebaseController: NSObject,DatabaseProtocol{
                         self.hobbyList.remove(at: index)
                     }
                 }
-//                if change.type == .added {
-//                    self.hobbyList.insert(parsedHobby, at: Int(0))
-//                }
-//                else if change.type == .modified {
-//                    self.hobbyList[Int(change.oldIndex)] = parsedHobby
-//                }
-//                else if change.type == .removed {
-//                    self.hobbyList.remove(at: Int(change.oldIndex))
-//                }
             }
             completion() //return, finished executing
         }
@@ -536,7 +635,7 @@ class FirebaseController: NSObject,DatabaseProtocol{
                         guard let self = self else { return }
                         self.listeners.invoke { (listener) in
                             if listener.listenerType == ListenerType.hobby || listener.listenerType == ListenerType.all {
-                                listener.onHobbyChange(change: .update, hobbies: self.hobbyList)
+                                listener.onHobbyChange(change: .update, hobbies: self.defaultUser.hobbies)
                             }
                         }
                     }
@@ -548,13 +647,36 @@ class FirebaseController: NSObject,DatabaseProtocol{
                             guard let self = self else { return }
                             self.listeners.invoke { (listener) in
                                 if listener.listenerType == ListenerType.hobby || listener.listenerType == ListenerType.all {
-                                    listener.onHobbyChange(change: .update, hobbies: self.hobbyList)
+                                    listener.onHobbyChange(change: .update, hobbies: self.defaultUser.hobbies)
                                 }
                             }
                         }
                     }
                 }
             }
+        }
+    }
+    func parseSpecificHobby(hobbyRefArray:[DocumentReference], completion: @escaping ([Hobby]) -> Void){
+        var counter = 0
+        var resultHobbyList:[Hobby] = []
+        hobbyRefArray.forEach{ oneHobbyRef in
+            oneHobbyRef.getDocument{ (oneHobbyDoc,error) in
+                if let document = oneHobbyDoc, document.exists{
+                    var oneHobbyObj = Hobby()
+                    oneHobbyObj.id = document.documentID
+                    oneHobbyObj.name = document.data()!["name"] as? String
+                    self.parseSpecificRecord(recordRefArray: oneHobbyDoc?.data()!["records"] as! [DocumentReference]){ allRecords in
+                        oneHobbyObj.records = allRecords
+                        resultHobbyList.append(oneHobbyObj)
+                        counter += 1
+                        if counter == hobbyRefArray.count{
+                            completion(resultHobbyList)
+                        }
+                    }
+                }
+                
+            }
+            
         }
     }
     func parseSpecificRecord(recordRefArray:[DocumentReference], completion: @escaping ([Records]) -> Void){
@@ -569,7 +691,6 @@ class FirebaseController: NSObject,DatabaseProtocol{
                     self.parseSpecificNote(noteRefArray: oneRecordDoc?.data()!["notes"] as! [DocumentReference]){ allNotes in
                         oneRecordObj.notes = allNotes
                         resultRecordsList.append(oneRecordObj)
-                        self.recordList.append(oneRecordObj)
                         counter += 1
                         if counter == recordRefArray.count{
                             completion(resultRecordsList)
@@ -693,59 +814,67 @@ class FirebaseController: NSObject,DatabaseProtocol{
             }
         }
     }
-
+    func addUser(name: String, id:String) -> User {
+        var user = User()
+        user.name = name
+        user.hobbies = []
+        do{
+            userRef?.document(id).setData(["name":name, "hobbies":user.hobbies])
+        } catch {
+            print("Failed to serialize hero")
+        }
+        return user
+    }
     
-//    func createAccount(email: String, password: String) async {
-//        do{
-//            let result = try await authController.createUser(withEmail: email, password: password)
-//            self.currentUser = result.user
-//        }catch{
-//            self.error = error.localizedDescription
-//
-//            hasCreated = false
-//        }
-//        if hasCreated == nil{
-//            hasCreated = true
-//        }
-//        listeners.invoke { (listener) in
-//            if listener.listenerType == ListenerType.auth || listener.listenerType == ListenerType.all {
-//                listener.onCreateAccount(change:.add,user:self.currentUser)
-//            }
-//        }
-//        self.teamName = self.currentUser?.uid
-//        if heroesRef == nil{
-//            self.setupHeroListener()
-//        }
-//        if self.teamsRef == nil {
-//            self.setupTeamListener()
-//            if let teamName = self.teamName{
-//                let _ = self.addTeam(teamName: teamName)
-//            }
-//        } else{
-//            if let teamName = self.teamName{
-//                let _ = self.addTeam(teamName: teamName)
-//            }
-//        }
-//        self.setupTeamListener()
-//    }
-//
-//    func loginAccount(email: String, password: String) async {
-//        do{
-//            let result = try await authController.signIn(withEmail: email, password: password)
-//            currentUser = result.user
-//        } catch{
-//            self.error = error.localizedDescription
-//            hasLogin = false
-//        }
-//        if hasLogin == nil{
-//            hasLogin = true
-//        }
-//        listeners.invoke { (listener) in
-//            if listener.listenerType == ListenerType.auth || listener.listenerType == ListenerType.all {
-//                listener.onAuthAccount(change:.login,user: currentUser)
-//            }
-//        }
-//        teamName = self.currentUser?.uid
-//        self.setupTeamListener()
-//    }
+    func createAccount(email: String, password: String) async {
+        do{
+            let result = try await authController.createUser(withEmail: email, password: password)
+            self.currentUser = result.user
+        }catch{
+            self.error = error.localizedDescription
+
+            hasCreated = false
+        }
+        if hasCreated == nil{
+            hasCreated = true
+        }
+        listeners.invoke { (listener) in
+            if listener.listenerType == ListenerType.auth || listener.listenerType == ListenerType.all {
+                listener.onCreateAccount(change:.add,user:self.currentUser)
+            }
+        }
+        self.setupUserListener()
+        let _ = self.addUser(name: email,id: self.currentUser!.uid)
+    }
+    
+    func findUserById(id:String) -> User? {
+        for user in userList {
+            if user.id == id{
+                return user
+            }
+        }
+        return nil
+    }
+
+    func loginAccount(email: String, password: String) async {
+        do{
+            let result = try await authController.signIn(withEmail: email, password: password)
+            currentUser = result.user
+        } catch{
+            self.error = error.localizedDescription
+            hasLogin = false
+        }
+        if hasLogin == nil{
+            hasLogin = true
+        }
+        listeners.invoke { (listener) in
+            if listener.listenerType == ListenerType.auth || listener.listenerType == ListenerType.all {
+                listener.onAuthAccount(change:.login,user: currentUser)
+            }
+        }
+        self.setupUserListener()
+//        self.setupHobbyListener()
+//        self.setupRecordListener()
+//        self.setupNotesListener()
+    }
 }
