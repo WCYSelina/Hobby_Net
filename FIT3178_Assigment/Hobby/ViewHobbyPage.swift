@@ -43,6 +43,12 @@ struct WeeklyViewControllerWrapper: UIViewControllerRepresentable{
 }
 
 class viewHobbyPageListener: NSObject, DatabaseListener {
+    func onPostChange(change: DatabaseChange, posts: [Post]) {
+    }
+    
+    func onCommentChange(change: DatabaseChange, comments: [Comment]) {
+    }
+    
     func onAuthAccount(change: DatabaseChange, user: FirebaseAuth.User?) {
     }
     

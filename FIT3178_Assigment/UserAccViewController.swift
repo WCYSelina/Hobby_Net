@@ -8,7 +8,6 @@
 import UIKit
 import FirebaseAuth
 class UserAccViewController: UIViewController,DatabaseListener{
-    
     func onAuthAccount(change: DatabaseChange, user: FirebaseAuth.User?) {
         if !loginHasCalledBefore{
             return
@@ -65,6 +64,12 @@ class UserAccViewController: UIViewController,DatabaseListener{
     }
     
     func onWeeklyRecordChange(change: DatabaseChange, records: [Records]) {
+    }
+    
+    func onPostChange(change: DatabaseChange, posts: [Post]) {
+    }
+    
+    func onCommentChange(change: DatabaseChange, comments: [Comment]) {
     }
     
     

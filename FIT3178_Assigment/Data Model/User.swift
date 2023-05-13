@@ -12,4 +12,7 @@ struct User: Codable{
     @DocumentID var id:String?
     var name:String?
     var hobbies:[Hobby] = []
+    var posts:[Post] = []
+    var likes:[Post] = []
+    
 }

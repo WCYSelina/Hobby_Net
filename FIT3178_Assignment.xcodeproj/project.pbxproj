@@ -33,8 +33,11 @@
 		6A6CE0A329F80F5E00BD7150 /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = 6A6CE0A229F80F5E00BD7150 /* FirebaseAuth */; };
 		6A6CE0A529F80F5E00BD7150 /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = 6A6CE0A429F80F5E00BD7150 /* FirebaseFirestore */; };
 		6A6CE0A729F80F5E00BD7150 /* FirebaseFirestoreSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 6A6CE0A629F80F5E00BD7150 /* FirebaseFirestoreSwift */; };
+		6A7A18BA2A0F686000C33B62 /* SheetAddPostViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A7A18B92A0F686000C33B62 /* SheetAddPostViewController.swift */; };
 		6A8BADF12A08988700CBAF9B /* SelectPhotosViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A8BADF02A08988700CBAF9B /* SelectPhotosViewController.swift */; };
 		6A8C9CF42A0DF6B200EA84E6 /* UserAccViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A8C9CF32A0DF6B200EA84E6 /* UserAccViewController.swift */; };
+		6ABD73432A0E847700FBC5A1 /* Comment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6ABD73422A0E847700FBC5A1 /* Comment.swift */; };
+		6ABD73452A0E84B700FBC5A1 /* Post.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6ABD73442A0E84B700FBC5A1 /* Post.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -62,8 +65,11 @@
 		6A561DA329F4105100138ABE /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		6A561DA629F4105100138ABE /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		6A561DA829F4105100138ABE /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		6A7A18B92A0F686000C33B62 /* SheetAddPostViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SheetAddPostViewController.swift; sourceTree = "<group>"; };
 		6A8BADF02A08988700CBAF9B /* SelectPhotosViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectPhotosViewController.swift; sourceTree = "<group>"; };
 		6A8C9CF32A0DF6B200EA84E6 /* UserAccViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserAccViewController.swift; sourceTree = "<group>"; };
+		6ABD73422A0E847700FBC5A1 /* Comment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Comment.swift; sourceTree = "<group>"; };
+		6ABD73442A0E84B700FBC5A1 /* Post.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Post.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -105,6 +111,8 @@
 				6A48A38C29F8019000F9BC55 /* Records.swift */,
 				6A48A38E29F806C700F9BC55 /* User.swift */,
 				6A48A39029F8089A00F9BC55 /* Notes.swift */,
+				6ABD73422A0E847700FBC5A1 /* Comment.swift */,
+				6ABD73442A0E84B700FBC5A1 /* Post.swift */,
 			);
 			path = "Data Model";
 			sourceTree = "<group>";
@@ -130,27 +138,36 @@
 			isa = PBXGroup;
 			children = (
 				6A30EEBB2A09563B0063ED97 /* GoogleService-Info.plist */,
-				6A48A38929F8015400F9BC55 /* Data Model */,
-				6A48A37B29F7FA4200F9BC55 /* Database */,
 				6A561D9A29F4105000138ABE /* AppDelegate.swift */,
 				6A561D9C29F4105000138ABE /* SceneDelegate.swift */,
 				6A561DA029F4105000138ABE /* Main.storyboard */,
 				6A561DA329F4105100138ABE /* Assets.xcassets */,
 				6A561DA529F4105100138ABE /* LaunchScreen.storyboard */,
 				6A561DA829F4105100138ABE /* Info.plist */,
+				6A48A37B29F7FA4200F9BC55 /* Database */,
+				6A48A38929F8015400F9BC55 /* Data Model */,
+				6A7A18BB2A0F68DC00C33B62 /* Hobby */,
+				6A0217702A01121000AF7C4E /* SocialNetViewController.swift */,
+				6A8BADF02A08988700CBAF9B /* SelectPhotosViewController.swift */,
+				6A8C9CF32A0DF6B200EA84E6 /* UserAccViewController.swift */,
+				6A2E934D2A0E6CFB002D6CA5 /* EventViewController.swift */,
+				6A2E934F2A0E6D07002D6CA5 /* UserProfileViewController.swift */,
+				6A7A18B92A0F686000C33B62 /* SheetAddPostViewController.swift */,
+			);
+			path = FIT3178_Assigment;
+			sourceTree = "<group>";
+		};
+		6A7A18BB2A0F68DC00C33B62 /* Hobby */ = {
+			isa = PBXGroup;
+			children = (
 				6A4CF15C29F4D889004F5BFD /* HobbyTableViewController.swift */,
 				6A4CF15E29F4DAE9004F5BFD /* SheetViewController.swift */,
 				6A4CF19829F5801A004F5BFD /* ViewHobbyPage.swift */,
 				6A4CF19A29F58EC3004F5BFD /* AddRecordViewController.swift */,
 				6A14BD6929F6567C0099C45D /* SheetAddRecordViewController.swift */,
-				6A0217702A01121000AF7C4E /* SocialNetViewController.swift */,
 				6A48D0A82A07622300D36CBD /* WeeklyRecordViewController.swift */,
-				6A8BADF02A08988700CBAF9B /* SelectPhotosViewController.swift */,
-				6A8C9CF32A0DF6B200EA84E6 /* UserAccViewController.swift */,
-				6A2E934D2A0E6CFB002D6CA5 /* EventViewController.swift */,
-				6A2E934F2A0E6D07002D6CA5 /* UserProfileViewController.swift */,
 			);
-			path = FIT3178_Assigment;
+			path = Hobby;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -235,6 +252,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				6A14BD6A29F6567C0099C45D /* SheetAddRecordViewController.swift in Sources */,
+				6ABD73452A0E84B700FBC5A1 /* Post.swift in Sources */,
 				6A2E93502A0E6D07002D6CA5 /* UserProfileViewController.swift in Sources */,
 				6A4CF15F29F4DAE9004F5BFD /* SheetViewController.swift in Sources */,
 				6A561D9B29F4105000138ABE /* AppDelegate.swift in Sources */,
@@ -244,6 +262,7 @@
 				6A48A37D29F7FA7700F9BC55 /* MulticastDelegate.swift in Sources */,
 				6A0217712A01121000AF7C4E /* SocialNetViewController.swift in Sources */,
 				6A48A38F29F806C700F9BC55 /* User.swift in Sources */,
+				6ABD73432A0E847700FBC5A1 /* Comment.swift in Sources */,
 				6A8BADF12A08988700CBAF9B /* SelectPhotosViewController.swift in Sources */,
 				6A48A38D29F8019000F9BC55 /* Records.swift in Sources */,
 				6A48D0A92A07622300D36CBD /* WeeklyRecordViewController.swift in Sources */,
@@ -252,6 +271,7 @@
 				6A561D9D29F4105000138ABE /* SceneDelegate.swift in Sources */,
 				6A48A37F29F7FFE200F9BC55 /* FirebaseController.swift in Sources */,
 				6A4CF19B29F58EC3004F5BFD /* AddRecordViewController.swift in Sources */,
+				6A7A18BA2A0F686000C33B62 /* SheetAddPostViewController.swift in Sources */,
 				6A48A38B29F8017D00F9BC55 /* Hobby.swift in Sources */,
 				6A48A39129F8089A00F9BC55 /* Notes.swift in Sources */,
 			);

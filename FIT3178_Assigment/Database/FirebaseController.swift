@@ -34,6 +34,8 @@ class FirebaseController: NSObject,DatabaseProtocol{
     var recordRef: CollectionReference?
     var noteRef: CollectionReference?
     var userRef: CollectionReference?
+    var commentRef: CollectionReference?
+    var postRef:CollectionReference?
     var currentUser: FirebaseAuth.User?
     var DEFAULT_USERNAME = "username"
     var currentRecord:Records?
@@ -47,7 +49,8 @@ class FirebaseController: NSObject,DatabaseProtocol{
     var tempRecord:Records?
     var defaultRecordWeekly:Records?
     var userList: [User]
-    
+    var defaultPost: Post
+    var postList: [Post] = []
     
     override init(){
         FirebaseApp.configure()
@@ -59,6 +62,7 @@ class FirebaseController: NSObject,DatabaseProtocol{
         defaultHobby = Hobby()
         defaultUser = User()
         notesList = [Notes]()
+        defaultPost = Post()
         recordList = [Records]()
         super.init()
         
@@ -123,6 +127,12 @@ class FirebaseController: NSObject,DatabaseProtocol{
         }
         if listener.listenerType == .auth || listener.listenerType == .all {
             listener.onCreateAccount(change: .add, user: currentUser)
+        }
+        if listener.listenerType == .post || listener.listenerType == .all {
+            listener.onPostChange(change: .add, posts: postList)
+        }
+        if listener.listenerType == .comment || listener.listenerType == .all {
+            listener.onCommentChange(change: .add, comments: defaultPost.comment)
         }
     }
     func removeListener(listener: DatabaseListener){
@@ -349,6 +359,64 @@ class FirebaseController: NSObject,DatabaseProtocol{
         return true
     }
     
+    func addPost(postDetail:String,publisher:DocumentReference) -> Post{
+        var post = Post()
+        post.comment = []
+        post.likeNum = 0
+        post.postDetail = postDetail
+        post.publisher = publisher
+        
+        do{
+            if let postRef = try postRef?.addDocument(from: post) {
+                post.id = postRef.documentID
+//                self.defaultHobby.records.append(record)
+            }
+        } catch {
+            print("Failed to serialize hero")
+        }
+        return post
+        
+    }
+    
+    
+    func addPostToUser(post: Post) -> Bool {
+        guard let postID = post.id, let userID = self.defaultUser.id else {
+            return false
+        }
+
+        if let newPostRef = postRef?.document(postID) {
+            userRef?.document(userID).updateData(
+                ["posts" : FieldValue.arrayUnion([newPostRef])])
+        }
+        defaultUser.posts.append(post)
+//        self.listeners.invoke{ listener in
+//            if listener.listenerType == ListenerType.record || listener.listenerType == ListenerType.all {
+//                listener.onHobbyChange(change: .update, hobbies: self.defaultUser.hobbies)
+//            }
+//        }
+        return true
+    }
+    
+    
+    //like field save an array of reference of what the user have like
+    func addLikeToUser(like:Post) -> Bool {
+        guard let postID = like.id, let userID = self.defaultUser.id else {
+            return false
+        }
+        
+        if let newPostRef = postRef?.document(postID) {
+            userRef?.document(userID).updateData(
+                ["likes" : FieldValue.arrayUnion([newPostRef])])
+        }
+        defaultUser.likes.append(like)
+//        self.listeners.invoke{ listener in
+//            if listener.listenerType == ListenerType.record || listener.listenerType == ListenerType.all {
+//                listener.onHobbyChange(change: .update, hobbies: self.defaultUser.hobbies)
+//            }
+//        }
+        return true
+    }
+    
     
     func removeNoteFromRecord(note: Notes, record: Records) {
         if record.notes.contains(note), let recordID = record.id, let noteID = note.id {
@@ -489,25 +557,91 @@ class FirebaseController: NSObject,DatabaseProtocol{
         }
     }
     func parseUserSnapshot(snapshot: QuerySnapshot, completion: @escaping (User) -> Void){
+        var counter = 0
         snapshot.documentChanges.forEach{ (change) in
             var parsedUser = User()
             if change.document.exists{
                 if currentUser?.uid == change.document.documentID{
                     parsedUser.id = change.document.documentID
                     parsedUser.name = change.document.data()["name"] as? String
+                    
+                    //decode user's hobby
                     let hobbyRef = change.document.data()["hobbies"] as! [DocumentReference]
                     if hobbyRef == []{
                         parsedUser.hobbies = []
-                        self.addToUserList(change: change, parsedUser: parsedUser){
-                            completion(parsedUser)
+                        counter += 1
+                        if counter == 3{
+                            self.addToUserList(change: change, parsedUser: parsedUser){
+                                print("hhhh")
+                                completion(parsedUser)
+                            }
                         }
                     }
                     else{
                         self.parseSpecificHobby(hobbyRefArray: hobbyRef){ resultHobbies in
                             parsedUser.hobbies = resultHobbies
                             self.defaultUser.hobbies = resultHobbies
+                            counter += 1
+                            print("llll")
+                            if counter == 3{
+                                self.addToUserList(change: change, parsedUser: parsedUser){
+                                    print("hhhh")
+                                    completion(parsedUser)
+                                }
+                            }
+                        }
+                    }
+                    
+                    //decode user's post
+                    let postRef = change.document.data()["posts"] as! [DocumentReference]
+                    if postRef == []{
+                        parsedUser.posts = []
+                        counter += 1
+                        if counter == 3{
                             self.addToUserList(change: change, parsedUser: parsedUser){
+                                print("hhhh")
                                 completion(parsedUser)
+                            }
+                        }
+                    }
+                    else{
+                        self.parseSpecificPost(postRefArray: postRef){ resultPosts in
+                            parsedUser.posts = resultPosts
+                            self.defaultUser.posts = resultPosts
+                            counter += 1
+                            print("cccc")
+                            if counter == 3{
+                                self.addToUserList(change: change, parsedUser: parsedUser){
+                                    print("hhhh")
+                                    completion(parsedUser)
+                                }
+                            }
+                        }
+                    }
+                    
+                    //decode user's liked posts
+                    let likePostRef = change.document.data()["likes"] as! [DocumentReference]
+                    if likePostRef == []{
+                        parsedUser.likes = []
+                        counter += 1
+                        if counter == 3{
+                            self.addToUserList(change: change, parsedUser: parsedUser){
+                                print("hhhh")
+                                completion(parsedUser)
+                            }
+                        }
+                    }
+                    else{
+                        self.parseSpecificPost(postRefArray: likePostRef){ resultLikePosts in
+                            parsedUser.likes = resultLikePosts
+                            self.defaultUser.likes = resultLikePosts
+                            counter += 1
+                            print("dddd")
+                            if counter == 3{
+                                self.addToUserList(change: change, parsedUser: parsedUser){
+                                    print("hhhh")
+                                    completion(parsedUser)
+                                }
                             }
                         }
                     }
@@ -543,6 +677,179 @@ class FirebaseController: NSObject,DatabaseProtocol{
             completion() //return, finished executing
         }
     }
+    func setupCommentListener(){
+        commentRef = database.collection("comment")
+    }
+    
+    func setupPostListener(){
+        postRef = database.collection("post")
+        postRef?.addSnapshotListener() { (querySnapshot, error) in
+            guard let querySnapshot = querySnapshot else {
+                print("Failed to fetch documents with error: \(String(describing: error))")
+                return
+            }
+            self.parseHobbySnapshot(snapshot: querySnapshot){ () in
+                // nothing to do
+                
+            }
+        }
+    }
+    func addToPostList(change:DocumentChange,parsedPost:Post, completion: @escaping () -> Void){
+        let docRef = database.collection("hobby").document(parsedPost.id!)
+        
+        docRef.getDocument{ (document, error) in
+            if let document = document, document.exists{
+                if change.type == .added {
+                    if let index = self.postList.firstIndex(where: { $0.id == parsedPost.id }) {
+                        // If the parsedHobby already exists in the list, update it
+                        self.postList[index] = parsedPost
+                    } else {
+                        // If the parsedHobby doesn't exist in the list, add it
+                        self.postList.append(parsedPost)
+                    }
+                } else if change.type == .modified {
+                    if let index = self.postList.firstIndex(where: { $0.id == parsedPost.id }) {
+                        // If the parsedHobby exists in the list, update it
+                        self.postList[index] = parsedPost
+                    }
+                } else if change.type == .removed {
+                    if let index = self.postList.firstIndex(where: { $0.id == parsedPost.id }) {
+                        // If the parsedHobby exists in the list, remove it
+                        self.postList.remove(at: index)
+                    }
+                }
+            }
+            completion() //return, finished executing
+        }
+    }
+    
+    func parseSpecificPost(postRefArray:[DocumentReference], completion: @escaping ([Post]) -> Void){
+        if postRefArray.count == 0{
+            completion([])
+        }
+        var counter = 0
+        var resultPostList:[Post] = []
+        postRefArray.forEach{ onePostRef in
+            onePostRef.getDocument{ (onePostDoc,error) in
+                if let document = onePostDoc, document.exists{
+                    var onePostObj = Post()
+                    onePostObj.id = document.documentID
+                    onePostObj.likeNum = document.data()!["likeNum"] as? Int
+                    onePostObj.postDetail = document.data()!["postDetail"] as? String
+                    onePostObj.publisher = document.data()!["publisher"] as? DocumentReference
+                    self.parseSpecificComment(commentRefArray: onePostDoc?.data()!["comments"] as! [DocumentReference]){ allComments in
+                        onePostObj.comment = allComments
+                        resultPostList.append(onePostObj)
+                        counter += 1
+                        if counter == postRefArray.count{
+                            completion(resultPostList)
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
+    func parsePostSnapshot(snapshot: QuerySnapshot, completion: @escaping () -> Void){
+        snapshot.documentChanges.forEach{ (change) in
+            var parsedPost = Post()
+            if change.document.exists{
+                parsedPost.id = change.document.documentID
+                parsedPost.publisher = change.document.data()["publisher"] as? DocumentReference
+                parsedPost.likeNum = change.document.data()["likeNum"] as? Int
+                let commentRef = change.document.data()["comments"] as! [DocumentReference]
+                if commentRef == []{
+                    parsedPost.comment = []
+                    self.addToPostList(change: change, parsedPost: parsedPost) { [weak self] in
+                        //[weak self] and the next line make sure the following line execute after addToHobbyList finished executing
+                        guard let self = self else { return }
+                        self.listeners.invoke { (listener) in
+                            if listener.listenerType == ListenerType.post || listener.listenerType == ListenerType.all {
+//                                self.defaultUser = self.findUserById(id: self.currentUser!.uid)!
+                                listener.onPostChange(change: .update, posts: self.postList)
+                            }
+                        }
+                    }
+                }
+                else{
+                    self.parseSpecificComment(commentRefArray: commentRef){ resultComments in
+                        parsedPost.comment = resultComments
+                        self.addToPostList(change: change, parsedPost: parsedPost){ [weak self] in
+                            guard let self = self else { return }
+                            self.listeners.invoke { (listener) in
+                                if listener.listenerType == ListenerType.post || listener.listenerType == ListenerType.all {
+    //                                self.defaultUser = self.findUserById(id: self.currentUser!.uid)!
+                                    listener.onPostChange(change: .update, posts: self.postList)
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
+    func parseSpecificComment(commentRefArray:[DocumentReference], completion: @escaping ([Comment]) -> Void){
+        if commentRefArray.count == 0{
+            completion([])
+        }
+        var commentList:[Comment] = []
+        var count = 0
+        commentRefArray.forEach{ oneCommentRef in
+            oneCommentRef.getDocument{ (oneCommentDoc,error) in
+                if let document = oneCommentDoc, document.exists{
+                    var parsedComment: Comment?
+                    do {
+                        parsedComment = try document.data(as: Comment.self)
+                    } catch {
+                        print("Unable to decode comments")
+                        return
+                    }
+                    guard let comment = parsedComment else {
+                        print("Document doesn't exist: Comment")
+                        return
+                    }
+                    commentList.append(comment)
+                    count += 1
+                    if count == commentRefArray.count{
+                        completion(commentList)
+                    }
+                }
+            }
+        }
+    }
+    
+    func addComment(commentDetail:String,publisher:DocumentReference) -> Comment{
+        var comment = Comment()
+        comment.commentDetail = commentDetail
+        comment.publisher = publisher
+        do{
+            if let commentRef = try commentRef?.addDocument(from: comment) {
+                comment.id = commentRef.documentID
+            }
+        } catch {
+            print("Failed to serialize hero")
+        }
+        return comment
+    }
+    
+    func addCommentToPost(comment:Comment) {
+        guard let commentID = comment.id, let postID = defaultPost.id else {
+            return
+        }
+
+        if let newCommentRef = commentRef?.document(commentID) {
+            postRef?.document(postID).updateData(
+                ["comments" : FieldValue.arrayUnion([newCommentRef])])
+        }
+        defaultPost.comment.append(comment)
+        self.listeners.invoke{ listener in
+            if listener.listenerType == ListenerType.record || listener.listenerType == ListenerType.all {
+                listener.onHobbyChange(change: .update, hobbies: self.defaultUser.hobbies)
+            }
+        }
+    }
+
     func setupHobbyListener() {
         hobbyRef = database.collection("hobby")
         hobbyRef?.addSnapshotListener() { (querySnapshot, error) in

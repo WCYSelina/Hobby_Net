@@ -42,9 +42,7 @@ class SheetAddRecordViewController: UIViewController {
                 }else{
                     self.addNote(noteDetails: note,imageString: "")
                 }
-                
             }
-                
         }
     }
     

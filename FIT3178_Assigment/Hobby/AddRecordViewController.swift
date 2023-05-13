@@ -18,7 +18,6 @@ class AddRecordViewController: UIViewController {
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "dd MMMM yyyy"
         selectedDate = dateFormatter.string(from: sender.date)
-        print("Selected date: \(selectedDate)")
         
 //        let storyboard = UIStoryboard(name: "Main", bundle: nil)
 //        let sheetPresentationControler = storyboard.instantiateViewController(withIdentifier: "SheetAddRecordViewController") as! SheetAddRecordViewController
