@@ -33,8 +33,8 @@ class SocialNetTableViewController: UITableViewController,DatabaseListener,UITex
     }
     
     func onPostChange(change: DatabaseChange, posts: [Post]) {
-        
         postList = posts
+        tableView.reloadData()
     }
     
     func onCommentChange(change: DatabaseChange, comments: [Comment]) {
@@ -86,8 +86,8 @@ class SocialNetTableViewController: UITableViewController,DatabaseListener,UITex
         // Configure the comment text field
         postCell.commentTextField.placeholder = "Add a comment"
         postCell.commentTextField.delegate = self
-        postCell.likesLabel.text = "12 Likes"
-        postCell.commentLabel.text = "5 comments"
+        postCell.likesLabel.text = "\(post.likeNum!) likes"
+        postCell.commentLabel.text = "\(post.comment.count) comments"
         postCell.userName.text = post.publisher?.documentID
         return postCell
     }
