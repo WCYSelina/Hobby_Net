@@ -62,10 +62,58 @@
             filePath = "FIT3178_Assigment/SocialNetTableViewController.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "147"
-            endingLineNumber = "147"
+            startingLineNumber = "157"
+            endingLineNumber = "157"
             landmarkName = "init(style:reuseIdentifier:)"
             landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "5EE02E25-3353-4293-BEA8-473F079C6C04"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "FIT3178_Assigment/SocialNetTableViewController.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "136"
+            endingLineNumber = "136"
+            landmarkName = "init(style:reuseIdentifier:)"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "5EE02E25-3353-4293-BEA8-473F079C6C04 - ddfcdcaf8a0f68f0"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "FIT3178_Assignment.CardTableViewCell.__allocating_init(style: __C.UITableViewCellStyle, reuseIdentifier: Swift.Optional&lt;Swift.String&gt;) -&gt; FIT3178_Assignment.CardTableViewCell"
+                  moduleName = "FIT3178_Assignment"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/selina/Documents/Monash/Uni/Y2S2/FIT3178/FIT3178_Assigment/FIT3178_Assigment/SocialNetTableViewController.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "0"
+                  endingLineNumber = "0"
+                  offsetFromSymbolStart = "28">
+               </Location>
+               <Location
+                  uuid = "5EE02E25-3353-4293-BEA8-473F079C6C04 - 8e477d40a16910fb"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "FIT3178_Assignment.CardTableViewCell.init(style: __C.UITableViewCellStyle, reuseIdentifier: Swift.Optional&lt;Swift.String&gt;) -&gt; FIT3178_Assignment.CardTableViewCell"
+                  moduleName = "FIT3178_Assignment"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/selina/Documents/Monash/Uni/Y2S2/FIT3178/FIT3178_Assigment/FIT3178_Assigment/SocialNetTableViewController.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "125"
+                  endingLineNumber = "125"
+                  offsetFromSymbolStart = "132">
+               </Location>
+            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>

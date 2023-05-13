@@ -750,8 +750,8 @@ class FirebaseController: NSObject,DatabaseProtocol{
                 parsedPost.publisher = change.document.data()["publisher"] as? DocumentReference
                 parsedPost.likeNum = change.document.data()["likeNum"] as? Int
                 parsedPost.postDetail = change.document.data()["postDetail"] as? String
-                let commentRef = change.document.data()["comments"] as! [DocumentReference]
-                if commentRef == []{
+                let commentRef = change.document.data()["comments"] as? [DocumentReference]
+                if commentRef == nil{
                     parsedPost.comment = []
                     self.addToPostList(change: change, parsedPost: parsedPost) { () in
                         print("postList: \(self.postList)")
@@ -767,7 +767,7 @@ class FirebaseController: NSObject,DatabaseProtocol{
                     }
                 }
                 else{
-                    self.parseSpecificComment(commentRefArray: commentRef){ resultComments in
+                    self.parseSpecificComment(commentRefArray: commentRef!){ resultComments in
                         parsedPost.comment = resultComments
                         self.addToPostList(change: change, parsedPost: parsedPost){ () in
                             self.listeners.invoke { (listener) in

@@ -33,6 +33,7 @@ class SocialNetTableViewController: UITableViewController,DatabaseListener,UITex
     }
     
     func onPostChange(change: DatabaseChange, posts: [Post]) {
+        
         postList = posts
     }
     
@@ -87,6 +88,7 @@ class SocialNetTableViewController: UITableViewController,DatabaseListener,UITex
         postCell.commentTextField.delegate = self
         postCell.likesLabel.text = "12 Likes"
         postCell.commentLabel.text = "5 comments"
+        postCell.userName.text = post.publisher?.documentID
         return postCell
     }
     
@@ -96,14 +98,12 @@ class SocialNetTableViewController: UITableViewController,DatabaseListener,UITex
            // You can access the corresponding data or perform any desired action
        }
     
+    
     // Override to support conditional editing of the table view.
     override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
         // Return false if you do not want the specified item to be editable.
         return true
     }
-    
-
-
     // Override to support editing the table view.
     override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
         if editingStyle == .delete {
@@ -114,6 +114,8 @@ class SocialNetTableViewController: UITableViewController,DatabaseListener,UITex
 }
 
 class CardTableViewCell: UITableViewCell {
+    let userName = UILabel()
+    let profileImage = UIImageView()
     let descriptionLabel = UILabel()
     let thumbsUpButton = UIButton()
     let commentTextField = UITextField()
@@ -133,7 +135,15 @@ class CardTableViewCell: UITableViewCell {
         contentView.layer.borderWidth = 1.0
         contentView.layer.borderColor = UIColor.lightGray.cgColor
         
+        
+        userName.font = UIFont.boldSystemFont(ofSize: userName.font.pointSize)
+        userName.translatesAutoresizingMaskIntoConstraints = false
+        contentView.addSubview(userName)
+        
+        
         // Configure description label
+        descriptionLabel.font = UIFont.systemFont(ofSize: 16)
+        descriptionLabel.tintColor = .lightGray
         descriptionLabel.numberOfLines = 0
         descriptionLabel.translatesAutoresizingMaskIntoConstraints = false
         contentView.addSubview(descriptionLabel)
@@ -179,7 +189,11 @@ class CardTableViewCell: UITableViewCell {
         
         // Set up constraints
         NSLayoutConstraint.activate([
-            descriptionLabel.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 8),
+            
+            userName.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 8),
+            userName.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 8),
+            
+            descriptionLabel.topAnchor.constraint(equalTo: userName.bottomAnchor, constant: 8),
             descriptionLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 8),
             descriptionLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -8),
             
