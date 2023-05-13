@@ -8,7 +8,7 @@
 import UIKit
 import FirebaseAuth
 
-class SocialNetTableViewController: UITableViewController,DatabaseListener{
+class SocialNetTableViewController: UITableViewController,DatabaseListener,UITextFieldDelegate{
     var listenerType = ListenerType.post
     weak var databaseController :DatabaseProtocol?
     let CELL_POST = "postCell"
@@ -77,8 +77,23 @@ class SocialNetTableViewController: UITableViewController,DatabaseListener{
         let postCell = tableView.dequeueReusableCell(withIdentifier: "postCell", for: indexPath) as! CardTableViewCell
         let post = postList[indexPath.row]
         postCell.descriptionLabel.text = post.postDetail
+        
+        // Configure the thumbs-up button
+        postCell.thumbsUpButton.addTarget(self, action: #selector(thumbsUpButtonTapped(_:)), for: .touchUpInside)
+        postCell.thumbsUpButton.tag = indexPath.row // Set a unique tag to identify the button
+        
+        // Configure the comment text field
+        postCell.commentTextField.placeholder = "Add a comment"
+        postCell.commentTextField.delegate = self
+        
         return postCell
     }
+    
+    @objc func thumbsUpButtonTapped(_ sender: UIButton) {
+           let row = sender.tag
+           // Handle the thumbs-up button tap for the specific row
+           // You can access the corresponding data or perform any desired action
+       }
     
     // Override to support conditional editing of the table view.
     override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
@@ -99,6 +114,9 @@ class SocialNetTableViewController: UITableViewController,DatabaseListener{
 
 class CardTableViewCell: UITableViewCell {
     let descriptionLabel = UILabel()
+    let thumbsUpButton = UIButton()
+    let commentTextField = UITextField()
+    let sendButton = UIButton()
 
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -115,12 +133,45 @@ class CardTableViewCell: UITableViewCell {
         descriptionLabel.translatesAutoresizingMaskIntoConstraints = false
         contentView.addSubview(descriptionLabel)
         
+        // Configure thumbs-up button
+        thumbsUpButton.setImage(UIImage(systemName: "hand.thumbsup"), for: .normal)
+        thumbsUpButton.tintColor = .gray
+        thumbsUpButton.translatesAutoresizingMaskIntoConstraints = false
+        contentView.addSubview(thumbsUpButton)
+        
+        // Configure comment text field
+        commentTextField.placeholder = "Add a comment"
+        commentTextField.borderStyle = .roundedRect
+        commentTextField.translatesAutoresizingMaskIntoConstraints = false
+        contentView.addSubview(commentTextField)
+        
+        // Configure send button
+        sendButton.setImage(UIImage(systemName: "arrow.up.circle"), for: .normal)
+        sendButton.tintColor = .systemBlue
+        sendButton.translatesAutoresizingMaskIntoConstraints = false
+        contentView.addSubview(sendButton)
+        
         // Set up constraints
         NSLayoutConstraint.activate([
             descriptionLabel.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 8),
             descriptionLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 8),
             descriptionLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -8),
-            descriptionLabel.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -8)
+            
+            thumbsUpButton.topAnchor.constraint(equalTo: descriptionLabel.bottomAnchor, constant: 8),
+            thumbsUpButton.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 8),
+            thumbsUpButton.widthAnchor.constraint(equalToConstant: 24),
+            thumbsUpButton.heightAnchor.constraint(equalToConstant: 24),
+            thumbsUpButton.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -8),
+            
+            commentTextField.topAnchor.constraint(equalTo: descriptionLabel.bottomAnchor, constant: 8),
+            commentTextField.leadingAnchor.constraint(equalTo: thumbsUpButton.trailingAnchor, constant: 8),
+            commentTextField.trailingAnchor.constraint(equalTo: sendButton.leadingAnchor, constant: -8),
+            commentTextField.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -8),
+            
+            sendButton.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -8),
+            sendButton.centerYAnchor.constraint(equalTo: commentTextField.centerYAnchor),
+            sendButton.widthAnchor.constraint(equalToConstant: 24),
+            sendButton.heightAnchor.constraint(equalToConstant: 24)
         ])
     }
     
@@ -128,3 +179,5 @@ class CardTableViewCell: UITableViewCell {
         fatalError("init(coder:) has not been implemented")
     }
 }
+
+
