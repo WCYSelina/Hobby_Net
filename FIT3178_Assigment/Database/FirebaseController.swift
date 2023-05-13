@@ -359,17 +359,18 @@ class FirebaseController: NSObject,DatabaseProtocol{
         return true
     }
     
-    func addPost(postDetail:String,publisher:DocumentReference) -> Post{
+    func addPost(postDetail:String) -> Post{
         var post = Post()
         post.comment = []
         post.likeNum = 0
         post.postDetail = postDetail
-        post.publisher = publisher
+        post.publisher = database.collection("user").document(currentUser!.uid)
         
         do{
             if let postRef = try postRef?.addDocument(from: post) {
                 post.id = postRef.documentID
 //                self.defaultHobby.records.append(record)
+                addPostToUser(post: post)
             }
         } catch {
             print("Failed to serialize hero")
@@ -737,7 +738,7 @@ class FirebaseController: NSObject,DatabaseProtocol{
                     onePostObj.likeNum = document.data()!["likeNum"] as? Int
                     onePostObj.postDetail = document.data()!["postDetail"] as? String
                     onePostObj.publisher = document.data()!["publisher"] as? DocumentReference
-                    self.parseSpecificComment(commentRefArray: onePostDoc?.data()!["comments"] as! [DocumentReference]){ allComments in
+                    self.parseSpecificComment(commentRefArray: onePostDoc?.data()!["comments"] as? [DocumentReference] ?? []){ allComments in
                         onePostObj.comment = allComments
                         resultPostList.append(onePostObj)
                         counter += 1
@@ -899,8 +900,8 @@ class FirebaseController: NSObject,DatabaseProtocol{
             if change.document.exists{
                 parsedHobby.id = change.document.documentID
                 parsedHobby.name = change.document.data()["name"] as? String
-                let recordRef = change.document.data()["records"] as! [DocumentReference]
-                if recordRef == []{
+                let recordRef = change.document.data()["records"] as? [DocumentReference]
+                if recordRef == nil{
                     parsedHobby.records = []
                     self.addToHobbyList(change: change, parsedHobby: parsedHobby){ [weak self] in
                         //[weak self] and the next line make sure the following line execute after addToHobbyList finished executing
@@ -914,7 +915,7 @@ class FirebaseController: NSObject,DatabaseProtocol{
                     }
                 }
                 else{
-                    self.parseSpecificRecord(recordRefArray: recordRef){ resultRecords in
+                    self.parseSpecificRecord(recordRefArray: recordRef!){ resultRecords in
                         parsedHobby.records = resultRecords
                         self.addToHobbyList(change: change, parsedHobby: parsedHobby){ [weak self] in
                             guard let self = self else { return }
@@ -1151,6 +1152,8 @@ class FirebaseController: NSObject,DatabaseProtocol{
             self.setupHobbyListener()
             self.setupRecordListener()
             self.setupNotesListener()
+            self.setupPostListener()
+            self.setupCommentListener()
         }
         self.listeners.invoke { (listener) in
             if listener.listenerType == ListenerType.auth || listener.listenerType == ListenerType.all {

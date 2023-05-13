@@ -8,12 +8,18 @@
 import UIKit
 
 class SheetAddPostViewController: UIViewController,UITextViewDelegate{
-    let maxNumberOfLines = 4
     weak var databaseController:DatabaseProtocol?
     let placeholderText = "Enter text here..."
     
     
     @IBOutlet weak var postDetails: UITextView!
+    
+    
+    @IBAction func createPost(_ sender: Any) {
+        let _ = databaseController?.addPost(postDetail: postDetails.text)
+        navigationController?.popViewController(animated: true)
+    }
+    
 
     override func viewDidLoad() {
         super.viewDidLoad()
