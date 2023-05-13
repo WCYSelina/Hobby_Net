@@ -398,24 +398,93 @@ class FirebaseController: NSObject,DatabaseProtocol{
         return true
     }
     
+    func deleteLikeFromUser(like:Post) {
+        guard let postID = like.id, let userID = self.defaultUser.id else {
+            return
+        }
+        var inList = false
+        for likeList in defaultUser.likes{
+            if like.id == likeList.id{
+                inList = true
+            }
+        }
+        if inList{
+            if let newPostRef = postRef?.document(postID) {
+                userRef?.document(userID).updateData(
+                    ["likes" : FieldValue.arrayRemove([newPostRef])])
+                decrementLikeNum(id: postID)
+                postList = removeLikeFromUser(id: postID, posts: defaultUser.likes)!
+                let post = findPostByID(id: postID)
+                post?.likeNum! -= 1
+                self.listeners.invoke { (listener) in
+                    if listener.listenerType == ListenerType.post || listener.listenerType == ListenerType.all {
+                        listener.onPostChange(change: .update, posts: self.postList)
+                    }
+                }
+            }
+        }
+    }
     
     //like field save an array of reference of what the user have like
     func addLikeToUser(like:Post) -> Bool {
         guard let postID = like.id, let userID = self.defaultUser.id else {
             return false
         }
-        
-        if let newPostRef = postRef?.document(postID) {
-            userRef?.document(userID).updateData(
-                ["likes" : FieldValue.arrayUnion([newPostRef])])
+        var inList = false
+        for likeList in defaultUser.likes{
+            if like.id == likeList.id{
+                inList = true
+            }
         }
-        defaultUser.likes.append(like)
-//        self.listeners.invoke{ listener in
-//            if listener.listenerType == ListenerType.record || listener.listenerType == ListenerType.all {
-//                listener.onHobbyChange(change: .update, hobbies: self.defaultUser.hobbies)
-//            }
-//        }
+        if !inList{
+            if let newPostRef = postRef?.document(postID) {
+                userRef?.document(userID).updateData(
+                    ["likes" : FieldValue.arrayUnion([newPostRef])])
+                let post = modifyLikeNum(id: postID)
+                defaultUser.likes.append(like)
+                post?.likeNum! += 1
+                self.listeners.invoke { (listener) in
+                    if listener.listenerType == ListenerType.post || listener.listenerType == ListenerType.all {
+                        listener.onPostChange(change: .update, posts: self.postList)
+                    }
+                }
+            }
+        }
         return true
+    }
+    
+    func removeLikeFromUser(id:String,posts:[Post]) -> [Post]? {
+        var postList = posts
+        for i in 0...postList.count{
+            if postList[i].id == id{
+                postList.remove(at: i)
+            }
+        }
+        return nil
+    }
+    
+    func findPostByID(id:String) -> Post?{
+        for list in postList {
+            if list.id == id{
+                return list
+            }
+        }
+        return nil
+    }
+    
+    func decrementLikeNum(id:String){
+        database.collection("post").document(id).updateData(["likeNum":FieldValue.increment(Int64(-1))])
+    }
+    
+    
+    func modifyLikeNum(id:String) -> Post? {
+        database.collection("post").document(id).updateData(["likeNum":FieldValue.increment(Int64(1))])
+        for post in postList {
+            if post.id == id{
+                return post
+            }
+        }
+        return nil
     }
     
     
@@ -742,7 +811,6 @@ class FirebaseController: NSObject,DatabaseProtocol{
     }
     
     func parsePostSnapshot(snapshot: QuerySnapshot, completion: @escaping () -> Void){
-        print("Post in")
         snapshot.documentChanges.forEach{ (change) in
             var parsedPost = Post()
             if change.document.exists{
@@ -754,13 +822,11 @@ class FirebaseController: NSObject,DatabaseProtocol{
                 if commentRef == nil{
                     parsedPost.comment = []
                     self.addToPostList(change: change, parsedPost: parsedPost) { () in
-                        print("postList: \(self.postList)")
                         //[weak self] and the next line make sure the following line execute after addToHobbyList finished executing
                         self.listeners.invoke { (listener) in
                             if listener.listenerType == ListenerType.post || listener.listenerType == ListenerType.all {
 //                                self.defaultUser = self.findUserById(id: self.currentUser!.uid)!
                                 listener.onPostChange(change: .update, posts: self.postList)
-                                print("Post out")
                                 completion()
                             }
                         }
@@ -774,7 +840,6 @@ class FirebaseController: NSObject,DatabaseProtocol{
                                 if listener.listenerType == ListenerType.post || listener.listenerType == ListenerType.all {
     //                                self.defaultUser = self.findUserById(id: self.currentUser!.uid)!
                                     listener.onPostChange(change: .update, posts: self.postList)
-                                    print("Post out")
                                     completion()
                                 }
                             }
@@ -786,9 +851,7 @@ class FirebaseController: NSObject,DatabaseProtocol{
     }
     
     func parseSpecificComment(commentRefArray:[DocumentReference], completion: @escaping ([Comment]) -> Void){
-        print("Comment in")
         if commentRefArray.count == 0{
-            print("Comment out 0")
             completion([])
         }
         var commentList:[Comment] = []
@@ -810,7 +873,6 @@ class FirebaseController: NSObject,DatabaseProtocol{
                     commentList.append(comment)
                     count += 1
                     if count == commentRefArray.count{
-                        print("comment out >0")
                         completion(commentList)
                     }
                 }

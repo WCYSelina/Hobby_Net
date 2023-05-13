@@ -92,8 +92,25 @@ class SocialNetTableViewController: UITableViewController,DatabaseListener,UITex
         return postCell
     }
     
+    
     @objc func thumbsUpButtonTapped(_ sender: UIButton) {
-           let row = sender.tag
+        let row = sender.tag
+        let post = postList[row]
+        // Toggle the selected state of the button
+            sender.isSelected = !sender.isSelected
+            
+            // Update the button's appearance based on the selected state
+            if sender.isSelected {
+                // Button is selected (filled)
+                let _ = databaseController?.addLikeToUser(like: post)
+                sender.setImage(UIImage(systemName: "hand.thumbsup.fill"), for: .normal)
+                sender.tintColor = .systemBlue
+            } else {
+                // Button is not selected (outline)
+                databaseController?.deleteLikeFromUser(like: post)
+                sender.setImage(UIImage(systemName: "hand.thumbsup"), for: .normal)
+                sender.tintColor = .gray
+            }
            // Handle the thumbs-up button tap for the specific row
            // You can access the corresponding data or perform any desired action
        }
@@ -150,7 +167,7 @@ class CardTableViewCell: UITableViewCell {
         
         // Configure thumbs-up button
         thumbsUpButton.setImage(UIImage(systemName: "hand.thumbsup"), for: .normal)
-        thumbsUpButton.tintColor = .gray
+//        thumbsUpButton.tintColor = .gray
         thumbsUpButton.translatesAutoresizingMaskIntoConstraints = false
         contentView.addSubview(thumbsUpButton)
         

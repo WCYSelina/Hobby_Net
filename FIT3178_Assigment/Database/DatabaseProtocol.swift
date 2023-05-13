@@ -57,6 +57,8 @@ protocol DatabaseProtocol: AnyObject {
     var endWeek:Date?{get set}
     var selectedImage: UIImage? {get set}
     func onWeeklyChange(records:[Records])
+    func addLikeToUser(like:Post) -> Bool
+    func deleteLikeFromUser(like:Post)
     func uploadImageToStorage(folderPath:String, image:UIImage, completion:@escaping (String) -> Void)
     func addRecordToHobby(record: Records, hobby: Hobby) -> Bool
     func showCorrespondingRecord(hobby:Hobby,date:String,completion: @escaping () -> Void)
