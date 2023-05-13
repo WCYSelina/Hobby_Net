@@ -411,7 +411,7 @@
             </objects>
             <point key="canvasLocation" x="5017.5572519083971" y="-27.464788732394368"/>
         </scene>
-        <!--Social Net Table View Controller-->
+        <!--HobbyNet-->
         <scene sceneID="cZd-wX-sHF">
             <objects>
                 <tableViewController id="UNG-sp-CG2" customClass="SocialNetTableViewController" customModule="FIT3178_Assignment" customModuleProvider="target" sceneMemberID="viewController">
@@ -434,7 +434,7 @@
                             <outlet property="delegate" destination="UNG-sp-CG2" id="ATw-1x-GEk"/>
                         </connections>
                     </tableView>
-                    <navigationItem key="navigationItem" id="a1k-iY-LUW">
+                    <navigationItem key="navigationItem" title="HobbyNet" id="a1k-iY-LUW">
                         <barButtonItem key="rightBarButtonItem" systemItem="add" id="NTL-Ik-9N8">
                             <connections>
                                 <segue destination="dXV-QN-3XA" kind="show" id="IgW-hf-CMA"/>

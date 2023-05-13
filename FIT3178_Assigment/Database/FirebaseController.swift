@@ -573,7 +573,6 @@ class FirebaseController: NSObject,DatabaseProtocol{
                         counter += 1
                         if counter == 3{
                             self.addToUserList(change: change, parsedUser: parsedUser){
-                                print("hhhh")
                                 completion(parsedUser)
                             }
                         }
@@ -583,10 +582,8 @@ class FirebaseController: NSObject,DatabaseProtocol{
                             parsedUser.hobbies = resultHobbies
                             self.defaultUser.hobbies = resultHobbies
                             counter += 1
-                            print("llll")
                             if counter == 3{
                                 self.addToUserList(change: change, parsedUser: parsedUser){
-                                    print("hhhh")
                                     completion(parsedUser)
                                 }
                             }
@@ -600,7 +597,6 @@ class FirebaseController: NSObject,DatabaseProtocol{
                         counter += 1
                         if counter == 3{
                             self.addToUserList(change: change, parsedUser: parsedUser){
-                                print("hhhh")
                                 completion(parsedUser)
                             }
                         }
@@ -610,10 +606,8 @@ class FirebaseController: NSObject,DatabaseProtocol{
                             parsedUser.posts = resultPosts
                             self.defaultUser.posts = resultPosts
                             counter += 1
-                            print("cccc")
                             if counter == 3{
                                 self.addToUserList(change: change, parsedUser: parsedUser){
-                                    print("hhhh")
                                     completion(parsedUser)
                                 }
                             }
@@ -627,7 +621,6 @@ class FirebaseController: NSObject,DatabaseProtocol{
                         counter += 1
                         if counter == 3{
                             self.addToUserList(change: change, parsedUser: parsedUser){
-                                print("hhhh")
                                 completion(parsedUser)
                             }
                         }
@@ -637,10 +630,8 @@ class FirebaseController: NSObject,DatabaseProtocol{
                             parsedUser.likes = resultLikePosts
                             self.defaultUser.likes = resultLikePosts
                             counter += 1
-                            print("dddd")
                             if counter == 3{
                                 self.addToUserList(change: change, parsedUser: parsedUser){
-                                    print("hhhh")
                                     completion(parsedUser)
                                 }
                             }
@@ -689,15 +680,14 @@ class FirebaseController: NSObject,DatabaseProtocol{
                 print("Failed to fetch documents with error: \(String(describing: error))")
                 return
             }
-            self.parseHobbySnapshot(snapshot: querySnapshot){ () in
+            self.parsePostSnapshot(snapshot: querySnapshot){ () in
                 // nothing to do
                 
             }
         }
     }
     func addToPostList(change:DocumentChange,parsedPost:Post, completion: @escaping () -> Void){
-        let docRef = database.collection("hobby").document(parsedPost.id!)
-        
+        let docRef = database.collection("post").document(parsedPost.id!)
         docRef.getDocument{ (document, error) in
             if let document = document, document.exists{
                 if change.type == .added {
@@ -752,22 +742,26 @@ class FirebaseController: NSObject,DatabaseProtocol{
     }
     
     func parsePostSnapshot(snapshot: QuerySnapshot, completion: @escaping () -> Void){
+        print("Post in")
         snapshot.documentChanges.forEach{ (change) in
             var parsedPost = Post()
             if change.document.exists{
                 parsedPost.id = change.document.documentID
                 parsedPost.publisher = change.document.data()["publisher"] as? DocumentReference
                 parsedPost.likeNum = change.document.data()["likeNum"] as? Int
+                parsedPost.postDetail = change.document.data()["postDetail"] as? String
                 let commentRef = change.document.data()["comments"] as! [DocumentReference]
                 if commentRef == []{
                     parsedPost.comment = []
-                    self.addToPostList(change: change, parsedPost: parsedPost) { [weak self] in
+                    self.addToPostList(change: change, parsedPost: parsedPost) { () in
+                        print("postList: \(self.postList)")
                         //[weak self] and the next line make sure the following line execute after addToHobbyList finished executing
-                        guard let self = self else { return }
                         self.listeners.invoke { (listener) in
                             if listener.listenerType == ListenerType.post || listener.listenerType == ListenerType.all {
 //                                self.defaultUser = self.findUserById(id: self.currentUser!.uid)!
                                 listener.onPostChange(change: .update, posts: self.postList)
+                                print("Post out")
+                                completion()
                             }
                         }
                     }
@@ -775,12 +769,13 @@ class FirebaseController: NSObject,DatabaseProtocol{
                 else{
                     self.parseSpecificComment(commentRefArray: commentRef){ resultComments in
                         parsedPost.comment = resultComments
-                        self.addToPostList(change: change, parsedPost: parsedPost){ [weak self] in
-                            guard let self = self else { return }
+                        self.addToPostList(change: change, parsedPost: parsedPost){ () in
                             self.listeners.invoke { (listener) in
                                 if listener.listenerType == ListenerType.post || listener.listenerType == ListenerType.all {
     //                                self.defaultUser = self.findUserById(id: self.currentUser!.uid)!
                                     listener.onPostChange(change: .update, posts: self.postList)
+                                    print("Post out")
+                                    completion()
                                 }
                             }
                         }
@@ -791,7 +786,9 @@ class FirebaseController: NSObject,DatabaseProtocol{
     }
     
     func parseSpecificComment(commentRefArray:[DocumentReference], completion: @escaping ([Comment]) -> Void){
+        print("Comment in")
         if commentRefArray.count == 0{
+            print("Comment out 0")
             completion([])
         }
         var commentList:[Comment] = []
@@ -813,6 +810,7 @@ class FirebaseController: NSObject,DatabaseProtocol{
                     commentList.append(comment)
                     count += 1
                     if count == commentRefArray.count{
+                        print("comment out >0")
                         completion(commentList)
                     }
                 }
