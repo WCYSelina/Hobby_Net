@@ -7,25 +7,43 @@
 
 import UIKit
 
-class SheetAddPostViewController: UIViewController,UISheetPresentationControllerDelegate{
-    
+class SheetAddPostViewController: UIViewController,UITextViewDelegate{
+    let maxNumberOfLines = 4
     weak var databaseController:DatabaseProtocol?
-
-    override var sheetPresentationController: UISheetPresentationController?{
-        presentationController as? UISheetPresentationController
-    }
+    let placeholderText = "Enter text here..."
+    
+    
+    @IBOutlet weak var postDetails: UITextView!
 
     override func viewDidLoad() {
         super.viewDidLoad()
         let appDelegate = UIApplication.shared.delegate as? AppDelegate
         databaseController = appDelegate?.databaseController
-        sheetPresentationController?.detents = [.custom{
-            _ in return 220
-        }]
-        sheetPresentationController?.prefersGrabberVisible = true //show the line on top of the bottom sheet
-        sheetPresentationController?.preferredCornerRadius = 24
+        
+        // Set placeholder text initially
+        postDetails.text = placeholderText
+        postDetails.textColor = UIColor.lightGray
+        
+        // Adjust text view properties
+        postDetails.contentInset = UIEdgeInsets.zero
+        postDetails.delegate = self
     }
     
+    // UITextViewDelegate method called when text view begins editing
+       func textViewDidBeginEditing(_ textView: UITextView) {
+           if postDetails.text == placeholderText {
+               postDetails.text = ""
+               postDetails.textColor = UIColor.black
+           }
+       }
+       
+       // UITextViewDelegate method called when text view ends editing
+       func textViewDidEndEditing(_ textView: UITextView) {
+           if postDetails.text!.isEmpty {
+               postDetails.text = placeholderText
+               postDetails.textColor = UIColor.lightGray
+           }
+       }
     
     
 
