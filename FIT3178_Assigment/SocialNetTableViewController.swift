@@ -85,7 +85,8 @@ class SocialNetTableViewController: UITableViewController,DatabaseListener,UITex
         // Configure the comment text field
         postCell.commentTextField.placeholder = "Add a comment"
         postCell.commentTextField.delegate = self
-        
+        postCell.likesLabel.text = "12 Likes"
+        postCell.commentLabel.text = "5 comments"
         return postCell
     }
     
@@ -119,6 +120,8 @@ class CardTableViewCell: UITableViewCell {
     let sendButton = UIButton()
     let separatorViewTop = UIView()
     let separatorViewBottom = UIView()
+    let likesLabel = UILabel()
+    let commentLabel = UILabel()
 
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -153,6 +156,18 @@ class CardTableViewCell: UITableViewCell {
         sendButton.translatesAutoresizingMaskIntoConstraints = false
         contentView.addSubview(sendButton)
         
+        // Configure likes label
+        likesLabel.textColor = .gray
+        likesLabel.font = UIFont.systemFont(ofSize: 12) // Adjust the font size as desired
+        likesLabel.translatesAutoresizingMaskIntoConstraints = false
+        contentView.addSubview(likesLabel)
+        
+        // Configure likes label
+        commentLabel.textColor = .gray
+        commentLabel.font = UIFont.systemFont(ofSize: 12) // Adjust the font size as desired
+        commentLabel.translatesAutoresizingMaskIntoConstraints = false
+        contentView.addSubview(commentLabel)
+        
         // Configure separator views
         separatorViewTop.backgroundColor = .lightGray
         separatorViewTop.translatesAutoresizingMaskIntoConstraints = false
@@ -168,36 +183,27 @@ class CardTableViewCell: UITableViewCell {
             descriptionLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 8),
             descriptionLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -8),
             
-            separatorViewTop.topAnchor.constraint(equalTo: descriptionLabel.bottomAnchor, constant: 4),
+            separatorViewTop.topAnchor.constraint(equalTo: descriptionLabel.bottomAnchor, constant: 8),
             separatorViewTop.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 8),
             separatorViewTop.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -8),
             separatorViewTop.heightAnchor.constraint(equalToConstant: 1),
             
-            thumbsUpButton.topAnchor.constraint(equalTo: separatorViewTop.bottomAnchor, constant: 8),
+            likesLabel.topAnchor.constraint(equalTo: separatorViewTop.bottomAnchor, constant: 4),
+            likesLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 8),
+            
+            commentLabel.topAnchor.constraint(equalTo: separatorViewTop.bottomAnchor, constant: 4),
+            commentLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -8),
+            
+            separatorViewBottom.topAnchor.constraint(equalTo: likesLabel.bottomAnchor, constant: 4),
+            separatorViewBottom.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 8),
+            separatorViewBottom.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -8),
+            separatorViewBottom.heightAnchor.constraint(equalToConstant: 1),
+            
+            thumbsUpButton.topAnchor.constraint(equalTo: separatorViewBottom.bottomAnchor, constant: 8),
             thumbsUpButton.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 8),
             thumbsUpButton.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -8),
             thumbsUpButton.widthAnchor.constraint(equalToConstant: 24),
             thumbsUpButton.heightAnchor.constraint(equalToConstant: 24),
-            
-            separatorViewBottom.topAnchor.constraint(equalTo: thumbsUpButton.topAnchor),
-            separatorViewBottom.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 8),
-            separatorViewBottom.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -8),
-            separatorViewBottom.heightAnchor.constraint(equalToConstant: 1),
-            
-            commentTextField.topAnchor.constraint(equalTo: separatorViewTop.bottomAnchor, constant: 8),
-            commentTextField.leadingAnchor.constraint(equalTo: thumbsUpButton.trailingAnchor, constant: 8),
-            commentTextField.trailingAnchor.constraint(equalTo: sendButton.leadingAnchor, constant: -8),
-            commentTextField.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -8),
-            
-            sendButton.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -8),
-            sendButton.centerYAnchor.constraint(equalTo: commentTextField.centerYAnchor),
-            sendButton.widthAnchor.constraint(equalToConstant: 24),
-            sendButton.heightAnchor.constraint(equalToConstant: 24),
-            
-            separatorViewBottom.topAnchor.constraint(equalTo: thumbsUpButton.bottomAnchor, constant: 8),
-            separatorViewBottom.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 8),
-            separatorViewBottom.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -8),
-            separatorViewBottom.heightAnchor.constraint(equalToConstant: 1),
             
             commentTextField.topAnchor.constraint(equalTo: separatorViewBottom.bottomAnchor, constant: 8),
             commentTextField.leadingAnchor.constraint(equalTo: thumbsUpButton.trailingAnchor, constant: 8),
@@ -207,7 +213,8 @@ class CardTableViewCell: UITableViewCell {
             sendButton.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -8),
             sendButton.centerYAnchor.constraint(equalTo: commentTextField.centerYAnchor),
             sendButton.widthAnchor.constraint(equalToConstant: 24),
-            sendButton.heightAnchor.constraint(equalToConstant: 24)
+            sendButton.heightAnchor.constraint(equalToConstant: 24),
+            
         ])
     }
     
