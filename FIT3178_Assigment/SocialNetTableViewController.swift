@@ -117,6 +117,8 @@ class CardTableViewCell: UITableViewCell {
     let thumbsUpButton = UIButton()
     let commentTextField = UITextField()
     let sendButton = UIButton()
+    let separatorViewTop = UIView()
+    let separatorViewBottom = UIView()
 
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -151,19 +153,53 @@ class CardTableViewCell: UITableViewCell {
         sendButton.translatesAutoresizingMaskIntoConstraints = false
         contentView.addSubview(sendButton)
         
+        // Configure separator views
+        separatorViewTop.backgroundColor = .lightGray
+        separatorViewTop.translatesAutoresizingMaskIntoConstraints = false
+        contentView.addSubview(separatorViewTop)
+        
+        separatorViewBottom.backgroundColor = .lightGray
+        separatorViewBottom.translatesAutoresizingMaskIntoConstraints = false
+        contentView.addSubview(separatorViewBottom)
+        
         // Set up constraints
         NSLayoutConstraint.activate([
             descriptionLabel.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 8),
             descriptionLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 8),
             descriptionLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -8),
             
-            thumbsUpButton.topAnchor.constraint(equalTo: descriptionLabel.bottomAnchor, constant: 8),
+            separatorViewTop.topAnchor.constraint(equalTo: descriptionLabel.bottomAnchor, constant: 4),
+            separatorViewTop.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 8),
+            separatorViewTop.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -8),
+            separatorViewTop.heightAnchor.constraint(equalToConstant: 1),
+            
+            thumbsUpButton.topAnchor.constraint(equalTo: separatorViewTop.bottomAnchor, constant: 8),
             thumbsUpButton.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 8),
+            thumbsUpButton.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -8),
             thumbsUpButton.widthAnchor.constraint(equalToConstant: 24),
             thumbsUpButton.heightAnchor.constraint(equalToConstant: 24),
-            thumbsUpButton.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -8),
             
-            commentTextField.topAnchor.constraint(equalTo: descriptionLabel.bottomAnchor, constant: 8),
+            separatorViewBottom.topAnchor.constraint(equalTo: thumbsUpButton.topAnchor),
+            separatorViewBottom.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 8),
+            separatorViewBottom.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -8),
+            separatorViewBottom.heightAnchor.constraint(equalToConstant: 1),
+            
+            commentTextField.topAnchor.constraint(equalTo: separatorViewTop.bottomAnchor, constant: 8),
+            commentTextField.leadingAnchor.constraint(equalTo: thumbsUpButton.trailingAnchor, constant: 8),
+            commentTextField.trailingAnchor.constraint(equalTo: sendButton.leadingAnchor, constant: -8),
+            commentTextField.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -8),
+            
+            sendButton.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -8),
+            sendButton.centerYAnchor.constraint(equalTo: commentTextField.centerYAnchor),
+            sendButton.widthAnchor.constraint(equalToConstant: 24),
+            sendButton.heightAnchor.constraint(equalToConstant: 24),
+            
+            separatorViewBottom.topAnchor.constraint(equalTo: thumbsUpButton.bottomAnchor, constant: 8),
+            separatorViewBottom.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 8),
+            separatorViewBottom.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -8),
+            separatorViewBottom.heightAnchor.constraint(equalToConstant: 1),
+            
+            commentTextField.topAnchor.constraint(equalTo: separatorViewBottom.bottomAnchor, constant: 8),
             commentTextField.leadingAnchor.constraint(equalTo: thumbsUpButton.trailingAnchor, constant: 8),
             commentTextField.trailingAnchor.constraint(equalTo: sendButton.leadingAnchor, constant: -8),
             commentTextField.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -8),
@@ -179,5 +215,8 @@ class CardTableViewCell: UITableViewCell {
         fatalError("init(coder:) has not been implemented")
     }
 }
+
+            
+            
 
 
