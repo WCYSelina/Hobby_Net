@@ -45,6 +45,10 @@ class SocialNetTableViewController: UITableViewController,DatabaseListener{
         super.viewDidLoad()
         let appDelegate = UIApplication.shared.delegate as? AppDelegate
         databaseController = appDelegate?.databaseController
+        // Customize table view appearance
+//        tableView.backgroundColor = .clear
+        tableView.separatorStyle = .none
+        tableView.register(CardTableViewCell.self, forCellReuseIdentifier: "postCell")
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -70,11 +74,9 @@ class SocialNetTableViewController: UITableViewController,DatabaseListener{
     }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let postCell = tableView.dequeueReusableCell(withIdentifier: CELL_POST, for: indexPath)
-        var content = postCell.defaultContentConfiguration()
+        let postCell = tableView.dequeueReusableCell(withIdentifier: "postCell", for: indexPath) as! CardTableViewCell
         let post = postList[indexPath.row]
-        content.text = post.postDetail
-        postCell.contentConfiguration = content
+        postCell.descriptionLabel.text = post.postDetail
         return postCell
     }
     
@@ -92,5 +94,37 @@ class SocialNetTableViewController: UITableViewController,DatabaseListener{
             // Delete the row from the data source
 //            self.databaseController?.deleteHobby(hobby: allHobbies[indexPath.row])
         }
+    }
+}
+
+class CardTableViewCell: UITableViewCell {
+    let descriptionLabel = UILabel()
+
+    override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
+        super.init(style: style, reuseIdentifier: reuseIdentifier)
+        
+        // Customize cell layout
+        contentView.backgroundColor = .white
+        contentView.layer.cornerRadius = 8.0
+        contentView.layer.masksToBounds = true
+        contentView.layer.borderWidth = 1.0
+        contentView.layer.borderColor = UIColor.lightGray.cgColor
+        
+        // Configure description label
+        descriptionLabel.numberOfLines = 0
+        descriptionLabel.translatesAutoresizingMaskIntoConstraints = false
+        contentView.addSubview(descriptionLabel)
+        
+        // Set up constraints
+        NSLayoutConstraint.activate([
+            descriptionLabel.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 8),
+            descriptionLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 8),
+            descriptionLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -8),
+            descriptionLabel.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -8)
+        ])
+    }
+    
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
 }
