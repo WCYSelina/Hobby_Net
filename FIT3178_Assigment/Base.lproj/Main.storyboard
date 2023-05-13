@@ -424,7 +424,7 @@
                     <navigationItem key="navigationItem" title="HobbyNet" id="tR9-8j-4Ex">
                         <barButtonItem key="rightBarButtonItem" systemItem="add" id="KVM-Ts-AbD">
                             <connections>
-                                <segue destination="dXV-QN-3XA" kind="show" id="dy4-At-wDh"/>
+                                <action selector="barButtonItemTapped:" destination="WxP-AC-OOd" id="c5Y-Os-wvP"/>
                             </connections>
                         </barButtonItem>
                     </navigationItem>
@@ -434,30 +434,36 @@
             </objects>
             <point key="canvasLocation" x="7529.0076335877857" y="916.90140845070425"/>
         </scene>
-        <!--Add Post-->
+        <!--Sheet Add Post View Controller-->
         <scene sceneID="khl-fa-v3k">
             <objects>
-                <viewController id="dXV-QN-3XA" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="SheetAddPostViewController" id="dXV-QN-3XA" customClass="SheetAddPostViewController" customModule="FIT3178_Assignment" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="uAl-Qw-Rn7">
                         <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="3gH-dB-u7R">
-                                <rect key="frame" x="20" y="123" width="353" height="21"/>
+                                <rect key="frame" x="20" y="126" width="353" height="21"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
                             <textField opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="248" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="fgQ-Cj-baE">
-                                <rect key="frame" x="20" y="152" width="353" height="34"/>
+                                <rect key="frame" x="20" y="155" width="353" height="34"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                 <textInputTraits key="textInputTraits"/>
                             </textField>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="VAf-y9-aCM">
-                                <rect key="frame" x="298" y="194" width="75" height="35"/>
+                            <button opaque="NO" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="VAf-y9-aCM">
+                                <rect key="frame" x="297" y="199" width="75" height="35"/>
                                 <state key="normal" title="Button"/>
-                                <buttonConfiguration key="configuration" style="filled" title="Button"/>
+                                <buttonConfiguration key="configuration" style="filled" title="Create"/>
                             </button>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Create Post" textAlignment="center" lineBreakMode="tailTruncation" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="oSv-Nf-Qet">
+                                <rect key="frame" x="20" y="79" width="353" height="27"/>
+                                <fontDescription key="fontDescription" type="boldSystem" pointSize="22"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="9f4-fg-niG"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
@@ -465,14 +471,17 @@
                             <constraint firstItem="3gH-dB-u7R" firstAttribute="leading" secondItem="9f4-fg-niG" secondAttribute="leading" constant="20" id="6c0-gb-47H"/>
                             <constraint firstItem="9f4-fg-niG" firstAttribute="trailing" secondItem="3gH-dB-u7R" secondAttribute="trailing" constant="20" id="8UV-Tm-L4G"/>
                             <constraint firstItem="fgQ-Cj-baE" firstAttribute="top" secondItem="3gH-dB-u7R" secondAttribute="bottom" constant="8" id="CxA-SK-Jde"/>
+                            <constraint firstItem="oSv-Nf-Qet" firstAttribute="top" secondItem="9f4-fg-niG" secondAttribute="top" constant="20" id="JcT-eU-Chc"/>
                             <constraint firstItem="9f4-fg-niG" firstAttribute="trailing" secondItem="fgQ-Cj-baE" secondAttribute="trailing" constant="20" id="LJu-5a-RKy"/>
-                            <constraint firstItem="3gH-dB-u7R" firstAttribute="top" secondItem="9f4-fg-niG" secondAttribute="top" constant="20" id="MUo-yO-5Z9"/>
+                            <constraint firstItem="9f4-fg-niG" firstAttribute="trailing" secondItem="oSv-Nf-Qet" secondAttribute="trailing" constant="20" id="Niz-Kd-GyT"/>
+                            <constraint firstItem="3gH-dB-u7R" firstAttribute="top" secondItem="oSv-Nf-Qet" secondAttribute="bottom" constant="20" id="V7U-T7-KVj"/>
                             <constraint firstItem="VAf-y9-aCM" firstAttribute="top" secondItem="fgQ-Cj-baE" secondAttribute="bottom" constant="8" id="XRV-En-FBO"/>
+                            <constraint firstItem="oSv-Nf-Qet" firstAttribute="leading" secondItem="9f4-fg-niG" secondAttribute="leading" constant="20" id="b9p-VA-97C"/>
                             <constraint firstItem="VAf-y9-aCM" firstAttribute="trailing" secondItem="fgQ-Cj-baE" secondAttribute="trailing" id="n1X-uK-jLh"/>
                             <constraint firstItem="fgQ-Cj-baE" firstAttribute="leading" secondItem="3gH-dB-u7R" secondAttribute="leading" id="sMW-8y-wqC"/>
                         </constraints>
                     </view>
-                    <navigationItem key="navigationItem" title="Add Post" id="fRw-G5-jFh"/>
+                    <navigationItem key="navigationItem" id="fRw-G5-jFh"/>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="iKQ-ah-uuz" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>

@@ -12,6 +12,14 @@ class SocialNetViewController: UIViewController {
     
     @IBOutlet weak var username: UILabel!
     
+    @IBAction func barButtonItemTapped(_ sender: UIBarButtonItem) {
+        let storyboard = UIStoryboard(name: "Main", bundle: nil)
+        let sheetPresentationControler = storyboard.instantiateViewController(withIdentifier: "SheetAddPostViewController") as! SheetAddPostViewController
+//        sheetPresentationControler.hobbyDelegate = self
+        present(sheetPresentationControler, animated: true, completion: nil)
+    }
+        
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view.

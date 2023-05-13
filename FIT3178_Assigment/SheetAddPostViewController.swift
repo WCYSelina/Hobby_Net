@@ -7,9 +7,13 @@
 
 import UIKit
 
-class SheetAddPostViewController: UIViewController{
+class SheetAddPostViewController: UIViewController,UISheetPresentationControllerDelegate{
     
     weak var databaseController:DatabaseProtocol?
+
+    override var sheetPresentationController: UISheetPresentationController?{
+        presentationController as? UISheetPresentationController
+    }
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -20,10 +24,6 @@ class SheetAddPostViewController: UIViewController{
         }]
         sheetPresentationController?.prefersGrabberVisible = true //show the line on top of the bottom sheet
         sheetPresentationController?.preferredCornerRadius = 24
-    }
-    
-    override var sheetPresentationController: UISheetPresentationController?{
-        presentationController as? UISheetPresentationController
     }
     
     
