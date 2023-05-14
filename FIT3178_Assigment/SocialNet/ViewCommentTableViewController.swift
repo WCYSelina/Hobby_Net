@@ -38,7 +38,7 @@ class ViewCommentViewController: UIViewController,DatabaseListener,UITableViewDa
     }
     
     func onCommentChange(change: DatabaseChange, comments: [Comment]) {
-//        commentList = comments
+        commentList = comments
     }
     
     let CELL_COMMENT = "commentCell"
@@ -85,7 +85,6 @@ class ViewCommentViewController: UIViewController,DatabaseListener,UITableViewDa
      func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
          let commentCell = tableView.dequeueReusableCell(withIdentifier: CELL_COMMENT, for: indexPath) as! CardTableViewCellForComment
          let comment = commentList![indexPath.row]
-         print(comment.commentDetail)
          commentCell.descriptionLabel.text = comment.commentDetail
          commentCell.userName.text = comment.publisher?.documentID
          
@@ -113,7 +112,7 @@ class CardTableViewCellForComment: UITableViewCell {
         contentView.addSubview(userName)
         
         // Configure description label
-        descriptionLabel.font = UIFont.systemFont(ofSize: 14)
+        descriptionLabel.font = UIFont.systemFont(ofSize: 15)
         descriptionLabel.tintColor = .lightGray
         descriptionLabel.numberOfLines = 0
         descriptionLabel.translatesAutoresizingMaskIntoConstraints = false
@@ -128,6 +127,7 @@ class CardTableViewCellForComment: UITableViewCell {
             descriptionLabel.topAnchor.constraint(equalTo: userName.bottomAnchor, constant: 8),
             descriptionLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 8),
             descriptionLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -8),
+            descriptionLabel.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -8)
             
         ])
     }

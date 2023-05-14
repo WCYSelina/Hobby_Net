@@ -49,6 +49,7 @@ protocol DatabaseProtocol: AnyObject {
     func deleteHobby(hobby: Hobby)
     var email:String? {get set}
     var defaultHobby: Hobby {get set}
+    var defaultPost: Post {get set}
     var hasLogin:Bool? {get set}
     var hasCreated:Bool? {get set}
     var error:String? {get set}

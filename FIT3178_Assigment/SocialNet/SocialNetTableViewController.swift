@@ -121,12 +121,16 @@ class SocialNetTableViewController: UITableViewController,DatabaseListener,UITex
         }
         let row = sender.tag
         let post = postList[row]
-        let comment = databaseController?.addComment(commentDetail: postCell.commentTextField.text!)
-        databaseController?.addCommentToPost(comment: comment!,post: post)
+        if postCell.commentTextField.text != ""{
+            let comment = databaseController?.addComment(commentDetail: postCell.commentTextField.text!)
+            postCell.commentTextField.text = ""
+            databaseController?.addCommentToPost(comment: comment!,post: post)
+        }
     }
     
     @objc func viewCommentTapped(_ sender: CustomTapGesture){
         if let post = sender.post{
+            databaseController!.defaultPost = post
             performSegue(withIdentifier: "viewCommentIdentifier", sender: post)
         }
     }
