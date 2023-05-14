@@ -38,7 +38,7 @@ class ViewCommentViewController: UIViewController,DatabaseListener,UITableViewDa
     }
     
     func onCommentChange(change: DatabaseChange, comments: [Comment]) {
-        commentList = comments
+//        commentList = comments
     }
     
     let CELL_COMMENT = "commentCell"
