@@ -66,7 +66,7 @@ class UserAccViewController: UIViewController,DatabaseListener{
     func onWeeklyRecordChange(change: DatabaseChange, records: [Records]) {
     }
     
-    func onPostChange(change: DatabaseChange, posts: [Post]) {
+    func onPostChange(change: DatabaseChange, posts: [Post], defaultUser:User?) {
     }
     
     func onCommentChange(change: DatabaseChange, comments: [Comment]) {

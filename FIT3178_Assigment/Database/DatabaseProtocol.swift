@@ -35,7 +35,7 @@ protocol DatabaseListener: AnyObject {
     func onWeeklyRecordChange(change:DatabaseChange, records:[Records])
     func onAuthAccount(change:DatabaseChange,user:FirebaseAuth.User?)
     func onCreateAccount(change:DatabaseChange,user:FirebaseAuth.User?)
-    func onPostChange(change: DatabaseChange, posts: [Post])
+    func onPostChange(change: DatabaseChange, posts: [Post], defaultUser: User?)
     func onCommentChange(change:DatabaseChange, comments:[Comment])
 }
 
@@ -58,7 +58,7 @@ protocol DatabaseProtocol: AnyObject {
     var selectedImage: UIImage? {get set}
     func onWeeklyChange(records:[Records])
     func addLikeToUser(like:Post) -> Bool
-    func deleteLikeFromUser(like:Post)
+    func deleteLikeFromUser(like:Post) -> Bool
     func uploadImageToStorage(folderPath:String, image:UIImage, completion:@escaping (String) -> Void)
     func addRecordToHobby(record: Records, hobby: Hobby) -> Bool
     func showCorrespondingRecord(hobby:Hobby,date:String,completion: @escaping () -> Void)

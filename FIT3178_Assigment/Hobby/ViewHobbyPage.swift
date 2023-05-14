@@ -43,7 +43,7 @@ struct WeeklyViewControllerWrapper: UIViewControllerRepresentable{
 }
 
 class viewHobbyPageListener: NSObject, DatabaseListener {
-    func onPostChange(change: DatabaseChange, posts: [Post]) {
+    func onPostChange(change: DatabaseChange, posts: [Post], defaultUser:User?) {
     }
     
     func onCommentChange(change: DatabaseChange, comments: [Comment]) {

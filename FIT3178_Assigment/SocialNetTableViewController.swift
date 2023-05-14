@@ -32,7 +32,8 @@ class SocialNetTableViewController: UITableViewController,DatabaseListener,UITex
     func onCreateAccount(change: DatabaseChange, user: FirebaseAuth.User?) {
     }
     
-    func onPostChange(change: DatabaseChange, posts: [Post]) {
+    func onPostChange(change: DatabaseChange, posts: [Post], defaultUser: User?) {
+        self.defaultUser = defaultUser
         postList = posts
         tableView.reloadData()
     }
@@ -41,7 +42,7 @@ class SocialNetTableViewController: UITableViewController,DatabaseListener,UITex
     }
     
     var postList:[Post] = []
-    
+    var defaultUser:User?
     override func viewDidLoad() {
         super.viewDidLoad()
         let appDelegate = UIApplication.shared.delegate as? AppDelegate
@@ -80,8 +81,20 @@ class SocialNetTableViewController: UITableViewController,DatabaseListener,UITex
         postCell.descriptionLabel.text = post.postDetail
         
         // Configure the thumbs-up button
-        postCell.thumbsUpButton.addTarget(self, action: #selector(thumbsUpButtonTapped(_:)), for: .touchUpInside)
-        postCell.thumbsUpButton.tag = indexPath.row // Set a unique tag to identify the button
+        postCell.thumbsUpButton.addTarget(self,action: #selector(thumbsUpButtonTapped(_:)), for: .touchUpInside)
+        postCell.thumbsUpButton.tag = indexPath.row// Set a unique tag to identify the button
+        var isSet = false
+        for likePost in defaultUser!.likes{
+            if likePost.id == post.id{
+                postCell.thumbsUpButton.setImage(UIImage(systemName: "hand.thumbsup.fill"), for: .normal)
+                postCell.thumbsUpButton.tintColor = .systemBlue
+                isSet = true
+            }
+        }
+        if !isSet{
+            postCell.thumbsUpButton.setImage(UIImage(systemName: "hand.thumbsup"), for: .normal)
+            postCell.thumbsUpButton.tintColor = .gray
+        }
         
         // Configure the comment text field
         postCell.commentTextField.placeholder = "Add a comment"
@@ -95,6 +108,7 @@ class SocialNetTableViewController: UITableViewController,DatabaseListener,UITex
     
     @objc func thumbsUpButtonTapped(_ sender: UIButton) {
         let row = sender.tag
+        let indexPath = IndexPath(row: row, section: 0)
         let post = postList[row]
         // Toggle the selected state of the button
             sender.isSelected = !sender.isSelected
@@ -105,9 +119,10 @@ class SocialNetTableViewController: UITableViewController,DatabaseListener,UITex
                 let _ = databaseController?.addLikeToUser(like: post)
                 sender.setImage(UIImage(systemName: "hand.thumbsup.fill"), for: .normal)
                 sender.tintColor = .systemBlue
+
             } else {
                 // Button is not selected (outline)
-                databaseController?.deleteLikeFromUser(like: post)
+                let _ = databaseController?.deleteLikeFromUser(like: post)
                 sender.setImage(UIImage(systemName: "hand.thumbsup"), for: .normal)
                 sender.tintColor = .gray
             }
@@ -165,8 +180,9 @@ class CardTableViewCell: UITableViewCell {
         descriptionLabel.translatesAutoresizingMaskIntoConstraints = false
         contentView.addSubview(descriptionLabel)
         
+        
         // Configure thumbs-up button
-        thumbsUpButton.setImage(UIImage(systemName: "hand.thumbsup"), for: .normal)
+//        thumbsUpButton.setImage(UIImage(systemName: "hand.thumbsup"), for: .normal)
 //        thumbsUpButton.tintColor = .gray
         thumbsUpButton.translatesAutoresizingMaskIntoConstraints = false
         contentView.addSubview(thumbsUpButton)
