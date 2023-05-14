@@ -14,4 +14,5 @@ class Post: NSObject,Codable{
     var likeNum:Int?
     var postDetail:String?
     var publisher:DocumentReference?
+    var publisherName:String?
 }

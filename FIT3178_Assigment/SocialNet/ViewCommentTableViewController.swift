@@ -99,7 +99,7 @@ class ViewCommentViewController: UIViewController,DatabaseListener,UITableViewDa
          let commentCell = tableView.dequeueReusableCell(withIdentifier: CELL_COMMENT, for: indexPath) as! CardTableViewCellForComment
          let comment = commentList![indexPath.row]
          commentCell.descriptionLabel.text = comment.commentDetail
-         commentCell.userName.text = comment.publisher?.documentID
+         commentCell.userName.text = comment.publisherName
          
          return commentCell
     }

@@ -12,4 +12,5 @@ struct Comment: Codable{
     @DocumentID var id:String?
     var commentDetail:String?
     var publisher:DocumentReference?
+    var publisherName:String?
 }

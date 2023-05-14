@@ -111,7 +111,7 @@ class SocialNetTableViewController: UITableViewController,DatabaseListener,UITex
         postCell.commentTextField.delegate = self
         postCell.likesLabel.text = "\(post.likeNum!) likes"
         postCell.commentLabel.text = "View comments"
-        postCell.userName.text = post.publisher?.documentID
+        postCell.userName.text = post.publisherName
         return postCell
     }
     

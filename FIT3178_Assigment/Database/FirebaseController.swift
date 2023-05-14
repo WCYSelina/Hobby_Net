@@ -809,6 +809,7 @@ class FirebaseController: NSObject,DatabaseProtocol{
                     onePostObj.id = document.documentID
                     onePostObj.likeNum = document.data()!["likeNum"] as? Int
                     onePostObj.postDetail = document.data()!["postDetail"] as? String
+                    onePostObj.publisherName = document.data()!["publisherName"] as? String
                     onePostObj.publisher = document.data()!["publisher"] as? DocumentReference
                     self.parseSpecificComment(commentRefArray: onePostDoc?.data()!["comments"] as? [DocumentReference] ?? []){ allComments in
                         onePostObj.comment = allComments
@@ -831,6 +832,7 @@ class FirebaseController: NSObject,DatabaseProtocol{
                 parsedPost.publisher = change.document.data()["publisher"] as? DocumentReference
                 parsedPost.likeNum = change.document.data()["likeNum"] as? Int
                 parsedPost.postDetail = change.document.data()["postDetail"] as? String
+                parsedPost.publisherName = change.document.data()["publisherName"] as? String
                 let commentRef = change.document.data()["comments"] as? [DocumentReference]
                 if commentRef == nil{
                     parsedPost.comment = []
@@ -897,6 +899,7 @@ class FirebaseController: NSObject,DatabaseProtocol{
         var comment = Comment()
         comment.commentDetail = commentDetail
         comment.publisher = database.collection("user").document(defaultUser.id!)
+        comment.publisherName = defaultUser.name
         do{
             if let commentRef = try commentRef?.addDocument(from: comment) {
                 comment.id = commentRef.documentID
@@ -919,7 +922,6 @@ class FirebaseController: NSObject,DatabaseProtocol{
         defaultPost.comment.append(comment)
         self.listeners.invoke{ listener in
             if listener.listenerType == ListenerType.comment || listener.listenerType == ListenerType.all {
-                print("kkkkk")
                 listener.onCommentChange(change: .update, comments: self.defaultPost.comment)
             }
         }
