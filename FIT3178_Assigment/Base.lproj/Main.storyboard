@@ -457,8 +457,15 @@
                         <rect key="frame" x="0.0" y="0.0" width="393" height="783"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="Gge-Xh-ZVQ">
+                                <rect key="frame" x="20" y="30" width="353" height="21"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="-1" estimatedSectionHeaderHeight="-1" sectionFooterHeight="-1" estimatedSectionFooterHeight="-1" translatesAutoresizingMaskIntoConstraints="NO" id="xoJ-jU-gQn">
-                                <rect key="frame" x="20" y="71" width="353" height="625"/>
+                                <rect key="frame" x="20" y="71" width="353" height="624.66666666666663"/>
                                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                 <prototypes>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="commentCell" id="Ynn-mR-ZdP">
@@ -471,39 +478,35 @@
                                     </tableViewCell>
                                 </prototypes>
                             </tableView>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="gAe-si-r00">
-                                <rect key="frame" x="343.33333333333331" y="716" width="49.666666666666686" height="34"/>
-                                <state key="normal" title="Button"/>
-                                <buttonConfiguration key="configuration" style="plain" image="arrow.up.circle" catalog="system"/>
-                            </button>
                             <textField opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="248" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Add a comment" textAlignment="natural" minimumFontSize="17" id="J9k-T1-yfO">
-                                <rect key="frame" x="16" y="716" width="328" height="34"/>
+                                <rect key="frame" x="16" y="716" width="319" height="34"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                 <textInputTraits key="textInputTraits"/>
                             </textField>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="Gge-Xh-ZVQ">
-                                <rect key="frame" x="20" y="30" width="353" height="21"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                <nil key="textColor"/>
-                                <nil key="highlightedColor"/>
-                            </label>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="QaM-wY-72W">
+                                <rect key="frame" x="338.33333333333331" y="715.66666666666663" width="49.666666666666686" height="34.333333333333371"/>
+                                <state key="normal" title="Button"/>
+                                <buttonConfiguration key="configuration" style="plain" image="arrow.up.circle" catalog="system"/>
+                                <connections>
+                                    <action selector="sendComment:" destination="1lv-Js-Hxh" eventType="touchUpInside" id="lYK-As-bKo"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="490-vH-BUV"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <constraints>
-                            <constraint firstItem="490-vH-BUV" firstAttribute="trailing" secondItem="gAe-si-r00" secondAttribute="trailing" id="5Ti-af-gI2"/>
+                            <constraint firstItem="QaM-wY-72W" firstAttribute="bottom" secondItem="J9k-T1-yfO" secondAttribute="bottom" id="6rA-bO-QSm"/>
                             <constraint firstItem="xoJ-jU-gQn" firstAttribute="leading" secondItem="490-vH-BUV" secondAttribute="leading" constant="20" id="85o-rU-bbf"/>
                             <constraint firstItem="xoJ-jU-gQn" firstAttribute="top" secondItem="Gge-Xh-ZVQ" secondAttribute="bottom" constant="20" id="I67-gR-Lcr"/>
                             <constraint firstItem="490-vH-BUV" firstAttribute="trailing" secondItem="xoJ-jU-gQn" secondAttribute="trailing" constant="20" id="QeU-1p-eih"/>
-                            <constraint firstItem="gAe-si-r00" firstAttribute="top" secondItem="J9k-T1-yfO" secondAttribute="top" id="VnW-Wd-Vbk"/>
-                            <constraint firstItem="490-vH-BUV" firstAttribute="bottom" secondItem="gAe-si-r00" secondAttribute="bottom" constant="33" id="hLV-nD-BqQ"/>
-                            <constraint firstItem="gAe-si-r00" firstAttribute="top" secondItem="xoJ-jU-gQn" secondAttribute="bottom" constant="20" id="uBF-1x-24U"/>
+                            <constraint firstItem="QaM-wY-72W" firstAttribute="top" secondItem="xoJ-jU-gQn" secondAttribute="bottom" constant="20" id="v1H-IX-N89"/>
+                            <constraint firstItem="490-vH-BUV" firstAttribute="trailing" secondItem="QaM-wY-72W" secondAttribute="trailing" constant="5" id="vVQ-VO-Zi8"/>
                         </constraints>
                     </view>
                     <navigationItem key="navigationItem" id="jWm-su-BSx"/>
                     <connections>
+                        <outlet property="comment" destination="J9k-T1-yfO" id="LlE-Zg-bhy"/>
                         <outlet property="commentNum" destination="Gge-Xh-ZVQ" id="kAl-xo-MaG"/>
                         <outlet property="tableView" destination="xoJ-jU-gQn" id="xW0-ob-oz2"/>
                     </connections>

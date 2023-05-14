@@ -916,10 +916,11 @@ class FirebaseController: NSObject,DatabaseProtocol{
             postRef?.document(postID).updateData(
                 ["comments" : FieldValue.arrayUnion([newCommentRef])])
         }
-//        defaultPost.comment.append(comment)
+        defaultPost.comment.append(comment)
         self.listeners.invoke{ listener in
-            if listener.listenerType == ListenerType.record || listener.listenerType == ListenerType.all {
-                listener.onHobbyChange(change: .update, hobbies: self.defaultUser.hobbies)
+            if listener.listenerType == ListenerType.comment || listener.listenerType == ListenerType.all {
+                print("kkkkk")
+                listener.onCommentChange(change: .update, comments: self.defaultPost.comment)
             }
         }
     }

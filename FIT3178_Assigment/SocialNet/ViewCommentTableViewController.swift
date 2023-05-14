@@ -11,8 +11,19 @@ class ViewCommentViewController: UIViewController,DatabaseListener,UITableViewDa
     @IBOutlet weak var tableView: UITableView!
     @IBOutlet weak var commentNum: UILabel!
     
-    var listenerType = ListenerType.comment
     
+    @IBOutlet weak var comment: UITextField!
+    
+    @IBAction func sendComment(_ sender: Any) {
+        print("jjjjj")
+        if self.comment.text != ""{
+            let comment = databaseController?.addComment(commentDetail: self.comment.text!)
+            self.comment.text = ""
+            databaseController?.addCommentToPost(comment: comment!,post: databaseController!.defaultPost)
+        }
+    }
+    
+    var listenerType = ListenerType.comment
     func onHobbyChange(change: DatabaseChange, hobbies: [Hobby]) {
     }
     
@@ -39,6 +50,8 @@ class ViewCommentViewController: UIViewController,DatabaseListener,UITableViewDa
     
     func onCommentChange(change: DatabaseChange, comments: [Comment]) {
         commentList = comments
+        commentNum.text = "\(String(commentList!.count)) comments"
+        tableView.reloadData()
     }
     
     let CELL_COMMENT = "commentCell"
