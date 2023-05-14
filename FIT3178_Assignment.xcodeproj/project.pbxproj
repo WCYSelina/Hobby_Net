@@ -35,6 +35,7 @@
 		6A7A18BA2A0F686000C33B62 /* SheetAddPostViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A7A18B92A0F686000C33B62 /* SheetAddPostViewController.swift */; };
 		6A8BADF12A08988700CBAF9B /* SelectPhotosViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A8BADF02A08988700CBAF9B /* SelectPhotosViewController.swift */; };
 		6A8C9CF42A0DF6B200EA84E6 /* UserAccViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A8C9CF32A0DF6B200EA84E6 /* UserAccViewController.swift */; };
+		6A9B56B52A10D41300FB28A3 /* ViewCommentTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A9B56B42A10D41300FB28A3 /* ViewCommentTableViewController.swift */; };
 		6AB99CE42A0FB02400544DD6 /* SocialNetTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6AB99CE32A0FB02400544DD6 /* SocialNetTableViewController.swift */; };
 		6ABD73432A0E847700FBC5A1 /* Comment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6ABD73422A0E847700FBC5A1 /* Comment.swift */; };
 		6ABD73452A0E84B700FBC5A1 /* Post.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6ABD73442A0E84B700FBC5A1 /* Post.swift */; };
@@ -67,6 +68,7 @@
 		6A7A18B92A0F686000C33B62 /* SheetAddPostViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SheetAddPostViewController.swift; sourceTree = "<group>"; };
 		6A8BADF02A08988700CBAF9B /* SelectPhotosViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectPhotosViewController.swift; sourceTree = "<group>"; };
 		6A8C9CF32A0DF6B200EA84E6 /* UserAccViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserAccViewController.swift; sourceTree = "<group>"; };
+		6A9B56B42A10D41300FB28A3 /* ViewCommentTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewCommentTableViewController.swift; sourceTree = "<group>"; };
 		6AB99CE32A0FB02400544DD6 /* SocialNetTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SocialNetTableViewController.swift; sourceTree = "<group>"; };
 		6ABD73422A0E847700FBC5A1 /* Comment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Comment.swift; sourceTree = "<group>"; };
 		6ABD73442A0E84B700FBC5A1 /* Post.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Post.swift; sourceTree = "<group>"; };
@@ -146,13 +148,11 @@
 				6A561DA829F4105100138ABE /* Info.plist */,
 				6A48A37B29F7FA4200F9BC55 /* Database */,
 				6A48A38929F8015400F9BC55 /* Data Model */,
+				6A9B56B32A10D3E800FB28A3 /* User */,
 				6A7A18BB2A0F68DC00C33B62 /* Hobby */,
+				6A9B56B22A10D3BB00FB28A3 /* SocialNet */,
 				6A8BADF02A08988700CBAF9B /* SelectPhotosViewController.swift */,
-				6A8C9CF32A0DF6B200EA84E6 /* UserAccViewController.swift */,
 				6A2E934D2A0E6CFB002D6CA5 /* EventViewController.swift */,
-				6A2E934F2A0E6D07002D6CA5 /* UserProfileViewController.swift */,
-				6A7A18B92A0F686000C33B62 /* SheetAddPostViewController.swift */,
-				6AB99CE32A0FB02400544DD6 /* SocialNetTableViewController.swift */,
 			);
 			path = FIT3178_Assigment;
 			sourceTree = "<group>";
@@ -168,6 +168,25 @@
 				6A48D0A82A07622300D36CBD /* WeeklyRecordViewController.swift */,
 			);
 			path = Hobby;
+			sourceTree = "<group>";
+		};
+		6A9B56B22A10D3BB00FB28A3 /* SocialNet */ = {
+			isa = PBXGroup;
+			children = (
+				6A7A18B92A0F686000C33B62 /* SheetAddPostViewController.swift */,
+				6AB99CE32A0FB02400544DD6 /* SocialNetTableViewController.swift */,
+				6A9B56B42A10D41300FB28A3 /* ViewCommentTableViewController.swift */,
+			);
+			path = SocialNet;
+			sourceTree = "<group>";
+		};
+		6A9B56B32A10D3E800FB28A3 /* User */ = {
+			isa = PBXGroup;
+			children = (
+				6A8C9CF32A0DF6B200EA84E6 /* UserAccViewController.swift */,
+				6A2E934F2A0E6D07002D6CA5 /* UserProfileViewController.swift */,
+			);
+			path = User;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -263,6 +282,7 @@
 				6A48A37D29F7FA7700F9BC55 /* MulticastDelegate.swift in Sources */,
 				6A48A38F29F806C700F9BC55 /* User.swift in Sources */,
 				6ABD73432A0E847700FBC5A1 /* Comment.swift in Sources */,
+				6A9B56B52A10D41300FB28A3 /* ViewCommentTableViewController.swift in Sources */,
 				6A8BADF12A08988700CBAF9B /* SelectPhotosViewController.swift in Sources */,
 				6A48A38D29F8019000F9BC55 /* Records.swift in Sources */,
 				6A48D0A92A07622300D36CBD /* WeeklyRecordViewController.swift in Sources */,

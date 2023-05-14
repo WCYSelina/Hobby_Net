@@ -100,11 +100,15 @@ class SocialNetTableViewController: UITableViewController,DatabaseListener,UITex
             postCell.thumbsUpButton.tintColor = .gray
         }
         
+        // Add tap gesture recognizer to the label
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(viewCommentTapped))
+        postCell.commentLabel.addGestureRecognizer(tapGesture)
+        
         // Configure the comment text field
         postCell.commentTextField.placeholder = "Add a comment"
         postCell.commentTextField.delegate = self
         postCell.likesLabel.text = "\(post.likeNum!) likes"
-        postCell.commentLabel.text = "\(post.comment.count) comments"
+        postCell.commentLabel.text = "View comments"
         postCell.userName.text = defaultUser?.name
         return postCell
     }
@@ -117,6 +121,10 @@ class SocialNetTableViewController: UITableViewController,DatabaseListener,UITex
         let post = postList[row]
         let comment = databaseController?.addComment(commentDetail: postCell.commentTextField.text!)
         databaseController?.addCommentToPost(comment: comment!,post: post)
+    }
+    
+    @objc func viewCommentTapped(){
+        performSegue(withIdentifier: "viewCommentIdentifier", sender: nil)
     }
     
     
@@ -220,7 +228,8 @@ class CardTableViewCell: UITableViewCell {
         contentView.addSubview(likesLabel)
         
         // Configure likes label
-        commentLabel.textColor = .gray
+        commentLabel.isUserInteractionEnabled = true
+        commentLabel.textColor = .systemBlue
         commentLabel.font = UIFont.systemFont(ofSize: 12) // Adjust the font size as desired
         commentLabel.translatesAutoresizingMaskIntoConstraints = false
         contentView.addSubview(commentLabel)
