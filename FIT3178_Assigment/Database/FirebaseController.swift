@@ -893,10 +893,10 @@ class FirebaseController: NSObject,DatabaseProtocol{
         }
     }
     
-    func addComment(commentDetail:String,publisher:DocumentReference) -> Comment{
+    func addComment(commentDetail:String) -> Comment{
         var comment = Comment()
         comment.commentDetail = commentDetail
-        comment.publisher = publisher
+        comment.publisher = database.collection("user").document(defaultUser.id!)
         do{
             if let commentRef = try commentRef?.addDocument(from: comment) {
                 comment.id = commentRef.documentID
@@ -907,8 +907,8 @@ class FirebaseController: NSObject,DatabaseProtocol{
         return comment
     }
     
-    func addCommentToPost(comment:Comment) {
-        guard let commentID = comment.id, let postID = defaultPost.id else {
+    func addCommentToPost(comment:Comment, post:Post) {
+        guard let commentID = comment.id, let postID = post.id else {
             return
         }
 
@@ -916,7 +916,7 @@ class FirebaseController: NSObject,DatabaseProtocol{
             postRef?.document(postID).updateData(
                 ["comments" : FieldValue.arrayUnion([newCommentRef])])
         }
-        defaultPost.comment.append(comment)
+//        defaultPost.comment.append(comment)
         self.listeners.invoke{ listener in
             if listener.listenerType == ListenerType.record || listener.listenerType == ListenerType.all {
                 listener.onHobbyChange(change: .update, hobbies: self.defaultUser.hobbies)

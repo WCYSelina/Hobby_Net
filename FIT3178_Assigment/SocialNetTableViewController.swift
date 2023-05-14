@@ -80,6 +80,10 @@ class SocialNetTableViewController: UITableViewController,DatabaseListener,UITex
         let post = postList[indexPath.row]
         postCell.descriptionLabel.text = post.postDetail
         
+        postCell.sendButton.cell = postCell
+        postCell.sendButton.addTarget(self, action: #selector(sendButtonTapped(_:)), for: UIControl.Event.touchUpInside)
+        postCell.sendButton.tag = indexPath.row
+        
         // Configure the thumbs-up button
         postCell.thumbsUpButton.addTarget(self,action: #selector(thumbsUpButtonTapped(_:)), for: .touchUpInside)
         postCell.thumbsUpButton.tag = indexPath.row// Set a unique tag to identify the button
@@ -101,8 +105,18 @@ class SocialNetTableViewController: UITableViewController,DatabaseListener,UITex
         postCell.commentTextField.delegate = self
         postCell.likesLabel.text = "\(post.likeNum!) likes"
         postCell.commentLabel.text = "\(post.comment.count) comments"
-        postCell.userName.text = post.publisher?.documentID
+        postCell.userName.text = defaultUser?.name
         return postCell
+    }
+    
+    @objc func sendButtonTapped(_ sender:CustomButton) {
+        guard let postCell = sender.cell else{
+            return
+        }
+        let row = sender.tag
+        let post = postList[row]
+        let comment = databaseController?.addComment(commentDetail: postCell.commentTextField.text!)
+        databaseController?.addCommentToPost(comment: comment!,post: post)
     }
     
     
@@ -151,7 +165,7 @@ class CardTableViewCell: UITableViewCell {
     let descriptionLabel = UILabel()
     let thumbsUpButton = UIButton()
     let commentTextField = UITextField()
-    let sendButton = UIButton()
+    let sendButton = CustomButton(type: .system)
     let separatorViewTop = UIView()
     let separatorViewBottom = UIView()
     let likesLabel = UILabel()
@@ -270,7 +284,9 @@ class CardTableViewCell: UITableViewCell {
     }
 }
 
-            
+class CustomButton: UIButton {
+    var cell: CardTableViewCell?
+}
             
 
 
