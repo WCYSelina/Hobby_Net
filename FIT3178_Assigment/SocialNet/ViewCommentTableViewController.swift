@@ -8,10 +8,8 @@
 import UIKit
 import FirebaseAuth
 class ViewCommentViewController: UIViewController,DatabaseListener,UITableViewDataSource,UITableViewDelegate{
-    
-    
-    
     @IBOutlet weak var tableView: UITableView!
+    @IBOutlet weak var commentNum: UILabel!
     
     var listenerType = ListenerType.comment
     
@@ -55,6 +53,11 @@ class ViewCommentViewController: UIViewController,DatabaseListener,UITableViewDa
         
         let appDelegate = UIApplication.shared.delegate as? AppDelegate
         databaseController = appDelegate?.databaseController
+        
+        tableView.separatorStyle = .none
+        tableView.register(CardTableViewCellForComment.self, forCellReuseIdentifier: CELL_COMMENT)
+        
+        commentNum.text = "\(String(commentList!.count)) comments"
     }
 
     // MARK: - Table view data source
@@ -73,19 +76,16 @@ class ViewCommentViewController: UIViewController,DatabaseListener,UITableViewDa
         // #warning Incomplete implementation, return the number of sections
         return 1
     }
-
-     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        // #warning Incomplete implementation, return the number of rows
-        return commentList!.count
-    }
     
-     func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-        return String(describing: commentList?.count)
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        print(self.commentList!.count)
+        return commentList!.count
     }
     
      func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
          let commentCell = tableView.dequeueReusableCell(withIdentifier: CELL_COMMENT, for: indexPath) as! CardTableViewCellForComment
          let comment = commentList![indexPath.row]
+         print(comment.commentDetail)
          commentCell.descriptionLabel.text = comment.commentDetail
          commentCell.userName.text = comment.publisher?.documentID
          

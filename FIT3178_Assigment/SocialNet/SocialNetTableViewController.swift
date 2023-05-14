@@ -169,8 +169,15 @@ class SocialNetTableViewController: UITableViewController,DatabaseListener,UITex
 //            self.databaseController?.deleteHobby(hobby: allHobbies[indexPath.row])
         }
     }
-    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if segue.identifier == "viewCommentIdentifier", let destinationVC = segue.destination as? ViewCommentViewController{
+            if let post = sender as? Post{
+                destinationVC.commentList = post.comment
+            }
+        }
+            
     }
+}
 
 class CardTableViewCell: UITableViewCell {
     let userName = UILabel()
