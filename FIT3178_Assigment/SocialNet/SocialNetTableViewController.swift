@@ -101,7 +101,9 @@ class SocialNetTableViewController: UITableViewController,DatabaseListener,UITex
         }
         
         // Add tap gesture recognizer to the label
-        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(viewCommentTapped))
+        
+        let tapGesture = CustomTapGesture(target: self, action: #selector(viewCommentTapped(_:)))
+        tapGesture.post = post
         postCell.commentLabel.addGestureRecognizer(tapGesture)
         
         // Configure the comment text field
@@ -109,7 +111,7 @@ class SocialNetTableViewController: UITableViewController,DatabaseListener,UITex
         postCell.commentTextField.delegate = self
         postCell.likesLabel.text = "\(post.likeNum!) likes"
         postCell.commentLabel.text = "View comments"
-        postCell.userName.text = defaultUser?.name
+        postCell.userName.text = post.publisher?.documentID
         return postCell
     }
     
@@ -123,8 +125,10 @@ class SocialNetTableViewController: UITableViewController,DatabaseListener,UITex
         databaseController?.addCommentToPost(comment: comment!,post: post)
     }
     
-    @objc func viewCommentTapped(){
-        performSegue(withIdentifier: "viewCommentIdentifier", sender: nil)
+    @objc func viewCommentTapped(_ sender: CustomTapGesture){
+        if let post = sender.post{
+            performSegue(withIdentifier: "viewCommentIdentifier", sender: post)
+        }
     }
     
     
@@ -165,7 +169,8 @@ class SocialNetTableViewController: UITableViewController,DatabaseListener,UITex
 //            self.databaseController?.deleteHobby(hobby: allHobbies[indexPath.row])
         }
     }
-}
+    
+    }
 
 class CardTableViewCell: UITableViewCell {
     let userName = UILabel()
@@ -296,6 +301,13 @@ class CardTableViewCell: UITableViewCell {
 class CustomButton: UIButton {
     var cell: CardTableViewCell?
 }
+
+class CustomTapGesture: UITapGestureRecognizer {
+    var post: Post?
+}
+
+                                                
+                                    
             
 
 

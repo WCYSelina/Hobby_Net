@@ -6,84 +6,134 @@
 //
 
 import UIKit
-
-class ViewCommentTableViewController: UITableViewController {
+import FirebaseAuth
+class ViewCommentViewController: UIViewController,DatabaseListener,UITableViewDataSource,UITableViewDelegate{
+    
+    
+    
+    @IBOutlet weak var tableView: UITableView!
+    
+    var listenerType = ListenerType.comment
+    
+    func onHobbyChange(change: DatabaseChange, hobbies: [Hobby]) {
+    }
+    
+    func onRecordChange(change: DatabaseChange, record: [Notes]) {
+    }
+    
+    func onNoteChange(change: DatabaseChange, notes: [Notes]) {
+    }
+    
+    func onHobbyRecordFirstChange(change: DatabaseChange, hobby: Hobby) {
+    }
+    
+    func onWeeklyRecordChange(change: DatabaseChange, records: [Records]) {
+    }
+    
+    func onAuthAccount(change: DatabaseChange, user: FirebaseAuth.User?) {
+    }
+    
+    func onCreateAccount(change: DatabaseChange, user: FirebaseAuth.User?) {
+    }
+    
+    func onPostChange(change: DatabaseChange, posts: [Post], defaultUser: User?) {
+    }
+    
+    func onCommentChange(change: DatabaseChange, comments: [Comment]) {
+        commentList = comments
+    }
+    
+    let CELL_COMMENT = "commentCell"
+    weak var databaseController:DatabaseProtocol?
+    var commentList:[Comment]?
 
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        // Uncomment the following line to preserve selection between presentations
-        // self.clearsSelectionOnViewWillAppear = false
-
-        // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
-        // self.navigationItem.rightBarButtonItem = self.editButtonItem
+        // Set the table view's delegate and data source
+        tableView.delegate = self
+        tableView.dataSource = self
+        
+        let appDelegate = UIApplication.shared.delegate as? AppDelegate
+        databaseController = appDelegate?.databaseController
     }
 
     // MARK: - Table view data source
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        databaseController?.addListener(listener: self)
+    }
 
-    override func numberOfSections(in tableView: UITableView) -> Int {
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        databaseController?.removeListener(listener: self)
+    }
+
+     func numberOfSections(in tableView: UITableView) -> Int {
         // #warning Incomplete implementation, return the number of sections
-        return 0
+        return 1
     }
 
-    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         // #warning Incomplete implementation, return the number of rows
-        return 0
+        return commentList!.count
     }
-
-    /*
-    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "reuseIdentifier", for: indexPath)
-
-        // Configure the cell...
-
-        return cell
+    
+     func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+        return String(describing: commentList?.count)
     }
-    */
-
-    /*
-    // Override to support conditional editing of the table view.
-    override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
-        // Return false if you do not want the specified item to be editable.
-        return true
+    
+     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+         let commentCell = tableView.dequeueReusableCell(withIdentifier: CELL_COMMENT, for: indexPath) as! CardTableViewCellForComment
+         let comment = commentList![indexPath.row]
+         commentCell.descriptionLabel.text = comment.commentDetail
+         commentCell.userName.text = comment.publisher?.documentID
+         
+         return commentCell
     }
-    */
-
-    /*
-    // Override to support editing the table view.
-    override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
-        if editingStyle == .delete {
-            // Delete the row from the data source
-            tableView.deleteRows(at: [indexPath], with: .fade)
-        } else if editingStyle == .insert {
-            // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
-        }    
-    }
-    */
-
-    /*
-    // Override to support rearranging the table view.
-    override func tableView(_ tableView: UITableView, moveRowAt fromIndexPath: IndexPath, to: IndexPath) {
-
-    }
-    */
-
-    /*
-    // Override to support conditional rearranging of the table view.
-    override func tableView(_ tableView: UITableView, canMoveRowAt indexPath: IndexPath) -> Bool {
-        // Return false if you do not want the item to be re-orderable.
-        return true
-    }
-    */
-
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destination.
-        // Pass the selected object to the new view controller.
-    }
-    */
-
 }
+
+class CardTableViewCellForComment: UITableViewCell {
+    let userName = UILabel()
+    let descriptionLabel = UILabel()
+
+    override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
+        super.init(style: style, reuseIdentifier: reuseIdentifier)
+        
+        // Customize cell layout
+        contentView.backgroundColor = .white
+        contentView.layer.cornerRadius = 8.0
+        contentView.layer.masksToBounds = true
+        contentView.layer.borderWidth = 1.0
+        contentView.layer.borderColor = UIColor.lightGray.cgColor
+        
+        
+        userName.font = UIFont.boldSystemFont(ofSize: userName.font.pointSize)
+        userName.translatesAutoresizingMaskIntoConstraints = false
+        contentView.addSubview(userName)
+        
+        // Configure description label
+        descriptionLabel.font = UIFont.systemFont(ofSize: 14)
+        descriptionLabel.tintColor = .lightGray
+        descriptionLabel.numberOfLines = 0
+        descriptionLabel.translatesAutoresizingMaskIntoConstraints = false
+        contentView.addSubview(descriptionLabel)
+        
+        // Set up constraints
+        NSLayoutConstraint.activate([
+            
+            userName.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 8),
+            userName.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 8),
+            
+            descriptionLabel.topAnchor.constraint(equalTo: userName.bottomAnchor, constant: 8),
+            descriptionLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 8),
+            descriptionLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -8),
+            
+        ])
+    }
+    
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+}
+
