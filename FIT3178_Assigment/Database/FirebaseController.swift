@@ -649,8 +649,8 @@ class FirebaseController: NSObject,DatabaseProtocol{
                     parsedUser.name = change.document.data()["name"] as? String
                     
                     //decode user's hobby
-                    let hobbyRef = change.document.data()["hobbies"] as! [DocumentReference]
-                    if hobbyRef == []{
+                    let hobbyRef = change.document.data()["hobbies"] as? [DocumentReference]
+                    if hobbyRef == nil{
                         parsedUser.hobbies = []
                         counter += 1
                         if counter == 3{
@@ -660,7 +660,7 @@ class FirebaseController: NSObject,DatabaseProtocol{
                         }
                     }
                     else{
-                        self.parseSpecificHobby(hobbyRefArray: hobbyRef){ resultHobbies in
+                        self.parseSpecificHobby(hobbyRefArray: hobbyRef!){ resultHobbies in
                             parsedUser.hobbies = resultHobbies
                             self.defaultUser.hobbies = resultHobbies
                             counter += 1
@@ -673,8 +673,8 @@ class FirebaseController: NSObject,DatabaseProtocol{
                     }
                     
                     //decode user's post
-                    let postRef = change.document.data()["posts"] as! [DocumentReference]
-                    if postRef == []{
+                    let postRef = change.document.data()["posts"] as? [DocumentReference]
+                    if postRef == nil{
                         parsedUser.posts = []
                         counter += 1
                         if counter == 3{
@@ -684,7 +684,7 @@ class FirebaseController: NSObject,DatabaseProtocol{
                         }
                     }
                     else{
-                        self.parseSpecificPost(postRefArray: postRef){ resultPosts in
+                        self.parseSpecificPost(postRefArray: postRef!){ resultPosts in
                             parsedUser.posts = resultPosts
                             self.defaultUser.posts = resultPosts
                             counter += 1
@@ -697,8 +697,8 @@ class FirebaseController: NSObject,DatabaseProtocol{
                     }
                     
                     //decode user's liked posts
-                    let likePostRef = change.document.data()["likes"] as! [DocumentReference]
-                    if likePostRef == []{
+                    let likePostRef = change.document.data()["likes"] as? [DocumentReference]
+                    if likePostRef == nil{
                         parsedUser.likes = []
                         counter += 1
                         if counter == 3{
@@ -708,7 +708,7 @@ class FirebaseController: NSObject,DatabaseProtocol{
                         }
                     }
                     else{
-                        self.parseSpecificPost(postRefArray: likePostRef){ resultLikePosts in
+                        self.parseSpecificPost(postRefArray: likePostRef!){ resultLikePosts in
                             parsedUser.likes = resultLikePosts
                             self.defaultUser.likes = resultLikePosts
                             counter += 1
@@ -1200,7 +1200,9 @@ class FirebaseController: NSObject,DatabaseProtocol{
         self.setupUserListener(){ () in
             
         }
-        let _ = self.addUser(name: email,id: self.currentUser!.uid)
+        if let currentUser = self.currentUser{
+            let _ = self.addUser(name: email,id: currentUser.uid)
+        }
     }
     
     func findUserById(id:String) -> User? {
