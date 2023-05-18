@@ -64,6 +64,7 @@ protocol DatabaseProtocol: AnyObject {
     func deleteLikeFromUser(like:Post) -> Bool
     func addComment(commentDetail:String) -> Comment
     func addCommentToPost(comment:Comment, post:Post)
+    func addEvent(eventDate:Timestamp, eventDescription:String, eventLocation:String,eventName:String, showWeather:Bool) -> Event
     func uploadImageToStorage(folderPath:String, image:UIImage, completion:@escaping (String) -> Void)
     func addRecordToHobby(record: Records, hobby: Hobby) -> Bool
     func showCorrespondingRecord(hobby:Hobby,date:String,completion: @escaping () -> Void)

@@ -137,7 +137,7 @@ class FirebaseController: NSObject,DatabaseProtocol{
             listener.onCommentChange(change: .add, comments: defaultPost.comment)
         }
         if listener.listenerType == .event || listener.listenerType == .all {
-            listener.onCommentChange(change: .add, comments: eventList)
+            listener.onEventChange(change: .add, events: eventList)
         }
         
     }
@@ -750,8 +750,8 @@ class FirebaseController: NSObject,DatabaseProtocol{
                         }
                     }
                     //decode the events that the user has joined
-                    let eventRef = change.document.data()["eventsJoined"] as? [DocumentReference]
-                    if eventRef == nil{
+                    let eventJoinedRef = change.document.data()["eventsJoined"] as? [DocumentReference]
+                    if eventJoinedRef == nil{
                         parsedUser.eventJoined = []
                         counter += 1
                         if counter == userFieldCount{
@@ -823,7 +823,7 @@ class FirebaseController: NSObject,DatabaseProtocol{
             if let eventRef = try eventRef?.addDocument(from: event) {
                 event.id = eventRef.documentID
 //                self.defaultHobby.records.append(record)
-                addEventToUser(event: event)
+                let _ = addEventToUser(event: event)
             }
         } catch {
             print("Failed to serialize hero")
@@ -833,16 +833,16 @@ class FirebaseController: NSObject,DatabaseProtocol{
     }
     
     
-    func addEventToUser(event: event) -> Bool {
+    func addEventToUser(event: Event) -> Bool {
         guard let eventID = event.id, let userID = self.defaultUser.id else {
             return false
         }
 
-        if let newEventRef = eventRef?.document(postID) {
+        if let newEventRef = eventRef?.document(eventID) {
             userRef?.document(userID).updateData(
                 ["events" : FieldValue.arrayUnion([newEventRef])])
         }
-        defaultUser.events?.append(event)
+        defaultUser.events.append(event)
 //        self.listeners.invoke{ listener in
 //            if listener.listenerType == ListenerType.record || listener.listenerType == ListenerType.all {
 //                listener.onHobbyChange(change: .update, hobbies: self.defaultUser.hobbies)
@@ -877,31 +877,14 @@ class FirebaseController: NSObject,DatabaseProtocol{
                 parsedEvent.eventDescription = change.document.data()["eventDescription"] as? String
                 parsedEvent.eventLocation = change.document.data()["eventLocation"] as? String
                 parsedEvent.publisherName = change.document.data()["publisherName"] as? String
-                let userRef = change.document.data()["participants"] as? [DocumentReference]
-                if userRef == nil{
-                    parsedEvent.participants = []
-                    self.addToEventList(change: change, parsedEvent: parsedEvent) { () in
-                        //[weak self] and the next line make sure the following line execute after addToHobbyList finished executing
-                        self.listeners.invoke { (listener) in
-                            if listener.listenerType == ListenerType.event || listener.listenerType == ListenerType.all {
+                parsedEvent.participants = change.document.data()["participants"] as? [DocumentReference]
+                self.addToEventList(change: change, parsedEvent: parsedEvent) { () in
+                    //[weak self] and the next line make sure the following line execute after addToHobbyList finished executing
+                    self.listeners.invoke { (listener) in
+                        if listener.listenerType == ListenerType.post || listener.listenerType == ListenerType.all {
 //                                self.defaultUser = self.findUserById(id: self.currentUser!.uid)!
-                                listener.onEventChange(change: .update, events: eventList)
-                                completion()
-                            }
-                        }
-                    }
-                }
-                else{
-                    self.parseSpecificUser(userRefArray: commentRef!){ resultParticipants in
-                        parsedEvent.participants = resultParticipants
-                        self.addToEventList(change: change, parsedEvent: parsedEvent){ () in
-                            self.listeners.invoke { (listener) in
-                                if listener.listenerType == ListenerType.event || listener.listenerType == ListenerType.all {
-    //                                self.defaultUser = self.findUserById(id: self.currentUser!.uid)!
-                                    listener.onEventChange(change: .update, events: eventList)
-                                    completion()
-                                }
-                            }
+                            listener.onPostChange(change: .update, posts: self.postList,defaultUser: self.defaultUser)
+                            completion()
                         }
                     }
                 }
@@ -938,7 +921,7 @@ class FirebaseController: NSObject,DatabaseProtocol{
     }
     
     func parseSpecificEvent(eventRefArray:[DocumentReference], completion: @escaping ([Event]) -> Void){
-        if userRefArray.count == 0{
+        if eventRefArray.count == 0{
             completion([])
         }
         var counter = 0
@@ -986,8 +969,8 @@ class FirebaseController: NSObject,DatabaseProtocol{
                         if counterField == userFieldCount{
                             resultUserList.append(oneUserObj)
                             counter += 1
-                            if counter == postRefArray.count{
-                                completion(resultPostList)
+                            if counter == userRefArray.count{
+                                completion(resultUserList)
                             }
                         }
                     }
@@ -997,8 +980,8 @@ class FirebaseController: NSObject,DatabaseProtocol{
                         if counterField == userFieldCount{
                             resultUserList.append(oneUserObj)
                             counter += 1
-                            if counter == postRefArray.count{
-                                completion(resultPostList)
+                            if counter == userRefArray.count{
+                                completion(resultUserList)
                             }
                         }
                     }
@@ -1008,8 +991,8 @@ class FirebaseController: NSObject,DatabaseProtocol{
                         if counterField == userFieldCount{
                             resultUserList.append(oneUserObj)
                             counter += 1
-                            if counter == postRefArray.count{
-                                completion(resultPostList)
+                            if counter == userRefArray.count{
+                                completion(resultUserList)
                             }
                         }
                     }
@@ -1019,8 +1002,8 @@ class FirebaseController: NSObject,DatabaseProtocol{
                         if counterField == userFieldCount{
                             resultUserList.append(oneUserObj)
                             counter += 1
-                            if counter == postRefArray.count{
-                                completion(resultPostList)
+                            if counter == userRefArray.count{
+                                completion(resultUserList)
                             }
                         }
                     }
@@ -1030,8 +1013,8 @@ class FirebaseController: NSObject,DatabaseProtocol{
                         if counterField == userFieldCount{
                             resultUserList.append(oneUserObj)
                             counter += 1
-                            if counter == postRefArray.count{
-                                completion(resultPostList)
+                            if counter == userRefArray.count{
+                                completion(resultUserList)
                             }
                         }
                     }
@@ -1515,6 +1498,7 @@ class FirebaseController: NSObject,DatabaseProtocol{
             self.setupNotesListener()
             self.setupPostListener()
             self.setupCommentListener()
+            self.setupEventListener()
         }
         self.listeners.invoke { (listener) in
             if listener.listenerType == ListenerType.auth || listener.listenerType == ListenerType.all {

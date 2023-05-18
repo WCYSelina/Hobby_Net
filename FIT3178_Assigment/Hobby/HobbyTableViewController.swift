@@ -10,6 +10,9 @@ import SwiftUI
 import FirebaseAuth
 
 class HobbyTableViewController: UITableViewController,DatabaseListener{
+    func onEventChange(change: DatabaseChange, events: [Event]) {
+    }
+    
     func onPostChange(change: DatabaseChange, posts: [Post], defaultUser:User?) {
     }
     

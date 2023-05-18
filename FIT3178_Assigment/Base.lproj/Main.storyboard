@@ -755,6 +755,9 @@
                                 <rect key="frame" x="298" y="642.33333333333337" width="75" height="35"/>
                                 <state key="normal" title="Button"/>
                                 <buttonConfiguration key="configuration" style="filled" title="Button"/>
+                                <connections>
+                                    <action selector="createEvent:" destination="tdx-Ky-Z8M" eventType="touchUpInside" id="zQZ-vw-Sii"/>
+                                </connections>
                             </button>
                             <textField opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="248" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="WSf-JT-TzI">
                                 <rect key="frame" x="20" y="152" width="353" height="34"/>
@@ -767,7 +770,7 @@
                                 <textInputTraits key="textInputTraits"/>
                             </textField>
                             <datePicker contentMode="scaleToFill" ambiguous="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" datePickerMode="dateAndTime" minuteInterval="1" translatesAutoresizingMaskIntoConstraints="NO" id="BnW-C2-fSg">
-                                <rect key="frame" x="0.0" y="434" width="393" height="34"/>
+                                <rect key="frame" x="0.0" y="434" width="393" height="34.333333333333314"/>
                             </datePicker>
                             <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" translatesAutoresizingMaskIntoConstraints="NO" id="M4w-St-a3G">
                                 <rect key="frame" x="324" y="571.33333333333337" width="51" height="31"/>
@@ -819,6 +822,13 @@
                         </constraints>
                     </view>
                     <navigationItem key="navigationItem" title="Create Event" id="iwk-cT-8NP"/>
+                    <connections>
+                        <outlet property="eventDate" destination="BnW-C2-fSg" id="lzB-50-Ld0"/>
+                        <outlet property="eventDescription" destination="7Mr-Ua-gnE" id="Zp7-lY-edr"/>
+                        <outlet property="eventLocation" destination="6ce-gK-ltK" id="JfG-PT-065"/>
+                        <outlet property="eventName" destination="WSf-JT-TzI" id="b6r-VF-0Pj"/>
+                        <outlet property="showWeather" destination="M4w-St-a3G" id="ijD-Bj-bpL"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="P1h-OG-BLG" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>

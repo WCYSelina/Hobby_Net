@@ -9,7 +9,7 @@ import UIKit
 import FirebaseFirestoreSwift
 import FirebaseFirestore
 
-class Event: NSObject {
+class Event: NSObject, Codable{
     @DocumentID var id:String?
     var eventDescription:String?
     var eventName:String?

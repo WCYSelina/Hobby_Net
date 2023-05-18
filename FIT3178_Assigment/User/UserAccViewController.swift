@@ -8,6 +8,9 @@
 import UIKit
 import FirebaseAuth
 class UserAccViewController: UIViewController,DatabaseListener{
+    func onEventChange(change: DatabaseChange, events: [Event]) {
+    }
+    
     func onAuthAccount(change: DatabaseChange, user: FirebaseAuth.User?) {
         if !loginHasCalledBefore{
             return

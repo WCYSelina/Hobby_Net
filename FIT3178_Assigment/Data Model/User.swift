@@ -11,10 +11,10 @@ import FirebaseFirestoreSwift
 struct User: Codable{
     @DocumentID var id:String?
     var name:String?
-    var hobbies:[Hobby]? = []
-    var posts:[Post]? = []
-    var likes:[Post]? = []
-    var events:[Event]? = []
-    var eventJoined:[Event]? = []
+    var hobbies:[Hobby] = []
+    var posts:[Post] = []
+    var likes:[Post] = []
+    var events:[Event] = []
+    var eventJoined:[Event] = []
     
 }

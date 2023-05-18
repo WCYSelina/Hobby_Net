@@ -9,6 +9,9 @@ import UIKit
 import FirebaseAuth
 
 class SocialNetTableViewController: UITableViewController,DatabaseListener,UITextFieldDelegate{
+    func onEventChange(change: DatabaseChange, events: [Event]) {
+    }
+    
     var listenerType = ListenerType.post
     weak var databaseController :DatabaseProtocol?
     let CELL_POST = "postCell"

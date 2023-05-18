@@ -8,6 +8,9 @@
 import UIKit
 import FirebaseAuth
 class ViewCommentViewController: UIViewController,DatabaseListener,UITableViewDataSource,UITableViewDelegate{
+    func onEventChange(change: DatabaseChange, events: [Event]) {
+    }
+    
     @IBOutlet weak var tableView: UITableView!
     @IBOutlet weak var commentNum: UILabel!
     

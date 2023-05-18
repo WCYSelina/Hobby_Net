@@ -43,6 +43,9 @@ struct WeeklyViewControllerWrapper: UIViewControllerRepresentable{
 }
 
 class viewHobbyPageListener: NSObject, DatabaseListener {
+    func onEventChange(change: DatabaseChange, events: [Event]) {
+    }
+    
     func onPostChange(change: DatabaseChange, posts: [Post], defaultUser:User?) {
     }
     
