@@ -594,24 +594,49 @@
             </objects>
             <point key="canvasLocation" x="4090.8396946564885" y="-27.464788732394368"/>
         </scene>
-        <!--Item-->
+        <!--Events-->
         <scene sceneID="XQ5-pS-Prz">
             <objects>
                 <viewController id="dYq-S9-guE" customClass="EventViewController" customModule="FIT3178_Assignment" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="Fmn-gU-w51">
                         <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="-1" estimatedSectionHeaderHeight="-1" sectionFooterHeight="-1" estimatedSectionFooterHeight="-1" translatesAutoresizingMaskIntoConstraints="NO" id="fuF-hK-Q8v">
+                                <rect key="frame" x="20" y="123" width="353" height="626"/>
+                                <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                                <prototypes>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="eventCell" id="76J-9n-qRg">
+                                        <rect key="frame" x="0.0" y="50" width="353" height="43.666667938232422"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="76J-9n-qRg" id="cdE-wa-9X7">
+                                            <rect key="frame" x="0.0" y="0.0" width="353" height="43.666667938232422"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                        </tableViewCellContentView>
+                                    </tableViewCell>
+                                </prototypes>
+                            </tableView>
+                        </subviews>
                         <viewLayoutGuide key="safeArea" id="qlQ-9R-sl1"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                        <constraints>
+                            <constraint firstItem="qlQ-9R-sl1" firstAttribute="trailing" secondItem="fuF-hK-Q8v" secondAttribute="trailing" constant="20" id="2hU-t1-5C0"/>
+                            <constraint firstItem="fuF-hK-Q8v" firstAttribute="top" secondItem="qlQ-9R-sl1" secondAttribute="top" constant="20" id="6Cg-hL-qGv"/>
+                            <constraint firstItem="fuF-hK-Q8v" firstAttribute="leading" secondItem="qlQ-9R-sl1" secondAttribute="leading" constant="20" id="FPQ-XR-axv"/>
+                            <constraint firstItem="qlQ-9R-sl1" firstAttribute="bottom" secondItem="fuF-hK-Q8v" secondAttribute="bottom" constant="20" id="ahe-Tk-46o"/>
+                        </constraints>
                     </view>
                     <tabBarItem key="tabBarItem" title="Item" id="eRK-vr-CUK"/>
-                    <navigationItem key="navigationItem" id="tTb-he-YQH">
+                    <navigationItem key="navigationItem" title="Events" id="tTb-he-YQH">
                         <barButtonItem key="rightBarButtonItem" systemItem="add" id="BiG-2V-8BF">
                             <connections>
                                 <segue destination="tdx-Ky-Z8M" kind="show" id="vOq-tw-Ff6"/>
                             </connections>
                         </barButtonItem>
                     </navigationItem>
+                    <connections>
+                        <outlet property="tableView" destination="fuF-hK-Q8v" id="Ruh-f8-nV1"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Tac-iC-ANS" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
@@ -752,7 +777,7 @@
                                 <nil key="highlightedColor"/>
                             </label>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="l3l-h6-bvd">
-                                <rect key="frame" x="298" y="642.33333333333337" width="75" height="35"/>
+                                <rect key="frame" x="298" y="642.33333333333337" width="75" height="34.333333333333371"/>
                                 <state key="normal" title="Button"/>
                                 <buttonConfiguration key="configuration" style="filled" title="Button"/>
                                 <connections>

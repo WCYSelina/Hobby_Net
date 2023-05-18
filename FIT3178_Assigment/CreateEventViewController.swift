@@ -23,8 +23,11 @@ class CreateEventViewController: UIViewController {
     @IBAction func createEvent(_ sender: Any) {
         let date = Timestamp(date: eventDate.date)
         if let eventDes = eventDescription.text,let location = eventLocation.text, let name = eventName.text, let isShowWeather = showWeather{
-            print("jhhhh")
             let _ = databaseController?.addEvent(eventDate: date, eventDescription: eventDes, eventLocation: location, eventName: name, showWeather: isShowWeather.isOn)
+            self.dismiss(animated: true)
+        }
+        else{
+            displayMessage(title: "Error", message: "Please ensure that you have filled the information")
         }
         
     }
@@ -36,6 +39,14 @@ class CreateEventViewController: UIViewController {
         let appDelegate = UIApplication.shared.delegate as? AppDelegate
         databaseController = appDelegate?.databaseController
         // Do any additional setup after loading the view.
+    }
+    
+    func displayMessage(title:String,message:String){
+        let alertController = UIAlertController(title: title, message: message,
+        preferredStyle: .alert)
+        alertController.addAction(UIAlertAction(title: "Dismiss", style: .default,
+        handler: nil))
+        self.present(alertController, animated: true, completion: nil)
     }
     
     

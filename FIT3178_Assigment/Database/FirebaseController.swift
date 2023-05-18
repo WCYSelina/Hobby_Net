@@ -872,12 +872,13 @@ class FirebaseController: NSObject,DatabaseProtocol{
                 parsedEvent.id = change.document.documentID
                 parsedEvent.publisher = change.document.data()["publisher"] as? DocumentReference
                 parsedEvent.eventName = change.document.data()["eventName"] as? String
-                parsedEvent.eventDate = change.document.data()["postDetail"] as? Timestamp
+                parsedEvent.eventDate = change.document.data()["eventDate"] as? Timestamp
                 parsedEvent.publisherName = change.document.data()["publisherName"] as? String
                 parsedEvent.eventDescription = change.document.data()["eventDescription"] as? String
                 parsedEvent.eventLocation = change.document.data()["eventLocation"] as? String
                 parsedEvent.publisherName = change.document.data()["publisherName"] as? String
                 parsedEvent.participants = change.document.data()["participants"] as? [DocumentReference]
+                parsedEvent.showWeather = change.document.data()["showWeather"] as? Bool
                 self.addToEventList(change: change, parsedEvent: parsedEvent) { () in
                     //[weak self] and the next line make sure the following line execute after addToHobbyList finished executing
                     self.listeners.invoke { (listener) in

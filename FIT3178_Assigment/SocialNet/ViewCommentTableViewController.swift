@@ -18,7 +18,6 @@ class ViewCommentViewController: UIViewController,DatabaseListener,UITableViewDa
     @IBOutlet weak var comment: UITextField!
     
     @IBAction func sendComment(_ sender: Any) {
-        print("jjjjj")
         if self.comment.text != ""{
             let comment = databaseController?.addComment(commentDetail: self.comment.text!)
             self.comment.text = ""
