@@ -36,6 +36,7 @@ class FirebaseController: NSObject,DatabaseProtocol{
     var userRef: CollectionReference?
     var commentRef: CollectionReference?
     var postRef:CollectionReference?
+    var eventRef:CollectionReference?
     var currentUser: FirebaseAuth.User?
     var DEFAULT_USERNAME = "username"
     var currentRecord:Records?
@@ -51,6 +52,7 @@ class FirebaseController: NSObject,DatabaseProtocol{
     var userList: [User]
     var defaultPost: Post
     var postList: [Post] = []
+    var eventList:[Event] = []
     
     override init(){
         FirebaseApp.configure()
@@ -134,6 +136,10 @@ class FirebaseController: NSObject,DatabaseProtocol{
         if listener.listenerType == .comment || listener.listenerType == .all {
             listener.onCommentChange(change: .add, comments: defaultPost.comment)
         }
+        if listener.listenerType == .event || listener.listenerType == .all {
+            listener.onCommentChange(change: .add, comments: eventList)
+        }
+        
     }
     func removeListener(listener: DatabaseListener){
         listeners.removeDelegate(listener)
@@ -753,6 +759,138 @@ class FirebaseController: NSObject,DatabaseProtocol{
     }
     func setupCommentListener(){
         commentRef = database.collection("comment")
+    }
+    
+    func setupEventListener(){
+        eventRef = database.collection("event")
+        eventRef?.addSnapshotListener() { (querySnapshot, error) in
+            guard let querySnapshot = querySnapshot else {
+                print("Failed to fetch documents with error: \(String(describing: error))")
+                return
+            }
+            self.parseEventSnapshot(snapshot: querySnapshot){ () in
+                // nothing to do
+                
+            }
+        }
+    }
+    
+    func parseEventSnapshot(snapshot: QuerySnapshot, completion: @escaping () -> Void){
+        snapshot.documentChanges.forEach{ (change) in
+            var parsedEvent = Event()
+            if change.document.exists{
+                parsedEvent.id = change.document.documentID
+                parsedEvent.publisher = change.document.data()["publisher"] as? DocumentReference
+                parsedEvent.eventName = change.document.data()["eventName"] as? String
+                parsedEvent.eventDate = change.document.data()["postDetail"] as? Timestamp
+                parsedEvent.publisherName = change.document.data()["publisherName"] as? String
+                parsedEvent.eventDescription = change.document.data()["eventDescription"] as? String
+                parsedEvent.eventLocation = change.document.data()["eventLocation"] as? String
+                parsedEvent.publisherName = change.document.data()["publisherName"] as? String
+                let commentRef = change.document.data()["comments"] as? [DocumentReference]
+                if commentRef == nil{
+                    parsedPost.comment = []
+                    self.addToPostList(change: change, parsedPost: parsedPost) { () in
+                        //[weak self] and the next line make sure the following line execute after addToHobbyList finished executing
+                        self.listeners.invoke { (listener) in
+                            if listener.listenerType == ListenerType.post || listener.listenerType == ListenerType.all {
+//                                self.defaultUser = self.findUserById(id: self.currentUser!.uid)!
+                                listener.onPostChange(change: .update, posts: self.postList,defaultUser: self.defaultUser)
+                                completion()
+                            }
+                        }
+                    }
+                }
+                else{
+                    self.parseSpecificComment(commentRefArray: commentRef!){ resultComments in
+                        parsedPost.comment = resultComments
+                        self.addToPostList(change: change, parsedPost: parsedPost){ () in
+                            self.listeners.invoke { (listener) in
+                                if listener.listenerType == ListenerType.post || listener.listenerType == ListenerType.all {
+    //                                self.defaultUser = self.findUserById(id: self.currentUser!.uid)!
+                                    listener.onPostChange(change: .update, posts: self.postList,defaultUser: self.defaultUser)
+                                    completion()
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
+    func parseSpecificUser(userRefArray:[DocumentReference], completion: @escaping ([User]) -> Void){
+        if userRefArray.count == 0{
+            completion([])
+        }
+        var counterField = 0
+        var counter = 0
+        var userFieldCount = 5
+        var resultUserList:[User] = []
+        userRefArray.forEach{ oneUserRef in
+            oneUserRef.getDocument{ (oneUserDoc,error) in
+                if let document = oneUserDoc, document.exists{
+                    var oneUserObj = User()
+                    oneUserObj.id = document.documentID
+                    oneUserObj.name = document.data()!["name"] as? String
+                    self.parseSpecificHobby(hobbyRefArray: oneUserDoc?.data()!["hobbies"] as? [DocumentReference] ?? []){ resultHobbies in
+                        oneUserObj.hobbies = resultHobbies
+                        counterField += 1
+                        if counterField == userFieldCount{
+                            resultUserList.append(oneUserObj)
+                            counter += 1
+                            if counter == postRefArray.count{
+                                completion(resultPostList)
+                            }
+                        }
+                    }
+                    self.parseSpecificPost(postRefArray: oneUserDoc?.data()!["posts"] as? [DocumentReference] ?? []){ resultPosts in
+                        oneUserObj.posts = resultPosts
+                        counterField += 1
+                        if counterField == userFieldCount{
+                            resultUserList.append(oneUserObj)
+                            counter += 1
+                            if counter == postRefArray.count{
+                                completion(resultPostList)
+                            }
+                        }
+                    }
+                    self.parseSpecificPost(postRefArray: oneUserDoc?.data()!["likes"] as? [DocumentReference] ?? []){ resultLikePosts in
+                        oneUserObj.likes = resultLikePosts
+                        counterField += 1
+                        if counterField == userFieldCount{
+                            resultUserList.append(oneUserObj)
+                            counter += 1
+                            if counter == postRefArray.count{
+                                completion(resultPostList)
+                            }
+                        }
+                    }
+                    self.parseSpecificEvent(postRefArray: oneUserDoc?.data()!["events"] as? [DocumentReference] ?? []){ resultEvents in
+                        oneUserObj.events = resultEvents
+                        counterField += 1
+                        if counterField == userFieldCount{
+                            resultUserList.append(oneUserObj)
+                            counter += 1
+                            if counter == postRefArray.count{
+                                completion(resultPostList)
+                            }
+                        }
+                    }
+                    self.parseSpecificEvent(postRefArray: oneUserDoc?.data()!["events"] as? [DocumentReference] ?? []){ resultEventsJoined in
+                        oneUserObj.eventJoined = resultEventsJoined
+                        counterField += 1
+                        if counterField == userFieldCount{
+                            resultUserList.append(oneUserObj)
+                            counter += 1
+                            if counter == postRefArray.count{
+                                completion(resultPostList)
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
     
     func setupPostListener(){

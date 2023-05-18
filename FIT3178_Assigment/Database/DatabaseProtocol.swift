@@ -17,6 +17,7 @@ enum DatabaseChange {
 }
 
 enum ListenerType{
+    case event
     case post
     case comment
     case hobby
@@ -37,6 +38,7 @@ protocol DatabaseListener: AnyObject {
     func onCreateAccount(change:DatabaseChange,user:FirebaseAuth.User?)
     func onPostChange(change: DatabaseChange, posts: [Post], defaultUser: User?)
     func onCommentChange(change:DatabaseChange, comments:[Comment])
+    func onEventChange(change:DatabaseChange, events:[Event])
 }
 
 protocol DatabaseProtocol: AnyObject {
