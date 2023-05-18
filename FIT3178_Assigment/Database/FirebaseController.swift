@@ -647,6 +647,7 @@ class FirebaseController: NSObject,DatabaseProtocol{
     }
     func parseUserSnapshot(snapshot: QuerySnapshot, completion: @escaping (User) -> Void){
         var counter = 0
+        let userFieldCount = 5
         snapshot.documentChanges.forEach{ (change) in
             var parsedUser = User()
             if change.document.exists{
@@ -655,22 +656,22 @@ class FirebaseController: NSObject,DatabaseProtocol{
                     parsedUser.name = change.document.data()["name"] as? String
                     
                     //decode user's hobby
-                    let hobbyRef = change.document.data()["hobbies"] as! [DocumentReference]
-                    if hobbyRef == []{
+                    let hobbyRef = change.document.data()["hobbies"] as? [DocumentReference]
+                    if hobbyRef == nil{
                         parsedUser.hobbies = []
                         counter += 1
-                        if counter == 3{
+                        if counter == userFieldCount{
                             self.addToUserList(change: change, parsedUser: parsedUser){
                                 completion(parsedUser)
                             }
                         }
                     }
                     else{
-                        self.parseSpecificHobby(hobbyRefArray: hobbyRef){ resultHobbies in
+                        self.parseSpecificHobby(hobbyRefArray: hobbyRef!){ resultHobbies in
                             parsedUser.hobbies = resultHobbies
                             self.defaultUser.hobbies = resultHobbies
                             counter += 1
-                            if counter == 3{
+                            if counter == userFieldCount{
                                 self.addToUserList(change: change, parsedUser: parsedUser){
                                     completion(parsedUser)
                                 }
@@ -679,22 +680,22 @@ class FirebaseController: NSObject,DatabaseProtocol{
                     }
                     
                     //decode user's post
-                    let postRef = change.document.data()["posts"] as! [DocumentReference]
-                    if postRef == []{
+                    let postRef = change.document.data()["posts"] as? [DocumentReference]
+                    if postRef == nil{
                         parsedUser.posts = []
                         counter += 1
-                        if counter == 3{
+                        if counter == userFieldCount{
                             self.addToUserList(change: change, parsedUser: parsedUser){
                                 completion(parsedUser)
                             }
                         }
                     }
                     else{
-                        self.parseSpecificPost(postRefArray: postRef){ resultPosts in
+                        self.parseSpecificPost(postRefArray: postRef!){ resultPosts in
                             parsedUser.posts = resultPosts
                             self.defaultUser.posts = resultPosts
                             counter += 1
-                            if counter == 3{
+                            if counter == userFieldCount{
                                 self.addToUserList(change: change, parsedUser: parsedUser){
                                     completion(parsedUser)
                                 }
@@ -703,22 +704,68 @@ class FirebaseController: NSObject,DatabaseProtocol{
                     }
                     
                     //decode user's liked posts
-                    let likePostRef = change.document.data()["likes"] as! [DocumentReference]
-                    if likePostRef == []{
+                    let likePostRef = change.document.data()["likes"] as? [DocumentReference]
+                    if likePostRef == nil{
                         parsedUser.likes = []
                         counter += 1
-                        if counter == 3{
+                        if counter == userFieldCount{
                             self.addToUserList(change: change, parsedUser: parsedUser){
                                 completion(parsedUser)
                             }
                         }
                     }
                     else{
-                        self.parseSpecificPost(postRefArray: likePostRef){ resultLikePosts in
+                        self.parseSpecificPost(postRefArray: likePostRef!){ resultLikePosts in
                             parsedUser.likes = resultLikePosts
                             self.defaultUser.likes = resultLikePosts
                             counter += 1
-                            if counter == 3{
+                            if counter == userFieldCount{
+                                self.addToUserList(change: change, parsedUser: parsedUser){
+                                    completion(parsedUser)
+                                }
+                            }
+                        }
+                    }
+                    //decode user's events
+                    let eventRef = change.document.data()["events"] as? [DocumentReference]
+                    if eventRef == []{
+                        parsedUser.events = []
+                        counter += 1
+                        if counter == userFieldCount{
+                            self.addToUserList(change: change, parsedUser: parsedUser){
+                                completion(parsedUser)
+                            }
+                        }
+                    }
+                    else{
+                        self.parseSpecificEvent(eventRefArray: eventRef!){ resultEvents in
+                            parsedUser.events = resultEvents
+                            self.defaultUser.events = resultEvents
+                            counter += 1
+                            if counter == userFieldCount{
+                                self.addToUserList(change: change, parsedUser: parsedUser){
+                                    completion(parsedUser)
+                                }
+                            }
+                        }
+                    }
+                    //decode the events that the user has joined
+                    let eventRef = change.document.data()["eventsJoined"] as? [DocumentReference]
+                    if eventRef == nil{
+                        parsedUser.eventJoined = []
+                        counter += 1
+                        if counter == userFieldCount{
+                            self.addToUserList(change: change, parsedUser: parsedUser){
+                                completion(parsedUser)
+                            }
+                        }
+                    }
+                    else{
+                        self.parseSpecificEvent(eventRefArray: eventRef!){ resultEventsJoined in
+                            parsedUser.events = resultEventsJoined
+                            self.defaultUser.eventJoined = resultEventsJoined
+                            counter += 1
+                            if counter == userFieldCount{
                                 self.addToUserList(change: change, parsedUser: parsedUser){
                                     completion(parsedUser)
                                 }
@@ -761,6 +808,49 @@ class FirebaseController: NSObject,DatabaseProtocol{
         commentRef = database.collection("comment")
     }
     
+    func addEvent(eventDate:Timestamp, eventDescription:String, eventLocation:String,eventName:String, showWeather:Bool) -> Event{
+        var event = Event()
+        event.participants = []
+        event.eventDate = eventDate
+        event.eventDescription = eventDescription
+        event.publisher = database.collection("user").document(currentUser!.uid)
+        event.eventLocation = eventLocation
+        event.showWeather = showWeather
+        event.eventName = eventName
+        event.publisherName = defaultUser.name
+        
+        do{
+            if let eventRef = try eventRef?.addDocument(from: event) {
+                event.id = eventRef.documentID
+//                self.defaultHobby.records.append(record)
+                addEventToUser(event: event)
+            }
+        } catch {
+            print("Failed to serialize hero")
+        }
+        return event
+        
+    }
+    
+    
+    func addEventToUser(event: event) -> Bool {
+        guard let eventID = event.id, let userID = self.defaultUser.id else {
+            return false
+        }
+
+        if let newEventRef = eventRef?.document(postID) {
+            userRef?.document(userID).updateData(
+                ["events" : FieldValue.arrayUnion([newEventRef])])
+        }
+        defaultUser.events?.append(event)
+//        self.listeners.invoke{ listener in
+//            if listener.listenerType == ListenerType.record || listener.listenerType == ListenerType.all {
+//                listener.onHobbyChange(change: .update, hobbies: self.defaultUser.hobbies)
+//            }
+//        }
+        return true
+    }
+    
     func setupEventListener(){
         eventRef = database.collection("event")
         eventRef?.addSnapshotListener() { (querySnapshot, error) in
@@ -787,32 +877,89 @@ class FirebaseController: NSObject,DatabaseProtocol{
                 parsedEvent.eventDescription = change.document.data()["eventDescription"] as? String
                 parsedEvent.eventLocation = change.document.data()["eventLocation"] as? String
                 parsedEvent.publisherName = change.document.data()["publisherName"] as? String
-                let commentRef = change.document.data()["comments"] as? [DocumentReference]
-                if commentRef == nil{
-                    parsedPost.comment = []
-                    self.addToPostList(change: change, parsedPost: parsedPost) { () in
+                let userRef = change.document.data()["participants"] as? [DocumentReference]
+                if userRef == nil{
+                    parsedEvent.participants = []
+                    self.addToEventList(change: change, parsedEvent: parsedEvent) { () in
                         //[weak self] and the next line make sure the following line execute after addToHobbyList finished executing
                         self.listeners.invoke { (listener) in
-                            if listener.listenerType == ListenerType.post || listener.listenerType == ListenerType.all {
+                            if listener.listenerType == ListenerType.event || listener.listenerType == ListenerType.all {
 //                                self.defaultUser = self.findUserById(id: self.currentUser!.uid)!
-                                listener.onPostChange(change: .update, posts: self.postList,defaultUser: self.defaultUser)
+                                listener.onEventChange(change: .update, events: eventList)
                                 completion()
                             }
                         }
                     }
                 }
                 else{
-                    self.parseSpecificComment(commentRefArray: commentRef!){ resultComments in
-                        parsedPost.comment = resultComments
-                        self.addToPostList(change: change, parsedPost: parsedPost){ () in
+                    self.parseSpecificUser(userRefArray: commentRef!){ resultParticipants in
+                        parsedEvent.participants = resultParticipants
+                        self.addToEventList(change: change, parsedEvent: parsedEvent){ () in
                             self.listeners.invoke { (listener) in
-                                if listener.listenerType == ListenerType.post || listener.listenerType == ListenerType.all {
+                                if listener.listenerType == ListenerType.event || listener.listenerType == ListenerType.all {
     //                                self.defaultUser = self.findUserById(id: self.currentUser!.uid)!
-                                    listener.onPostChange(change: .update, posts: self.postList,defaultUser: self.defaultUser)
+                                    listener.onEventChange(change: .update, events: eventList)
                                     completion()
                                 }
                             }
                         }
+                    }
+                }
+            }
+        }
+    }
+    
+    func addToEventList(change:DocumentChange,parsedEvent:Event, completion: @escaping () -> Void){
+        let docRef = database.collection("event").document(parsedEvent.id!)
+        docRef.getDocument{ (document, error) in
+            if let document = document, document.exists{
+                if change.type == .added {
+                    if let index = self.eventList.firstIndex(where: { $0.id == parsedEvent.id }) {
+                        // If the parsedHobby already exists in the list, update it
+                        self.eventList[index] = parsedEvent
+                    } else {
+                        // If the parsedHobby doesn't exist in the list, add it
+                        self.eventList.append(parsedEvent)
+                    }
+                } else if change.type == .modified {
+                    if let index = self.eventList.firstIndex(where: { $0.id == parsedEvent.id }) {
+                        // If the parsedHobby exists in the list, update it
+                        self.eventList[index] = parsedEvent
+                    }
+                } else if change.type == .removed {
+                    if let index = self.eventList.firstIndex(where: { $0.id == parsedEvent.id }) {
+                        // If the parsedHobby exists in the list, remove it
+                        self.eventList.remove(at: index)
+                    }
+                }
+            }
+            completion() //return, finished executing
+        }
+    }
+    
+    func parseSpecificEvent(eventRefArray:[DocumentReference], completion: @escaping ([Event]) -> Void){
+        if userRefArray.count == 0{
+            completion([])
+        }
+        var counter = 0
+        var resultEventList:[Event] = []
+        eventRefArray.forEach{ oneEventRef in
+            oneEventRef.getDocument{ (oneEventDoc,error) in
+                if let document = oneEventDoc, document.exists{
+                    var oneEventObj = Event()
+                    oneEventObj.id = document.documentID
+                    oneEventObj.eventDate = document.data()!["eventDate"] as? Timestamp
+                    oneEventObj.eventDescription = document.data()!["eventDescription"] as? String
+                    oneEventObj.eventLocation = document.data()!["eventLocation"] as? String
+                    oneEventObj.publisher = document.data()!["publisher"] as? DocumentReference
+                    oneEventObj.eventName = document.data()!["eventName"] as? String
+                    oneEventObj.publisherName = document.data()!["publisherName"] as? String
+                    oneEventObj.showWeather = document.data()!["showWeather"] as? Bool
+                    oneEventObj.participants = document.data()!["publisher"] as? [DocumentReference]
+                    resultEventList.append(oneEventObj)
+                    counter += 1
+                    if counter == eventRefArray.count{
+                        completion(resultEventList)
                     }
                 }
             }
@@ -866,7 +1013,7 @@ class FirebaseController: NSObject,DatabaseProtocol{
                             }
                         }
                     }
-                    self.parseSpecificEvent(postRefArray: oneUserDoc?.data()!["events"] as? [DocumentReference] ?? []){ resultEvents in
+                    self.parseSpecificEvent(eventRefArray: oneUserDoc?.data()!["events"] as? [DocumentReference] ?? []){ resultEvents in
                         oneUserObj.events = resultEvents
                         counterField += 1
                         if counterField == userFieldCount{
@@ -877,7 +1024,7 @@ class FirebaseController: NSObject,DatabaseProtocol{
                             }
                         }
                     }
-                    self.parseSpecificEvent(postRefArray: oneUserDoc?.data()!["events"] as? [DocumentReference] ?? []){ resultEventsJoined in
+                    self.parseSpecificEvent(eventRefArray: oneUserDoc?.data()!["eventJoined"] as? [DocumentReference] ?? []){ resultEventsJoined in
                         oneUserObj.eventJoined = resultEventsJoined
                         counterField += 1
                         if counterField == userFieldCount{
