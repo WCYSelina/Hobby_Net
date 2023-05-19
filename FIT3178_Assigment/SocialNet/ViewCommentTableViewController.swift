@@ -8,6 +8,9 @@
 import UIKit
 import FirebaseAuth
 class ViewCommentViewController: UIViewController,DatabaseListener,UITableViewDataSource,UITableViewDelegate{
+    func onYourEventChange(change: DatabaseChange, user: User?) {
+    }
+    
     func onEventChange(change: DatabaseChange, events: [Event]) {
     }
     

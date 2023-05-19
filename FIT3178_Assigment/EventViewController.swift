@@ -9,6 +9,9 @@ import UIKit
 import FirebaseAuth
 
 class EventViewController: UIViewController,DatabaseListener,UITableViewDataSource,UITableViewDelegate{
+    func onYourEventChange(change: DatabaseChange, user: User?) {
+    }
+    
     @IBOutlet weak var tableView: UITableView!
     var listenerType = ListenerType.event
     weak var databaseController:DatabaseProtocol?

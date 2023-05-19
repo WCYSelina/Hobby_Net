@@ -9,6 +9,9 @@ import UIKit
 import FirebaseAuth
 
 class SocialNetTableViewController: UITableViewController,DatabaseListener,UITextFieldDelegate{
+    func onYourEventChange(change: DatabaseChange, user: User?) {
+    }
+    
     func onEventChange(change: DatabaseChange, events: [Event]) {
     }
     

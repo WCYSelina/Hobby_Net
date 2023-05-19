@@ -17,6 +17,7 @@ enum DatabaseChange {
 }
 
 enum ListenerType{
+    case userEvents
     case event
     case post
     case comment
@@ -39,6 +40,7 @@ protocol DatabaseListener: AnyObject {
     func onPostChange(change: DatabaseChange, posts: [Post], defaultUser: User?)
     func onCommentChange(change:DatabaseChange, comments:[Comment])
     func onEventChange(change:DatabaseChange, events:[Event])
+    func onYourEventChange(change: DatabaseChange, user: User?)
 }
 
 protocol DatabaseProtocol: AnyObject {
@@ -58,6 +60,7 @@ protocol DatabaseProtocol: AnyObject {
     var currentDate:String?{get set}
     var startWeek:Date?{get set}
     var endWeek:Date?{get set}
+    func findCurrentUser() -> User
     var selectedImage: UIImage? {get set}
     var defaultEvent:Event? {get set}
     func onWeeklyChange(records:[Records])
@@ -66,6 +69,7 @@ protocol DatabaseProtocol: AnyObject {
     func addComment(commentDetail:String) -> Comment
     func addCommentToPost(comment:Comment, post:Post)
     func userJoinEvent(event:Event) -> Bool
+    func setupUserListener(completion: @escaping () -> Void)
     func addEvent(eventDate:Timestamp, eventDescription:String, eventLocation:String,eventName:String, showWeather:Bool) -> Event
     func uploadImageToStorage(folderPath:String, image:UIImage, completion:@escaping (String) -> Void)
     func addRecordToHobby(record: Records, hobby: Hobby) -> Bool

@@ -628,6 +628,11 @@
                     </view>
                     <tabBarItem key="tabBarItem" title="Item" id="eRK-vr-CUK"/>
                     <navigationItem key="navigationItem" title="Events" id="tTb-he-YQH">
+                        <barButtonItem key="leftBarButtonItem" title="Your Events" id="fuU-FF-6fT">
+                            <connections>
+                                <segue destination="DIL-cM-AbX" kind="show" id="GrP-mo-Do6"/>
+                            </connections>
+                        </barButtonItem>
                         <barButtonItem key="rightBarButtonItem" systemItem="add" id="BiG-2V-8BF">
                             <connections>
                                 <segue destination="tdx-Ky-Z8M" kind="show" id="vOq-tw-Ff6"/>
@@ -860,6 +865,62 @@
             </objects>
             <point key="canvasLocation" x="6423.6641221374039" y="916.90140845070425"/>
         </scene>
+        <!--Your Events-->
+        <scene sceneID="jnf-G4-XmA">
+            <objects>
+                <viewController id="DIL-cM-AbX" customClass="YourEventsViewController" customModule="FIT3178_Assignment" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="zhn-gx-6UD">
+                        <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <segmentedControl opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="plain" selectedSegmentIndex="0" translatesAutoresizingMaskIntoConstraints="NO" id="OxE-LP-QGP">
+                                <rect key="frame" x="20" y="111" width="353" height="32"/>
+                                <segments>
+                                    <segment title="Created Events"/>
+                                    <segment title="Joined Events"/>
+                                </segments>
+                                <connections>
+                                    <action selector="segmentedControlValueChanged:" destination="DIL-cM-AbX" eventType="valueChanged" id="tbY-Zg-CnI"/>
+                                </connections>
+                            </segmentedControl>
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="-1" estimatedSectionHeaderHeight="-1" sectionFooterHeight="-1" estimatedSectionFooterHeight="-1" translatesAutoresizingMaskIntoConstraints="NO" id="dUH-Hl-QGt">
+                                <rect key="frame" x="20" y="162" width="353" height="587"/>
+                                <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                                <prototypes>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="yourEventsIdentifier" id="m5w-uZ-DZn">
+                                        <rect key="frame" x="0.0" y="50" width="353" height="43.666667938232422"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="m5w-uZ-DZn" id="56N-8t-Ok6">
+                                            <rect key="frame" x="0.0" y="0.0" width="353" height="43.666667938232422"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                        </tableViewCellContentView>
+                                    </tableViewCell>
+                                </prototypes>
+                            </tableView>
+                        </subviews>
+                        <viewLayoutGuide key="safeArea" id="43i-H5-6oz"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                        <constraints>
+                            <constraint firstItem="dUH-Hl-QGt" firstAttribute="leading" secondItem="43i-H5-6oz" secondAttribute="leading" constant="20" id="4ve-6s-h53"/>
+                            <constraint firstItem="OxE-LP-QGP" firstAttribute="leading" secondItem="43i-H5-6oz" secondAttribute="leading" constant="20" id="FUI-P5-9rX"/>
+                            <constraint firstItem="43i-H5-6oz" firstAttribute="trailing" secondItem="dUH-Hl-QGt" secondAttribute="trailing" constant="20" id="dGr-dz-oWb"/>
+                            <constraint firstItem="dUH-Hl-QGt" firstAttribute="top" secondItem="OxE-LP-QGP" secondAttribute="bottom" constant="20" id="do4-h2-v1h"/>
+                            <constraint firstItem="43i-H5-6oz" firstAttribute="bottom" secondItem="dUH-Hl-QGt" secondAttribute="bottom" constant="20" id="hqX-jE-1IT"/>
+                            <constraint firstItem="43i-H5-6oz" firstAttribute="trailing" secondItem="OxE-LP-QGP" secondAttribute="trailing" constant="20" id="kL1-pD-tsF"/>
+                            <constraint firstItem="OxE-LP-QGP" firstAttribute="top" secondItem="43i-H5-6oz" secondAttribute="top" constant="8" id="ko4-pt-0Wv"/>
+                        </constraints>
+                    </view>
+                    <navigationItem key="navigationItem" title="Your Events" id="4pP-Ip-7kW"/>
+                    <connections>
+                        <outlet property="createJoinEvent" destination="OxE-LP-QGP" id="uVF-de-2nj"/>
+                        <outlet property="tableView" destination="dUH-Hl-QGt" id="aih-sJ-jh1"/>
+                        <segue destination="1GC-ts-xkz" kind="show" identifier="moreDetailsIdentifier2" id="VV8-Vd-IQq"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="YZQ-AB-iaF" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="4952" y="1655"/>
+        </scene>
         <!--More Detail Page-->
         <scene sceneID="xer-rO-9I9">
             <objects>
@@ -993,6 +1054,7 @@
         </scene>
     </scenes>
     <inferredMetricsTieBreakers>
+        <segue reference="VV8-Vd-IQq"/>
         <segue reference="c7a-Uh-hQf"/>
     </inferredMetricsTieBreakers>
     <resources>
