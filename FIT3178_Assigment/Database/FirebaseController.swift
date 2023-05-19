@@ -853,6 +853,20 @@ class FirebaseController: NSObject,DatabaseProtocol{
         return true
     }
     
+    func userJoinEvent(event:Event) -> Bool {
+        print("hhhh\(event)")
+        guard let eventID = event.id, let userID = self.defaultUser.id else {
+            return false
+        }
+
+        if let newEventRef = eventRef?.document(eventID) {
+            userRef?.document(userID).updateData(
+                ["eventsJoined" : FieldValue.arrayUnion([newEventRef])])
+        }
+        defaultUser.eventJoined.append(event)
+        return true
+    }
+    
     func setupEventListener(){
         eventRef = database.collection("event")
         eventRef?.addSnapshotListener() { (querySnapshot, error) in

@@ -111,6 +111,9 @@ class EventViewController: UIViewController,DatabaseListener,UITableViewDataSour
         tapGesture.event = event
         eventCell.moreDetails.addGestureRecognizer(tapGesture)
         
+        eventCell.joinEventButton.addTarget(self, action: #selector(joinEvent(_:)), for: .touchUpInside)
+        eventCell.joinEventButton.tag = indexPath.section
+        
         return eventCell
     }
     
@@ -119,6 +122,13 @@ class EventViewController: UIViewController,DatabaseListener,UITableViewDataSour
             databaseController?.defaultEvent = event
             performSegue(withIdentifier: "moreDetailsIdentifier", sender: event)
         }
+    }
+    
+    @objc func joinEvent(_ sender: UIButton){
+        let section = sender.tag
+        let event = eventList[section]
+        print("event")
+        let _ = databaseController?.userJoinEvent(event: event)
     }
 }
 
@@ -245,7 +255,7 @@ class CardTableViewCellForEvent: UITableViewCell {
 class MoreDetailPage:UIViewController{
     weak var databaseController:DatabaseProtocol?
     @IBOutlet weak var eventTitle: UILabel!
-    @IBOutlet weak var desText: UITextView!
+    @IBOutlet weak var desText: UILabel!
     @IBOutlet weak var date: UILabel!
     @IBOutlet weak var time: UILabel!
     @IBOutlet weak var location: UILabel!
@@ -271,7 +281,7 @@ class MoreDetailPage:UIViewController{
         }
         
         location.text = event?.eventLocation
-        weather.text = "\(event?.showWeather!)"
+        weather.text = "\(event!.showWeather!)"
     }
     
     
