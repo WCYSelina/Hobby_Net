@@ -636,8 +636,8 @@ class FirebaseController: NSObject,DatabaseProtocol{
                     }
                     if listener.listenerType == ListenerType.userEvents || listener.listenerType == ListenerType.all{
                         print("kkkk")
-                        if user.id == self.currentUser?.uid{
-                            listener.onYourEventChange(change: .update,user: user)
+                        if user.id == self.defaultUser.id{
+                            listener.onYourEventChange(change: .update,user: self.defaultUser)
                         }
                     }
                     completion()
@@ -756,6 +756,7 @@ class FirebaseController: NSObject,DatabaseProtocol{
                         }
                     }
                     else{
+                        
                         self.parseSpecificEvent(eventRefArray: eventJoinedRef!){ resultEventsJoined in
                             print("FFF")
                             parsedUser.eventJoined = resultEventsJoined
@@ -773,6 +774,9 @@ class FirebaseController: NSObject,DatabaseProtocol{
     }
     func addToUserList(change:DocumentChange,parsedUser:User, completion: @escaping () -> Void){
         let docRef = database.collection("user").document(parsedUser.id!)
+        if currentUser?.uid == parsedUser.id{
+            self.defaultUser = parsedUser
+        }
         docRef.getDocument{ (document, error) in
             if let document = document, document.exists{
                 if change.type == .added {

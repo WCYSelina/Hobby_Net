@@ -67,7 +67,7 @@ class YourEventsViewController: UIViewController,UITableViewDataSource,UITableVi
     
     
     @IBAction func segmentedControlValueChanged(_ sender: UISegmentedControl) {
-        print(defaultUser?.eventJoined)
+
         if sender.selectedSegmentIndex == 0{
             if let events = defaultUser?.events{
                 eventList = events
@@ -76,6 +76,7 @@ class YourEventsViewController: UIViewController,UITableViewDataSource,UITableVi
         }
         else{
             if let events = defaultUser?.eventJoined{
+                print("seg\(defaultUser?.eventJoined)")
                 eventList = events
                 tableView.reloadData()
             }
