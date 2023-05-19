@@ -69,6 +69,7 @@ protocol DatabaseProtocol: AnyObject {
     func addComment(commentDetail:String) -> Comment
     func addCommentToPost(comment:Comment, post:Post)
     func userJoinEvent(event:Event) -> Bool
+    func checkIfUserHasJoined(event:Event) -> Bool
     func setupUserListener(completion: @escaping () -> Void)
     func addEvent(eventDate:Timestamp, eventDescription:String, eventLocation:String,eventName:String, showWeather:Bool) -> Event
     func uploadImageToStorage(folderPath:String, image:UIImage, completion:@escaping (String) -> Void)

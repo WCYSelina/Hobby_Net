@@ -852,7 +852,9 @@
                             <constraint firstItem="ud9-No-XAn" firstAttribute="leading" secondItem="DtA-Zj-caP" secondAttribute="leading" constant="20" id="z3V-9w-Vmb"/>
                         </constraints>
                     </view>
-                    <navigationItem key="navigationItem" title="Create Event" id="iwk-cT-8NP"/>
+                    <navigationItem key="navigationItem" title="Create Event" id="iwk-cT-8NP">
+                        <barButtonItem key="rightBarButtonItem" title="Item" image="ellipsis" catalog="system" id="C7u-AZ-0hz"/>
+                    </navigationItem>
                     <connections>
                         <outlet property="eventDate" destination="BnW-C2-fSg" id="lzB-50-Ld0"/>
                         <outlet property="eventDescription" destination="7Mr-Ua-gnE" id="Zp7-lY-edr"/>
@@ -1059,6 +1061,7 @@
     </inferredMetricsTieBreakers>
     <resources>
         <image name="arrow.up.circle" catalog="system" width="128" height="123"/>
+        <image name="ellipsis" catalog="system" width="128" height="37"/>
         <image name="figure.wave" catalog="system" width="80" height="128"/>
         <image name="magazine.fill" catalog="system" width="110" height="128"/>
         <image name="person.2.fill" catalog="system" width="128" height="81"/>

@@ -57,28 +57,27 @@ class YourEventsViewController: UIViewController,UITableViewDataSource,UITableVi
 
             self.tableView.separatorStyle = .none
             self.tableView.register(CardTableViewCellForEvent.self, forCellReuseIdentifier: "yourEventsIdentifier")
-            self.createJoinEvent.selectedSegmentIndex = 0
+            if self.createJoinEvent.selectedSegmentIndex != 1{
+                self.createJoinEvent.selectedSegmentIndex = 0
+            }
             self.segmentedControlValueChanged(self.createJoinEvent)
         }
-
-
     }
     
     
     
     @IBAction func segmentedControlValueChanged(_ sender: UISegmentedControl) {
-        Task{
-            if sender.selectedSegmentIndex == 0{
-                if let events = defaultUser?.events{
-                    eventList = events
-                    tableView.reloadData()
-                }
+        print(defaultUser?.eventJoined)
+        if sender.selectedSegmentIndex == 0{
+            if let events = defaultUser?.events{
+                eventList = events
+                tableView.reloadData()
             }
-            else{
-                if let events = defaultUser?.eventJoined{
-                    eventList = events
-                    tableView.reloadData()
-                }
+        }
+        else{
+            if let events = defaultUser?.eventJoined{
+                eventList = events
+                tableView.reloadData()
             }
         }
     }
@@ -133,6 +132,14 @@ class YourEventsViewController: UIViewController,UITableViewDataSource,UITableVi
         tapGesture.event = event
         eventCell.moreDetails.addGestureRecognizer(tapGesture)
         
+        let userHasJoined = databaseController?.checkIfUserHasJoined(event: event)
+        if userHasJoined!{
+            eventCell.joinEventButton.setTitle("Unjoined Event", for:.normal)
+        }
+        else{
+            eventCell.joinEventButton.setTitle("Join Event", for:.normal)
+        }
+        
         eventCell.joinEventButton.addTarget(self, action: #selector(joinEvent(_:)), for: .touchUpInside)
         eventCell.joinEventButton.tag = indexPath.section
         
@@ -149,7 +156,6 @@ class YourEventsViewController: UIViewController,UITableViewDataSource,UITableVi
     @objc func joinEvent(_ sender: UIButton){
         let section = sender.tag
         let event = eventList[section]
-        print("event")
         let _ = databaseController?.userJoinEvent(event: event)
     }
     

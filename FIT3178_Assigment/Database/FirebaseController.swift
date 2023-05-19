@@ -13,6 +13,7 @@ import SwiftUI
 import FirebaseStorage
 
 class FirebaseController: NSObject,DatabaseProtocol{
+    
     var defaultEvent: Event?
     var email: String?
     var selectedImage: UIImage?
@@ -745,6 +746,7 @@ class FirebaseController: NSObject,DatabaseProtocol{
                     //decode the events that the user has joined
                     let eventJoinedRef = change.document.data()["eventsJoined"] as? [DocumentReference]
                     if eventJoinedRef == nil{
+                        print("KKK")
                         parsedUser.eventJoined = []
                         counter += 1
                         if counter == userFieldCount{
@@ -755,6 +757,7 @@ class FirebaseController: NSObject,DatabaseProtocol{
                     }
                     else{
                         self.parseSpecificEvent(eventRefArray: eventJoinedRef!){ resultEventsJoined in
+                            print("FFF")
                             parsedUser.eventJoined = resultEventsJoined
                             counter += 1
                             if counter == userFieldCount{
@@ -796,6 +799,28 @@ class FirebaseController: NSObject,DatabaseProtocol{
             completion() //return, finished executing
         }
     }
+    
+    func checkIfUserHasJoined(event:Event) -> Bool {
+        var returnVal = false
+        let oneUserRef = database.collection("user").document(self.defaultUser.id!)
+        let oneEvent = findEventByID(id: event.id!)
+        oneEvent?.participants?.forEach{ participant in
+            if participant.documentID == oneUserRef.documentID{
+                returnVal = true
+            }
+        }
+        return returnVal
+    }
+    
+    func findEventByID(id:String) -> Event?{
+        for list in eventList {
+            if list.id == id{
+                return list
+            }
+        }
+        return nil
+    }
+    
     func setupCommentListener(){
         commentRef = database.collection("comment")
     }
@@ -844,16 +869,37 @@ class FirebaseController: NSObject,DatabaseProtocol{
     }
     
     func userJoinEvent(event:Event) -> Bool {
-        print("hhhh\(event)")
         guard let eventID = event.id, let userID = self.defaultUser.id else {
             return false
         }
-
-        if let newEventRef = eventRef?.document(eventID) {
-            userRef?.document(userID).updateData(
-                ["eventsJoined" : FieldValue.arrayUnion([newEventRef])])
+        let oneUserRef = database.collection("user").document(self.defaultUser.id!)
+        let ifUserHasJoined =  checkIfUserHasJoined(event: event)
+        print(ifUserHasJoined)
+        if !ifUserHasJoined{
+            if let newEventRef = eventRef?.document(eventID) {
+                userRef?.document(userID).updateData(
+                    ["eventsJoined" : FieldValue.arrayUnion([newEventRef])])
+            }
+            
+            if let newParticipantRef = userRef?.document(userID){
+                eventRef?.document(eventID).updateData(
+                    ["participants" : FieldValue.arrayUnion([newParticipantRef])])
+            }
+            return true
         }
-        return true
+        else{
+                if let newEventRef = eventRef?.document(eventID) {
+                    userRef?.document(userID).updateData(
+                        ["eventsJoined" : FieldValue.arrayRemove([newEventRef])])
+                }
+                
+                if let newParticipantRef = userRef?.document(userID){
+                    eventRef?.document(eventID).updateData(
+                        ["participants" : FieldValue.arrayRemove([newParticipantRef])])
+                }
+                return true
+        }
+        return false
     }
     
     func setupEventListener(){

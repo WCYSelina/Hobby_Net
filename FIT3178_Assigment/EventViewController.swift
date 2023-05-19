@@ -114,10 +114,17 @@ class EventViewController: UIViewController,DatabaseListener,UITableViewDataSour
         tapGesture.event = event
         eventCell.moreDetails.addGestureRecognizer(tapGesture)
         
-        eventCell.joinEventButton.addTarget(self, action: #selector(joinEvent(_:)), for: .touchUpInside)
-        eventCell.joinEventButton.tag = indexPath.section
-        
-        return eventCell
+            let userHasJoined = databaseController?.checkIfUserHasJoined(event: event)
+            if userHasJoined!{
+                eventCell.joinEventButton.setTitle("Unjoined Event", for:.normal)
+            }
+            else{
+                eventCell.joinEventButton.setTitle("Join Event", for:.normal)
+            }
+            
+            eventCell.joinEventButton.addTarget(self, action: #selector(self.joinEvent(_:)), for: .touchUpInside)
+            eventCell.joinEventButton.tag = indexPath.section
+            return eventCell
     }
     
     @objc func moreDetailTapped(_ sender: CustomTapGesture){
@@ -130,7 +137,6 @@ class EventViewController: UIViewController,DatabaseListener,UITableViewDataSour
     @objc func joinEvent(_ sender: UIButton){
         let section = sender.tag
         let event = eventList[section]
-        print("event")
         let _ = databaseController?.userJoinEvent(event: event)
     }
 }
@@ -195,7 +201,6 @@ class CardTableViewCellForEvent: UITableViewCell {
         moreDetails.translatesAutoresizingMaskIntoConstraints = false
         contentView.addSubview(moreDetails)
         
-        joinEventButton.setTitle("Join Event", for: .normal)
         joinEventButton.layer.cornerRadius = 10
         joinEventButton.setTitleColor(UIColor.white, for: .normal)
         joinEventButton.backgroundColor = .systemBlue
