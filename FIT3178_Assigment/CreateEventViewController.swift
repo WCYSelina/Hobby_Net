@@ -24,7 +24,7 @@ class CreateEventViewController: UIViewController {
         let date = Timestamp(date: eventDate.date)
         if let eventDes = eventDescription.text,let location = eventLocation.text, let name = eventName.text, let isShowWeather = showWeather{
             let _ = databaseController?.addEvent(eventDate: date, eventDescription: eventDes, eventLocation: location, eventName: name, showWeather: isShowWeather.isOn)
-            self.dismiss(animated: true)
+            navigationController?.popViewController(animated: true)
         }
         else{
             displayMessage(title: "Error", message: "Please ensure that you have filled the information")

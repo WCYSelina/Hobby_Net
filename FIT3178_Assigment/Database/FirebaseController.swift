@@ -13,6 +13,7 @@ import SwiftUI
 import FirebaseStorage
 
 class FirebaseController: NSObject,DatabaseProtocol{
+    var defaultEvent: Event?
     var email: String?
     var selectedImage: UIImage?
     var startWeek: Date?
@@ -824,6 +825,7 @@ class FirebaseController: NSObject,DatabaseProtocol{
                 event.id = eventRef.documentID
 //                self.defaultHobby.records.append(record)
                 let _ = addEventToUser(event: event)
+                eventList.append(event)
             }
         } catch {
             print("Failed to serialize hero")
@@ -843,11 +845,11 @@ class FirebaseController: NSObject,DatabaseProtocol{
                 ["events" : FieldValue.arrayUnion([newEventRef])])
         }
         defaultUser.events.append(event)
-//        self.listeners.invoke{ listener in
-//            if listener.listenerType == ListenerType.record || listener.listenerType == ListenerType.all {
-//                listener.onHobbyChange(change: .update, hobbies: self.defaultUser.hobbies)
-//            }
-//        }
+        self.listeners.invoke{ listener in
+            if listener.listenerType == ListenerType.event || listener.listenerType == ListenerType.all {
+                listener.onEventChange(change: .update, events: eventList)
+            }
+        }
         return true
     }
     

@@ -318,6 +318,7 @@ class CustomButton: UIButton {
 
 class CustomTapGesture: UITapGestureRecognizer {
     var post: Post?
+    var event:Event?
 }
 
                                                 

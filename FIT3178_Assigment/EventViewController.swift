@@ -13,8 +13,8 @@ class EventViewController: UIViewController,DatabaseListener,UITableViewDataSour
     var listenerType = ListenerType.event
     weak var databaseController:DatabaseProtocol?
     func onEventChange(change: DatabaseChange, events: [Event]) {
-        print("event")
         eventList = events
+        tableView.reloadData()
     }
     
     func onPostChange(change: DatabaseChange, posts: [Post], defaultUser:User?) {
@@ -94,21 +94,31 @@ class EventViewController: UIViewController,DatabaseListener,UITableViewDataSour
         eventCell.eventTitle.text = event.eventName
         eventCell.descriptionLabel.text = "Description: \(event.eventDescription!)"
         
-        
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "dd-MMM-yyyy"
         let eventDate = event.eventDate?.dateValue()
         if let date = eventDate{
             let dateString = dateFormatter.string(from:date)
             eventCell.eventDate.text = "Date: \(dateString)"
-            dateFormatter.dateFormat = "HH:MM"
+            dateFormatter.dateFormat = "HH:mm"
             let timeString = dateFormatter.string(from:date)
             eventCell.eventTime.text = "Time: \(timeString)"
         }
         eventCell.eventLocation.text = "Location: \(event.eventLocation!)"
         eventCell.weather.text = "Weather: \(event.showWeather!)"
         
+        let tapGesture = CustomTapGesture(target: self, action: #selector(moreDetailTapped(_:)))
+        tapGesture.event = event
+        eventCell.moreDetails.addGestureRecognizer(tapGesture)
+        
         return eventCell
+    }
+    
+    @objc func moreDetailTapped(_ sender: CustomTapGesture){
+        if let event = sender.event{
+            databaseController?.defaultEvent = event
+            performSegue(withIdentifier: "moreDetailsIdentifier", sender: event)
+        }
     }
 }
 
@@ -121,6 +131,7 @@ class CardTableViewCellForEvent: UITableViewCell {
     let weather = UILabel()
     let joinEventButton = UIButton(type: .system)
     let subscribeButton = UIButton()
+    let moreDetails = UILabel()
 
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -140,7 +151,7 @@ class CardTableViewCellForEvent: UITableViewCell {
         // Configure description label
         descriptionLabel.font = UIFont.systemFont(ofSize: 15)
         descriptionLabel.tintColor = .lightGray
-        descriptionLabel.numberOfLines = 0
+        descriptionLabel.numberOfLines = 3
         descriptionLabel.translatesAutoresizingMaskIntoConstraints = false
         contentView.addSubview(descriptionLabel)
         
@@ -163,6 +174,13 @@ class CardTableViewCellForEvent: UITableViewCell {
         weather.tintColor = .lightGray
         weather.translatesAutoresizingMaskIntoConstraints = false
         contentView.addSubview(weather)
+        
+        moreDetails.text = "More Details"
+        moreDetails.isUserInteractionEnabled = true
+        moreDetails.textColor = .systemBlue
+        moreDetails.font = UIFont.systemFont(ofSize: 12)
+        moreDetails.translatesAutoresizingMaskIntoConstraints = false
+        contentView.addSubview(moreDetails)
         
         joinEventButton.setTitle("Join Event", for: .normal)
         joinEventButton.layer.cornerRadius = 10
@@ -201,7 +219,10 @@ class CardTableViewCellForEvent: UITableViewCell {
             
             weather.topAnchor.constraint(equalTo: eventLocation.bottomAnchor, constant: 8),
             weather.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 8),
-            weather.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -8),
+            weather.trailingAnchor.constraint(equalTo: moreDetails.leadingAnchor, constant: -8),
+            
+            moreDetails.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -8),
+            moreDetails.centerYAnchor.constraint(equalTo: weather.centerYAnchor),
             
             joinEventButton.topAnchor.constraint(equalTo: weather.bottomAnchor, constant: 8),
             joinEventButton.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 8),
@@ -220,4 +241,42 @@ class CardTableViewCellForEvent: UITableViewCell {
         fatalError("init(coder:) has not been implemented")
     }
 }
+
+class MoreDetailPage:UIViewController{
+    weak var databaseController:DatabaseProtocol?
+    @IBOutlet weak var eventTitle: UILabel!
+    @IBOutlet weak var desText: UITextView!
+    @IBOutlet weak var date: UILabel!
+    @IBOutlet weak var time: UILabel!
+    @IBOutlet weak var location: UILabel!
+    @IBOutlet weak var weather: UILabel!
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        let appDelegate = UIApplication.shared.delegate as? AppDelegate
+        databaseController = appDelegate?.databaseController
+        let event = databaseController?.defaultEvent
+        eventTitle.text = event?.eventName
+        desText.text = event?.eventDescription
+        
+        let eventDate = event?.eventDate?.dateValue()
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "dd-MMM-yyyy"
+        if let date = eventDate{
+            let dateString = dateFormatter.string(from:date)
+            self.date.text = "Date: \(dateString)"
+            dateFormatter.dateFormat = "HH:mm"
+            let timeString = dateFormatter.string(from:date)
+            time.text = "Time: \(timeString)"
+        }
+        
+        location.text = event?.eventLocation
+        weather.text = "\(event?.showWeather!)"
+    }
+    
+    
+    
+}
+
+
 
