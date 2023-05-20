@@ -7,6 +7,7 @@
 
 import UIKit
 import FirebaseAuth
+import CoreLocation
 
 class EventViewController: UIViewController,DatabaseListener,UITableViewDataSource,UITableViewDelegate{
     func onYourEventChange(change: DatabaseChange, user: User?) {
@@ -269,6 +270,8 @@ class MoreDetailPage:UIViewController{
     @IBOutlet weak var location: UILabel!
     @IBOutlet weak var weather: UILabel!
     
+    let geocoder = CLGeocoder()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         let appDelegate = UIApplication.shared.delegate as? AppDelegate
@@ -289,11 +292,61 @@ class MoreDetailPage:UIViewController{
         }
         
         location.text = event?.eventLocation
+        geocoder.geocodeAddressString((event?.eventLocation)!) { (placemarks, error) in
+            if let error = error {
+                print("Error: \(error)")
+            } else if let placemark = placemarks?.first {
+                let location = placemark.location
+                self.getWeather(location: location!, date: eventDate!)
+            } else {
+                print("No location found")
+            }
+        }
         weather.text = "\(event!.showWeather!)"
     }
     
     
-    
+    func getWeather(location: CLLocation,date:Date){
+        let lat = location.coordinate.latitude
+        let long = location.coordinate.longitude
+        let calendar = Calendar.current
+        let components = calendar.dateComponents([.day], from: Date(),to: date)
+        print(components.day)
+        print("\(lat) \(long)")
+        let url =  URL(string:"https://api.openweathermap.org/data/2.5/forecast/daily?lat=\(lat)&lon=\(long)&cnt=\(components.day!+1)&appid=c5fee144acaea76473685a10dc4069b9")
+        let task = URLSession.shared.dataTask(with:url!) {(data,response,error) in
+            if let data = data{
+                do{
+                    print("heyyyy")
+                    let json = try JSONSerialization.jsonObject(with: data, options: .mutableContainers) as! [String:Any]
+                    let list = json["list"] as! [[String:Any]]
+                    let weather = list[components.day!]["weather"] as? [[String:Any]]
+                    if let weatherItem = weather?.first{
+                        let weatherDescription = weatherItem["description"] as? String
+                        print(weatherDescription)
+                    }
+                    let temp = list[components.day!]["temp"] as? [String:Any]
+                    if let minTemp = temp!["min"] as? Double {
+                        print("Min Temperature: \(minTemp) K")
+                    }
+                    if let maxTemp = temp!["max"] as? Double {
+                        print("Max Temperature: \(maxTemp) K")
+                    }
+                    if let sunrise = json["sunrise"] as? Int{
+                        let sunriseDate = Date(timeIntervalSince1970: TimeInterval(sunrise))
+                        print("Sunrise Time: \(sunriseDate)")
+                    }
+                    if let sunset = json["sunset"] as? Int {
+                        let sunsetDate = Date(timeIntervalSince1970: TimeInterval(sunset))
+                        print("Sunset Time: \(sunsetDate)")
+                    }
+                } catch{
+                    print("Failed to parse weather")
+                }
+            }
+        }
+        task.resume()
+    }
 }
 
 
