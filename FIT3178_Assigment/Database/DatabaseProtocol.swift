@@ -71,6 +71,9 @@ protocol DatabaseProtocol: AnyObject {
     func userJoinEvent(event:Event) -> Bool
     func checkIfUserHasJoined(event:Event) -> Bool
     func setupUserListener(completion: @escaping () -> Void)
+    func checkIfSubscribed(event:Event) -> String?
+    func removeSubscription(subscriptionId:String)
+    func addSubcription(subscriptionId:String) -> Bool
     func addEvent(eventDate:Timestamp, eventDescription:String, eventLocation:String,eventName:String, showWeather:Bool) -> Event
     func uploadImageToStorage(folderPath:String, image:UIImage, completion:@escaping (String) -> Void)
     func addRecordToHobby(record: Records, hobby: Hobby) -> Bool

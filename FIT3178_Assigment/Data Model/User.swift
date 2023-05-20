@@ -16,5 +16,6 @@ struct User: Codable{
     var likes:[Post] = []
     var events:[Event] = []
     var eventJoined:[Event] = []
+    var subscriptionID:[String]?
     
 }

@@ -397,6 +397,25 @@ class FirebaseController: NSObject,DatabaseProtocol{
         return true
     }
     
+
+    func addSubcription(subscriptionId:String) -> Bool {
+        guard let userID = self.defaultUser.id else {
+            return false
+        }
+
+        userRef?.document(userID).updateData(
+            ["subscriptions" : FieldValue.arrayUnion([subscriptionId])])
+        return true
+    }
+    
+    func removeSubscription(subscriptionId:String){
+        guard let userID = self.defaultUser.id else {
+            return
+        }
+
+        userRef?.document(userID).updateData(
+            ["subscriptions" : FieldValue.arrayRemove([subscriptionId])])
+    }
     func deleteLikeFromUser(like:Post) -> Bool {
         guard let postID = like.id, let userID = self.defaultUser.id else {
             return false
@@ -643,6 +662,27 @@ class FirebaseController: NSObject,DatabaseProtocol{
             }
         }
     }
+    func checkIfSubscribed(event:Event) -> String?{
+        var isSubscribed = false
+        var returnVal:String = ""
+        defaultUser.subscriptionID?.forEach{ id in
+            if id.contains(event.id!){
+                isSubscribed = true
+                returnVal = id
+            }
+        }
+        if isSubscribed{
+            return returnVal
+        }
+        else{
+            return nil
+        }
+    }
+    
+     
+    
+
+    
     func parseUserSnapshot(snapshot: QuerySnapshot, completion: @escaping (User) -> Void){
         var counter = 0
         let userFieldCount = 5
@@ -652,7 +692,7 @@ class FirebaseController: NSObject,DatabaseProtocol{
                 if currentUser?.uid == change.document.documentID{
                     parsedUser.id = change.document.documentID
                     parsedUser.name = change.document.data()["name"] as? String
-                    
+                    parsedUser.subscriptionID = change.document.data()["subscriptions"] as? [String]
                     //decode user's hobby
                     let hobbyRef = change.document.data()["hobbies"] as? [DocumentReference]
                     if hobbyRef == nil{
@@ -681,7 +721,8 @@ class FirebaseController: NSObject,DatabaseProtocol{
                     if postRef == nil{
                         counter += 1
                         if counter == userFieldCount{
-                            self.addToUserList(change: change, parsedUser: parsedUser){                                completion(parsedUser)
+                            self.addToUserList(change: change, parsedUser: parsedUser){
+                                completion(parsedUser)
                             }
                         }
                     }
@@ -768,6 +809,7 @@ class FirebaseController: NSObject,DatabaseProtocol{
             }
         }
     }
+    
     func addToUserList(change:DocumentChange,parsedUser:User, completion: @escaping () -> Void){
         let docRef = database.collection("user").document(parsedUser.id!)
         if currentUser?.uid == parsedUser.id{

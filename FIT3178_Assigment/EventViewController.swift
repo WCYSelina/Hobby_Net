@@ -8,12 +8,14 @@
 import UIKit
 import FirebaseAuth
 import CoreLocation
-
-class EventViewController: UIViewController,DatabaseListener,UITableViewDataSource,UITableViewDelegate{
+import UserNotifications
+class EventViewController: UIViewController,DatabaseListener,UITableViewDataSource,UITableViewDelegate,UNUserNotificationCenterDelegate{
     func onYourEventChange(change: DatabaseChange, user: User?) {
     }
     
     @IBOutlet weak var tableView: UITableView!
+    // Base identifier for the notification
+    let notificationIdentifierBase = "subscriptionNotification"
     var listenerType = ListenerType.event
     weak var databaseController:DatabaseProtocol?
     func onEventChange(change: DatabaseChange, events: [Event]) {
@@ -48,13 +50,26 @@ class EventViewController: UIViewController,DatabaseListener,UITableViewDataSour
     func onNoteChange(change: DatabaseChange, notes: [Notes]) {
     }
     
-    
+    var eventDateString:String?
+    var eventTimeString:String?
     var eventList:[Event] = []
     override func viewDidLoad() {
         super.viewDidLoad()
         // Set the table view's delegate and data source
         tableView.delegate = self
         tableView.dataSource = self
+
+        // Request permission to display alerts and play sounds.
+        let center = UNUserNotificationCenter.current()
+        center.delegate = self
+        center.requestAuthorization(options: [.alert, .sound]) { (granted, error) in
+            if granted {
+                print("Notification access granted")
+                print("ddddd")
+            } else {
+                print("Notification access denied")
+            }
+        }
         
         let appDelegate = UIApplication.shared.delegate as? AppDelegate
         databaseController = appDelegate?.databaseController
@@ -63,6 +78,11 @@ class EventViewController: UIViewController,DatabaseListener,UITableViewDataSour
         tableView.separatorColor = UIColor.gray // Customize the separator color
         tableView.separatorInset = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 16) // Customize the separator insets
         tableView.register(CardTableViewCellForEvent.self, forCellReuseIdentifier: "eventCell")
+    }
+    func userNotificationCenter(_ center: UNUserNotificationCenter,
+        willPresent notification: UNNotification,
+        withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
+            completionHandler([.banner, .sound])
     }
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
@@ -102,11 +122,11 @@ class EventViewController: UIViewController,DatabaseListener,UITableViewDataSour
         dateFormatter.dateFormat = "dd-MMM-yyyy"
         let eventDate = event.eventDate?.dateValue()
         if let date = eventDate{
-            let dateString = dateFormatter.string(from:date)
-            eventCell.eventDate.text = "Date: \(dateString)"
+            eventDateString = dateFormatter.string(from:date)
+            eventCell.eventDate.text = "Date: \(eventDateString!)"
             dateFormatter.dateFormat = "HH:mm"
-            let timeString = dateFormatter.string(from:date)
-            eventCell.eventTime.text = "Time: \(timeString)"
+            eventTimeString = dateFormatter.string(from:date)
+            eventCell.eventTime.text = "Time: \(eventTimeString!)"
         }
         eventCell.eventLocation.text = "Location: \(event.eventLocation!)"
         eventCell.weather.text = "Weather: \(event.showWeather!)"
@@ -114,18 +134,21 @@ class EventViewController: UIViewController,DatabaseListener,UITableViewDataSour
         let tapGesture = CustomTapGesture(target: self, action: #selector(moreDetailTapped(_:)))
         tapGesture.event = event
         eventCell.moreDetails.addGestureRecognizer(tapGesture)
+
+        let userHasJoined = databaseController?.checkIfUserHasJoined(event: event)
+        if userHasJoined!{
+            eventCell.joinEventButton.setTitle("Unjoined Event", for:.normal)
+        }
+        else{
+            eventCell.joinEventButton.setTitle("Join Event", for:.normal)
+        }
         
-            let userHasJoined = databaseController?.checkIfUserHasJoined(event: event)
-            if userHasJoined!{
-                eventCell.joinEventButton.setTitle("Unjoined Event", for:.normal)
-            }
-            else{
-                eventCell.joinEventButton.setTitle("Join Event", for:.normal)
-            }
-            
-            eventCell.joinEventButton.addTarget(self, action: #selector(self.joinEvent(_:)), for: .touchUpInside)
-            eventCell.joinEventButton.tag = indexPath.section
-            return eventCell
+        eventCell.joinEventButton.addTarget(self, action: #selector(self.joinEvent(_:)), for: .touchUpInside)
+        eventCell.joinEventButton.tag = indexPath.section
+        
+        eventCell.subscribeButton.addTarget(self, action: #selector(subscribeButtonClick(_:)), for: .touchUpInside)
+        eventCell.subscribeButton.tag = indexPath.section
+        return eventCell
     }
     
     @objc func moreDetailTapped(_ sender: CustomTapGesture){
@@ -140,7 +163,66 @@ class EventViewController: UIViewController,DatabaseListener,UITableViewDataSour
         let event = eventList[section]
         let _ = databaseController?.userJoinEvent(event: event)
     }
+    
+    @objc func subscribeButtonClick(_ sender:UIButton){
+        let section = sender.tag
+        let event = eventList[section]
+        let oldId = databaseController?.checkIfSubscribed(event: event)
+        if oldId == nil{
+            let subscriptionID = event.id!+UUID().uuidString
+            let _ = databaseController?.addSubcription(subscriptionId: subscriptionID)
+            scheduleNoticifation(for: subscriptionID, event: event)
+            displayMessage(title: "Successful Subscribe", message: "Message will be pushed to you an hour before before the events")
+        }
+        else{
+            databaseController?.removeSubscription(subscriptionId: oldId!)
+            removeNotification(for: oldId!)
+            displayMessage(title: "Subscription Removed", message: "Message will no longer push to you until you subscribe again")
+        }
+    }
+    
+    func scheduleNoticifation(for subscriptionID: String, event:Event){
+        let center = UNUserNotificationCenter.current()
+
+        // Prepare the notification content
+        let content = UNMutableNotificationContent()
+        content.title = "Reminder of the event \(event.eventName!)"
+        content.body = "Don't forget about the event in an hour at \(event.eventLocation!)"
+        content.sound = .default
+        
+        let reminderDate = Calendar.current.date(byAdding: .hour, value: -1, to: (event.eventDate?.dateValue())!)!
+        let components = Calendar.current.dateComponents([.year, .month, .day, .hour, .minute], from: reminderDate)
+        let trigger = UNCalendarNotificationTrigger(dateMatching: components, repeats: true)
+        print("done")
+        // Create a request and add it to the notification center
+        let notificationIdentifier = "\(notificationIdentifierBase)-\(subscriptionID)"
+        let request = UNNotificationRequest(identifier: notificationIdentifier, content: content, trigger: trigger)
+        center.add(request) { (error) in
+            if let error = error {
+                // Handle the error
+                print("Notification Error: ", error)
+            }
+            else{
+                print("Success???")
+            }
+        }
+    }
+    
+    func removeNotification(for subscriptionId: String) {
+        let center = UNUserNotificationCenter.current()
+        let notificationIdentifier = "\(notificationIdentifierBase)-\(subscriptionId)"
+        center.removePendingNotificationRequests(withIdentifiers: [notificationIdentifier])
+    }
+    func displayMessage(title:String,message:String){
+        let alertController = UIAlertController(title: title, message: message,
+        preferredStyle: .alert)
+        alertController.addAction(UIAlertAction(title: "Dismiss", style: .default,
+        handler: nil))
+        self.present(alertController, animated: true, completion: nil)
+    }
+
 }
+
 
 class CardTableViewCellForEvent: UITableViewCell {
     let eventTitle = UILabel()
