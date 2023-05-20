@@ -631,11 +631,9 @@ class FirebaseController: NSObject,DatabaseProtocol{
             self.parseUserSnapshot(snapshot: querySnapshot){ user in
                 self.listeners.invoke { (listener) in
                     if listener.listenerType == ListenerType.hobby || listener.listenerType == ListenerType.all {
-                        print("hhhh")
                         listener.onHobbyChange(change: .update, hobbies: user.hobbies)
                     }
                     if listener.listenerType == ListenerType.userEvents || listener.listenerType == ListenerType.all{
-                        print("kkkk")
                         if user.id == self.defaultUser.id{
                             listener.onYourEventChange(change: .update,user: self.defaultUser)
                         }
@@ -746,7 +744,6 @@ class FirebaseController: NSObject,DatabaseProtocol{
                     //decode the events that the user has joined
                     let eventJoinedRef = change.document.data()["eventsJoined"] as? [DocumentReference]
                     if eventJoinedRef == nil{
-                        print("KKK")
                         parsedUser.eventJoined = []
                         counter += 1
                         if counter == userFieldCount{
@@ -758,7 +755,6 @@ class FirebaseController: NSObject,DatabaseProtocol{
                     else{
                         
                         self.parseSpecificEvent(eventRefArray: eventJoinedRef!){ resultEventsJoined in
-                            print("FFF")
                             parsedUser.eventJoined = resultEventsJoined
                             counter += 1
                             if counter == userFieldCount{

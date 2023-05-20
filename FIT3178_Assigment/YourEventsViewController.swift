@@ -76,7 +76,6 @@ class YourEventsViewController: UIViewController,UITableViewDataSource,UITableVi
         }
         else{
             if let events = defaultUser?.eventJoined{
-                print("seg\(defaultUser?.eventJoined)")
                 eventList = events
                 tableView.reloadData()
             }
