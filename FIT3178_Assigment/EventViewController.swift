@@ -268,12 +268,18 @@ class MoreDetailPage:UIViewController{
     @IBOutlet weak var date: UILabel!
     @IBOutlet weak var time: UILabel!
     @IBOutlet weak var location: UILabel!
-    @IBOutlet weak var weather: UILabel!
-    
+    @IBOutlet weak var minTemp: UILabel!
+    @IBOutlet weak var maxTemp: UILabel!
+    @IBOutlet weak var weatherDes: UILabel!
+    @IBOutlet weak var sunriseTime: UILabel!
+    @IBOutlet weak var sunsetTime: UILabel!
+    @IBOutlet weak var weatherView: UIView!
     let geocoder = CLGeocoder()
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        weatherView.layer.cornerRadius = 10
+        view.addSubview(weatherView)
         let appDelegate = UIApplication.shared.delegate as? AppDelegate
         databaseController = appDelegate?.databaseController
         let event = databaseController?.defaultEvent
@@ -285,10 +291,10 @@ class MoreDetailPage:UIViewController{
         dateFormatter.dateFormat = "dd-MMM-yyyy"
         if let date = eventDate{
             let dateString = dateFormatter.string(from:date)
-            self.date.text = "Date: \(dateString)"
+            self.date.text = "\(dateString)"
             dateFormatter.dateFormat = "HH:mm"
             let timeString = dateFormatter.string(from:date)
-            time.text = "Time: \(timeString)"
+            time.text = "Event Time: \(timeString)"
         }
         
         location.text = event?.eventLocation
@@ -302,7 +308,6 @@ class MoreDetailPage:UIViewController{
                 print("No location found")
             }
         }
-        weather.text = "\(event!.showWeather!)"
     }
     
     
@@ -311,34 +316,38 @@ class MoreDetailPage:UIViewController{
         let long = location.coordinate.longitude
         let calendar = Calendar.current
         let components = calendar.dateComponents([.day], from: Date(),to: date)
-        print(components.day)
         print("\(lat) \(long)")
-        let url =  URL(string:"https://api.openweathermap.org/data/2.5/forecast/daily?lat=\(lat)&lon=\(long)&cnt=\(components.day!+1)&appid=c5fee144acaea76473685a10dc4069b9")
+        let url =  URL(string:"https://api.openweathermap.org/data/2.5/forecast/daily?lat=\(lat)&lon=\(long)&cnt=\(components.day!+1)&appid=c5fee144acaea76473685a10dc4069b9&units=metric")
         let task = URLSession.shared.dataTask(with:url!) {(data,response,error) in
             if let data = data{
                 do{
                     print("heyyyy")
                     let json = try JSONSerialization.jsonObject(with: data, options: .mutableContainers) as! [String:Any]
                     let list = json["list"] as! [[String:Any]]
-                    let weather = list[components.day!]["weather"] as? [[String:Any]]
-                    if let weatherItem = weather?.first{
-                        let weatherDescription = weatherItem["description"] as? String
-                        print(weatherDescription)
-                    }
-                    let temp = list[components.day!]["temp"] as? [String:Any]
-                    if let minTemp = temp!["min"] as? Double {
-                        print("Min Temperature: \(minTemp) K")
-                    }
-                    if let maxTemp = temp!["max"] as? Double {
-                        print("Max Temperature: \(maxTemp) K")
-                    }
-                    if let sunrise = json["sunrise"] as? Int{
-                        let sunriseDate = Date(timeIntervalSince1970: TimeInterval(sunrise))
-                        print("Sunrise Time: \(sunriseDate)")
-                    }
-                    if let sunset = json["sunset"] as? Int {
-                        let sunsetDate = Date(timeIntervalSince1970: TimeInterval(sunset))
-                        print("Sunset Time: \(sunsetDate)")
+                    DispatchQueue.main.async {
+                        let weather = list[components.day!]["weather"] as? [[String:Any]]
+                        if let weatherItem = weather?.first{
+                            self.weatherDes.text = weatherItem["description"] as? String
+                        }
+                    
+                        let temp = list[components.day!]["temp"] as? [String:Any]
+                        if let minTemp = temp!["min"] as? Double {
+                            self.minTemp.text = "\(minTemp) °C"
+                        }
+                        if let maxTemp = temp!["max"] as? Double {
+                            self.maxTemp.text = "\(maxTemp) °C"
+                        }
+                        let dateFormatter = DateFormatter()
+                        dateFormatter.dateFormat = "HH:mm"
+                        if let sunrise = list[components.day!]["sunrise"] as? Int{
+                            let sunriseDate = Date(timeIntervalSince1970: TimeInterval(sunrise))
+                            self.sunriseTime.text = dateFormatter.string(from: sunriseDate)
+                            print("\(sunriseDate)")
+                        }
+                        if let sunset = list[components.day!]["sunset"] as? Int {
+                            let sunsetDate = Date(timeIntervalSince1970: TimeInterval(sunset))
+                            self.sunsetTime.text = dateFormatter.string(from: sunsetDate)
+                        }
                     }
                 } catch{
                     print("Failed to parse weather")
