@@ -38,6 +38,8 @@
 		6A7A18BA2A0F686000C33B62 /* SheetAddPostViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A7A18B92A0F686000C33B62 /* SheetAddPostViewController.swift */; };
 		6A8BADF12A08988700CBAF9B /* SelectPhotosViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A8BADF02A08988700CBAF9B /* SelectPhotosViewController.swift */; };
 		6A8C9CF42A0DF6B200EA84E6 /* UserAccViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A8C9CF32A0DF6B200EA84E6 /* UserAccViewController.swift */; };
+		6A8E89E02A237F130007B9BF /* PageContainerViewControlller.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A8E89DF2A237F130007B9BF /* PageContainerViewControlller.swift */; };
+		6A8E89E22A2380690007B9BF /* PageViewTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A8E89E12A2380690007B9BF /* PageViewTableViewCell.swift */; };
 		6A9B56B52A10D41300FB28A3 /* ViewCommentTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A9B56B42A10D41300FB28A3 /* ViewCommentTableViewController.swift */; };
 		6AB99CE42A0FB02400544DD6 /* SocialNetTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6AB99CE32A0FB02400544DD6 /* SocialNetTableViewController.swift */; };
 		6ABD73432A0E847700FBC5A1 /* Comment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6ABD73422A0E847700FBC5A1 /* Comment.swift */; };
@@ -74,6 +76,8 @@
 		6A7A18B92A0F686000C33B62 /* SheetAddPostViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SheetAddPostViewController.swift; sourceTree = "<group>"; };
 		6A8BADF02A08988700CBAF9B /* SelectPhotosViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectPhotosViewController.swift; sourceTree = "<group>"; };
 		6A8C9CF32A0DF6B200EA84E6 /* UserAccViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserAccViewController.swift; sourceTree = "<group>"; };
+		6A8E89DF2A237F130007B9BF /* PageContainerViewControlller.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PageContainerViewControlller.swift; sourceTree = "<group>"; };
+		6A8E89E12A2380690007B9BF /* PageViewTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PageViewTableViewCell.swift; sourceTree = "<group>"; };
 		6A9B56B42A10D41300FB28A3 /* ViewCommentTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewCommentTableViewController.swift; sourceTree = "<group>"; };
 		6AB99CE32A0FB02400544DD6 /* SocialNetTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SocialNetTableViewController.swift; sourceTree = "<group>"; };
 		6ABD73422A0E847700FBC5A1 /* Comment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Comment.swift; sourceTree = "<group>"; };
@@ -175,6 +179,8 @@
 				6A4CF19A29F58EC3004F5BFD /* AddRecordViewController.swift */,
 				6A14BD6929F6567C0099C45D /* SheetAddRecordViewController.swift */,
 				6A48D0A82A07622300D36CBD /* WeeklyRecordViewController.swift */,
+				6A8E89DF2A237F130007B9BF /* PageContainerViewControlller.swift */,
+				6A8E89E12A2380690007B9BF /* PageViewTableViewCell.swift */,
 			);
 			path = Hobby;
 			sourceTree = "<group>";
@@ -285,6 +291,7 @@
 				6A4CF15F29F4DAE9004F5BFD /* SheetViewController.swift in Sources */,
 				6A561D9B29F4105000138ABE /* AppDelegate.swift in Sources */,
 				6A4CF19929F5801A004F5BFD /* ViewHobbyPage.swift in Sources */,
+				6A8E89E22A2380690007B9BF /* PageViewTableViewCell.swift in Sources */,
 				6AB99CE42A0FB02400544DD6 /* SocialNetTableViewController.swift in Sources */,
 				6A62E6992A173FA40070FF3B /* YourEventsViewController.swift in Sources */,
 				6A4CF15D29F4D889004F5BFD /* HobbyTableViewController.swift in Sources */,
@@ -292,6 +299,7 @@
 				6A48A37D29F7FA7700F9BC55 /* MulticastDelegate.swift in Sources */,
 				6A48A38F29F806C700F9BC55 /* User.swift in Sources */,
 				6ABD73432A0E847700FBC5A1 /* Comment.swift in Sources */,
+				6A8E89E02A237F130007B9BF /* PageContainerViewControlller.swift in Sources */,
 				6A9B56B52A10D41300FB28A3 /* ViewCommentTableViewController.swift in Sources */,
 				6A8BADF12A08988700CBAF9B /* SelectPhotosViewController.swift in Sources */,
 				6A48A38D29F8019000F9BC55 /* Records.swift in Sources */,
