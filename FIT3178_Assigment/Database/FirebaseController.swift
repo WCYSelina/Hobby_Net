@@ -433,9 +433,7 @@ class FirebaseController: NSObject,DatabaseProtocol{
                         listener.onPostChange(change: .update, posts: self.postList, defaultUser: defaultUser)
                     }
                     if listener.listenerType == .post || listener.listenerType == .all {
-                        print("before\(defaultUser.likes)")
                         listener.onUserPostsDetail(change: .add, user: defaultUser)
-                        print("after\(defaultUser.likes)")
                     }
                 }
                 return true
@@ -467,9 +465,7 @@ class FirebaseController: NSObject,DatabaseProtocol{
                         listener.onPostChange(change: .update, posts: self.postList,defaultUser: defaultUser)
                     }
                     if listener.listenerType == .post || listener.listenerType == .all {
-                        print("before\(defaultUser.likes)")
                         listener.onUserPostsDetail(change: .add, user: defaultUser)
-                        print("after\(defaultUser.likes)")
                     }
                 }
             }
@@ -511,11 +507,9 @@ class FirebaseController: NSObject,DatabaseProtocol{
         database.collection("post").document(id).updateData(["likeNum":FieldValue.increment(Int64(-1))])
         for post in postList {
             if post.id == id{
-                print("yyyy")
                 return post
             }
         }
-        print("nnnn")
         return nil
     }
     
@@ -1450,6 +1444,8 @@ class FirebaseController: NSObject,DatabaseProtocol{
             let date = dateFormatter.string(from: Date())
             self.showCorrespondingRecord(hobby: self.currentHobby!,date: date){ [weak self] in
                 guard let self = self else { return }
+                print(self.recordList.count)
+                print(change.oldIndex)
                 self.recordList[Int(change.oldIndex)] = parsedRecord
             }
         }

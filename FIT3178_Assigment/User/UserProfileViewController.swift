@@ -41,7 +41,6 @@ class UserProfileViewController: UIViewController,DatabaseListener,UITableViewDa
     
     
     @IBAction func removeListener(_ sender: Any) {
-        print("Clicked")
         databaseController?.removeListener(listener: self)
         performSegue(withIdentifier: "userLogOut", sender: nil)
     }
