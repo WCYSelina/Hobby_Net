@@ -132,6 +132,8 @@ class UserAccViewController: UIViewController,DatabaseListener{
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        modalPresentationStyle = .fullScreen
+        navigationItem.setHidesBackButton(true, animated: false)
         let appDelegate = UIApplication.shared.delegate as? AppDelegate
         databaseController = appDelegate?.databaseController
 //

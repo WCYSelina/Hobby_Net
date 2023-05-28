@@ -40,6 +40,12 @@ class UserProfileViewController: UIViewController,DatabaseListener,UITableViewDa
     }
     
     
+    @IBAction func removeListener(_ sender: Any) {
+        print("Clicked")
+        databaseController?.removeListener(listener: self)
+        performSegue(withIdentifier: "userLogOut", sender: nil)
+    }
+    
     
     @IBAction func segmentedControlValueChanged(_ sender: UISegmentedControl) {
         if sender.selectedSegmentIndex == 0{
