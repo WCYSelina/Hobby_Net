@@ -657,18 +657,49 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="2I1-Rf-eDd">
-                                <rect key="frame" x="20" y="183" width="353" height="21"/>
+                                <rect key="frame" x="20" y="223" width="353" height="21"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
+                            <segmentedControl opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="plain" selectedSegmentIndex="0" translatesAutoresizingMaskIntoConstraints="NO" id="RJE-WT-8md">
+                                <rect key="frame" x="20" y="264" width="353" height="32"/>
+                                <segments>
+                                    <segment title="Posts"/>
+                                    <segment title="Likes"/>
+                                </segments>
+                                <connections>
+                                    <action selector="segmentedControlValueChanged:" destination="oLh-I8-z1N" eventType="valueChanged" id="yNl-F8-bjB"/>
+                                </connections>
+                            </segmentedControl>
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="-1" estimatedSectionHeaderHeight="-1" sectionFooterHeight="-1" estimatedSectionFooterHeight="-1" translatesAutoresizingMaskIntoConstraints="NO" id="SOG-uP-lPT">
+                                <rect key="frame" x="20" y="315" width="353" height="457"/>
+                                <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                                <prototypes>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="yourPostsLikes" id="lHn-Ps-O3g">
+                                        <rect key="frame" x="0.0" y="50" width="353" height="43.666667938232422"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="lHn-Ps-O3g" id="LoH-q4-BRN">
+                                            <rect key="frame" x="0.0" y="0.0" width="353" height="43.666667938232422"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                        </tableViewCellContentView>
+                                    </tableViewCell>
+                                </prototypes>
+                            </tableView>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="2oJ-dQ-Tw1"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <constraints>
                             <constraint firstItem="2oJ-dQ-Tw1" firstAttribute="trailing" secondItem="2I1-Rf-eDd" secondAttribute="trailing" constant="20" id="63u-DE-Iry"/>
+                            <constraint firstItem="RJE-WT-8md" firstAttribute="leading" secondItem="2oJ-dQ-Tw1" secondAttribute="leading" constant="20" id="Az8-2h-z1O"/>
+                            <constraint firstItem="SOG-uP-lPT" firstAttribute="leading" secondItem="2oJ-dQ-Tw1" secondAttribute="leading" constant="20" id="IaP-cI-8Eu"/>
+                            <constraint firstAttribute="bottom" secondItem="SOG-uP-lPT" secondAttribute="bottom" constant="80" id="ZDc-i1-ORe"/>
+                            <constraint firstItem="RJE-WT-8md" firstAttribute="top" secondItem="2I1-Rf-eDd" secondAttribute="bottom" constant="20" id="dd0-SD-d9A"/>
                             <constraint firstItem="2I1-Rf-eDd" firstAttribute="leading" secondItem="2oJ-dQ-Tw1" secondAttribute="leading" constant="20" id="diE-eH-PlE"/>
-                            <constraint firstItem="2I1-Rf-eDd" firstAttribute="top" secondItem="2oJ-dQ-Tw1" secondAttribute="top" constant="80" id="eNR-vj-8tK"/>
+                            <constraint firstItem="2I1-Rf-eDd" firstAttribute="top" secondItem="2oJ-dQ-Tw1" secondAttribute="top" constant="120" id="iCH-f8-rKq"/>
+                            <constraint firstItem="SOG-uP-lPT" firstAttribute="top" secondItem="RJE-WT-8md" secondAttribute="bottom" constant="20" id="s01-BV-401"/>
+                            <constraint firstItem="2oJ-dQ-Tw1" firstAttribute="trailing" secondItem="RJE-WT-8md" secondAttribute="trailing" constant="20" id="uJZ-gb-BgA"/>
+                            <constraint firstItem="2oJ-dQ-Tw1" firstAttribute="trailing" secondItem="SOG-uP-lPT" secondAttribute="trailing" constant="20" id="x5U-3W-PB7"/>
                         </constraints>
                     </view>
                     <navigationItem key="navigationItem" title="Your Profile" id="q7J-oq-jAB">
@@ -680,6 +711,8 @@
                         </barButtonItem>
                     </navigationItem>
                     <connections>
+                        <outlet property="segmentedControl" destination="RJE-WT-8md" id="Bhk-fC-zCr"/>
+                        <outlet property="tableView" destination="SOG-uP-lPT" id="zgR-qA-VfF"/>
                         <outlet property="username" destination="2I1-Rf-eDd" id="zrm-Hx-55Y"/>
                     </connections>
                 </viewController>

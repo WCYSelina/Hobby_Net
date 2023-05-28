@@ -10,6 +10,9 @@ import FirebaseAuth
 import CoreLocation
 import UserNotifications
 class EventViewController: UIViewController,DatabaseListener,UITableViewDataSource,UITableViewDelegate,UNUserNotificationCenterDelegate{
+    func onUserPostsDetail(change: DatabaseChange, user: User?) {
+    }
+    
     func onYourEventChange(change: DatabaseChange, user: User?) {
     }
     
@@ -190,7 +193,7 @@ class EventViewController: UIViewController,DatabaseListener,UITableViewDataSour
         content.body = "Don't forget about the event in an hour at \(event.eventLocation!)"
         content.sound = .default
         
-        let reminderDate = Calendar.current.date(byAdding: .hour, value: -1, to: (event.eventDate?.dateValue())!)!
+        let reminderDate = Calendar.current.date(byAdding: .minute, value: -1, to: (event.eventDate?.dateValue())!)!
         let components = Calendar.current.dateComponents([.year, .month, .day, .hour, .minute], from: reminderDate)
         let trigger = UNCalendarNotificationTrigger(dateMatching: components, repeats: true)
         print("done")
@@ -273,7 +276,7 @@ class CardTableViewCellForEvent: UITableViewCell {
         contentView.addSubview(eventLocation)
         
         weather.font = UIFont.systemFont(ofSize: 15)
-        weather.tintColor = .lightGray
+        weather.tintColor = .systemGray
         weather.translatesAutoresizingMaskIntoConstraints = false
         contentView.addSubview(weather)
         

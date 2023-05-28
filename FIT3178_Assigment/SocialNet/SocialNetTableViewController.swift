@@ -9,6 +9,10 @@ import UIKit
 import FirebaseAuth
 
 class SocialNetTableViewController: UITableViewController,DatabaseListener,UITextFieldDelegate{
+    
+    func onUserPostsDetail(change: DatabaseChange, user: User?) {
+    }
+    
     func onYourEventChange(change: DatabaseChange, user: User?) {
     }
     
@@ -53,9 +57,11 @@ class SocialNetTableViewController: UITableViewController,DatabaseListener,UITex
         super.viewDidLoad()
         let appDelegate = UIApplication.shared.delegate as? AppDelegate
         databaseController = appDelegate?.databaseController
-        // Customize table view appearance
-//        tableView.backgroundColor = .clear
-        tableView.separatorStyle = .none
+        
+        tableView.separatorStyle = .singleLine
+        tableView.separatorColor = UIColor.gray // Customize the separator color
+        tableView.separatorInset = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 16) // Customize the separator insets
+        
         tableView.register(CardTableViewCell.self, forCellReuseIdentifier: "postCell")
     }
     
@@ -71,28 +77,37 @@ class SocialNetTableViewController: UITableViewController,DatabaseListener,UITex
 
     // MARK: - Table view data source
 
-    override func numberOfSections(in tableView: UITableView) -> Int {
-        // #warning Incomplete implementation, return the number of sections
+    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return 1
     }
-
-    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        // #warning Incomplete implementation, return the number of rows
+    
+    override func numberOfSections(in tableView: UITableView) -> Int {
         return postList.count
+    }
+    
+    override func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+        let headerView = UIView()
+        headerView.backgroundColor = UIColor.gray
+        headerView.layer.cornerRadius = 5
+        return headerView
+    }
+    
+    override func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+        return 5
     }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let postCell = tableView.dequeueReusableCell(withIdentifier: "postCell", for: indexPath) as! CardTableViewCell
-        let post = postList[indexPath.row]
+        let post = postList[indexPath.section]
         postCell.descriptionLabel.text = post.postDetail
         
         postCell.sendButton.cell = postCell
         postCell.sendButton.addTarget(self, action: #selector(sendButtonTapped(_:)), for: UIControl.Event.touchUpInside)
-        postCell.sendButton.tag = indexPath.row
+        postCell.sendButton.tag = indexPath.section
         
         // Configure the thumbs-up button
         postCell.thumbsUpButton.addTarget(self,action: #selector(thumbsUpButtonTapped(_:)), for: .touchUpInside)
-        postCell.thumbsUpButton.tag = indexPath.row// Set a unique tag to identify the button
+        postCell.thumbsUpButton.tag = indexPath.section// Set a unique tag to identify the button
         var isSet = false
         for likePost in defaultUser!.likes{
             if likePost.id == post.id{
@@ -125,8 +140,8 @@ class SocialNetTableViewController: UITableViewController,DatabaseListener,UITex
         guard let postCell = sender.cell else{
             return
         }
-        let row = sender.tag
-        let post = postList[row]
+        let section = sender.tag
+        let post = postList[section]
         if postCell.commentTextField.text != ""{
             let comment = databaseController?.addComment(commentDetail: postCell.commentTextField.text!)
             postCell.commentTextField.text = ""
@@ -143,9 +158,9 @@ class SocialNetTableViewController: UITableViewController,DatabaseListener,UITex
     
     
     @objc func thumbsUpButtonTapped(_ sender: UIButton) {
-        let row = sender.tag
-        let indexPath = IndexPath(row: row, section: 0)
-        let post = postList[row]
+        let section = sender.tag
+        let indexPath = IndexPath(row: 0, section: section)
+        let post = postList[section]
         // Toggle the selected state of the button
             sender.isSelected = !sender.isSelected
             
@@ -160,7 +175,7 @@ class SocialNetTableViewController: UITableViewController,DatabaseListener,UITex
                 // Button is not selected (outline)
                 let _ = databaseController?.deleteLikeFromUser(like: post)
                 sender.setImage(UIImage(systemName: "hand.thumbsup"), for: .normal)
-                sender.tintColor = .gray
+                sender.tintColor = .systemGray
             }
            // Handle the thumbs-up button tap for the specific row
            // You can access the corresponding data or perform any desired action
@@ -205,7 +220,7 @@ class CardTableViewCell: UITableViewCell {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         
         // Customize cell layout
-        contentView.backgroundColor = .white
+        contentView.backgroundColor = .systemBackground
         contentView.layer.cornerRadius = 8.0
         contentView.layer.masksToBounds = true
         contentView.layer.borderWidth = 1.0
@@ -219,7 +234,7 @@ class CardTableViewCell: UITableViewCell {
         
         // Configure description label
         descriptionLabel.font = UIFont.systemFont(ofSize: 16)
-        descriptionLabel.tintColor = .lightGray
+        descriptionLabel.tintColor = .systemBackground
         descriptionLabel.numberOfLines = 0
         descriptionLabel.translatesAutoresizingMaskIntoConstraints = false
         contentView.addSubview(descriptionLabel)
@@ -244,7 +259,7 @@ class CardTableViewCell: UITableViewCell {
         contentView.addSubview(sendButton)
         
         // Configure likes label
-        likesLabel.textColor = .gray
+        likesLabel.textColor = .systemGray
         likesLabel.font = UIFont.systemFont(ofSize: 12) // Adjust the font size as desired
         likesLabel.translatesAutoresizingMaskIntoConstraints = false
         contentView.addSubview(likesLabel)

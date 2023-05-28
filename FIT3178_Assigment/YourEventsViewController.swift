@@ -8,6 +8,9 @@
 import UIKit
 import FirebaseAuth
 class YourEventsViewController: UIViewController,UITableViewDataSource,UITableViewDelegate,DatabaseListener{
+    func onUserPostsDetail(change: DatabaseChange, user: User?) {
+    }
+    
     @IBOutlet weak var createJoinEvent: UISegmentedControl!
     @IBOutlet weak var tableView: UITableView!
     
@@ -67,7 +70,6 @@ class YourEventsViewController: UIViewController,UITableViewDataSource,UITableVi
     
     
     @IBAction func segmentedControlValueChanged(_ sender: UISegmentedControl) {
-
         if sender.selectedSegmentIndex == 0{
             if let events = defaultUser?.events{
                 eventList = events

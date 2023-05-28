@@ -41,6 +41,7 @@ protocol DatabaseListener: AnyObject {
     func onCommentChange(change:DatabaseChange, comments:[Comment])
     func onEventChange(change:DatabaseChange, events:[Event])
     func onYourEventChange(change: DatabaseChange, user: User?)
+    func onUserPostsDetail(change:DatabaseChange, user: User?)
 }
 
 protocol DatabaseProtocol: AnyObject {

@@ -8,6 +8,9 @@
 import UIKit
 import FirebaseAuth
 class UserAccViewController: UIViewController,DatabaseListener{
+    func onUserPostsDetail(change: DatabaseChange, user: User?) {
+    }
+    
     func onYourEventChange(change: DatabaseChange, user: User?) {
     }
     
@@ -112,6 +115,7 @@ class UserAccViewController: UIViewController,DatabaseListener{
         if let email = email.text,let password = password.text{
             Task{
                 await databaseController?.loginAccount(email: email, password: password)
+//                UserDefaults.standard.set(true, forKey: "isUserSignedIn")
             }
         }
     }
@@ -130,6 +134,13 @@ class UserAccViewController: UIViewController,DatabaseListener{
         super.viewDidLoad()
         let appDelegate = UIApplication.shared.delegate as? AppDelegate
         databaseController = appDelegate?.databaseController
+//
+//        let isUserSignedIn = UserDefaults.standard.bool(forKey: "isUserSignedIn")
+//        if isUserSignedIn{
+//            self.databaseController?.email = self.email.text
+//            self.performSegue(withIdentifier: "signUpIdentifier", sender: user)
+//            print("hhhh")
+//        }
 
         // Do any additional setup after loading the view.
     }

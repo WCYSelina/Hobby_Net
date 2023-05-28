@@ -131,6 +131,9 @@ class FirebaseController: NSObject,DatabaseProtocol{
         if listener.listenerType == .userEvents || listener.listenerType == .all {
             listener.onYourEventChange(change: .add, user: defaultUser)
         }
+        if listener.listenerType == .userEvents || listener.listenerType == .all {
+            listener.onUserPostsDetail(change: .add, user: defaultUser)
+        }
         
         
     }
@@ -222,9 +225,6 @@ class FirebaseController: NSObject,DatabaseProtocol{
                                         }
                                     }
                                     self.deleteRecord(record: record)
-                                    
-                                    //
-                                    //                                self.defaultRecord = nil
                                 }
                                 self.listeners.invoke{ listener in
                                     if listener.listenerType == ListenerType.hobby || listener.listenerType == ListenerType.all {
@@ -388,12 +388,7 @@ class FirebaseController: NSObject,DatabaseProtocol{
             userRef?.document(userID).updateData(
                 ["posts" : FieldValue.arrayUnion([newPostRef])])
         }
-        defaultUser.posts.append(post)
-//        self.listeners.invoke{ listener in
-//            if listener.listenerType == ListenerType.record || listener.listenerType == ListenerType.all {
-//                listener.onHobbyChange(change: .update, hobbies: self.defaultUser.hobbies)
-//            }
-//        }
+//        defaultUser.posts.append(post)
         return true
     }
     
@@ -428,16 +423,19 @@ class FirebaseController: NSObject,DatabaseProtocol{
         }
         if inList{
             if let newPostRef = postRef?.document(postID) {
-                print(defaultUser.likes)
                 userRef?.document(userID).updateData(
                     ["likes" : FieldValue.arrayRemove([newPostRef])])
-                decrementLikeNum(id: postID)
-                let postIndex = findPostIndex(id: postID, posts: defaultUser.likes)!
-                postList[postIndex].likeNum! -= 1
-                removeLikeFromUser(like: like)
+                let post = decrementLikeNum(id: postID)
+                post?.likeNum! -= 1
+                removeLikeFromUser(like: post!)
                 self.listeners.invoke { (listener) in
                     if listener.listenerType == ListenerType.post || listener.listenerType == ListenerType.all {
                         listener.onPostChange(change: .update, posts: self.postList, defaultUser: defaultUser)
+                    }
+                    if listener.listenerType == .post || listener.listenerType == .all {
+                        print("before\(defaultUser.likes)")
+                        listener.onUserPostsDetail(change: .add, user: defaultUser)
+                        print("after\(defaultUser.likes)")
                     }
                 }
                 return true
@@ -462,11 +460,16 @@ class FirebaseController: NSObject,DatabaseProtocol{
                 userRef?.document(userID).updateData(
                     ["likes" : FieldValue.arrayUnion([newPostRef])])
                 let post = modifyLikeNum(id: postID)
-                defaultUser.likes.append(like)
+                defaultUser.likes.append(post!)
                 post?.likeNum! += 1
                 self.listeners.invoke { (listener) in
                     if listener.listenerType == ListenerType.post || listener.listenerType == ListenerType.all {
                         listener.onPostChange(change: .update, posts: self.postList,defaultUser: defaultUser)
+                    }
+                    if listener.listenerType == .post || listener.listenerType == .all {
+                        print("before\(defaultUser.likes)")
+                        listener.onUserPostsDetail(change: .add, user: defaultUser)
+                        print("after\(defaultUser.likes)")
                     }
                 }
             }
@@ -478,7 +481,9 @@ class FirebaseController: NSObject,DatabaseProtocol{
     func removeLikeFromUser(like:Post) {
         for i in 0..<defaultUser.likes.count{
             if defaultUser.likes[i].id == like.id{
+                print("removed")
                 defaultUser.likes.remove(at: i)
+                return
             }
         }
     }
@@ -502,8 +507,16 @@ class FirebaseController: NSObject,DatabaseProtocol{
         return nil
     }
     
-    func decrementLikeNum(id:String){
+    func decrementLikeNum(id:String) -> Post?{
         database.collection("post").document(id).updateData(["likeNum":FieldValue.increment(Int64(-1))])
+        for post in postList {
+            if post.id == id{
+                print("yyyy")
+                return post
+            }
+        }
+        print("nnnn")
+        return nil
     }
     
     
@@ -657,6 +670,11 @@ class FirebaseController: NSObject,DatabaseProtocol{
                             listener.onYourEventChange(change: .update,user: self.defaultUser)
                         }
                     }
+                    if listener.listenerType == ListenerType.post || listener.listenerType == ListenerType.all{
+                        if user.id == self.defaultUser.id{
+                            listener.onUserPostsDetail(change: .update,user: self.defaultUser)
+                        }
+                    }
                     completion()
                 }
             }
@@ -680,9 +698,6 @@ class FirebaseController: NSObject,DatabaseProtocol{
     }
     
      
-    
-
-    
     func parseUserSnapshot(snapshot: QuerySnapshot, completion: @escaping (User) -> Void){
         var counter = 0
         let userFieldCount = 5
@@ -1061,6 +1076,7 @@ class FirebaseController: NSObject,DatabaseProtocol{
             }
         }
     }
+    
     func addToPostList(change:DocumentChange,parsedPost:Post, completion: @escaping () -> Void){
         let docRef = database.collection("post").document(parsedPost.id!)
         docRef.getDocument{ (document, error) in
@@ -1135,6 +1151,7 @@ class FirebaseController: NSObject,DatabaseProtocol{
                             if listener.listenerType == ListenerType.post || listener.listenerType == ListenerType.all {
 //                                self.defaultUser = self.findUserById(id: self.currentUser!.uid)!
                                 listener.onPostChange(change: .update, posts: self.postList,defaultUser: self.defaultUser)
+                                listener.onUserPostsDetail(change: .update,user: self.defaultUser)
                                 completion()
                             }
                         }
@@ -1148,6 +1165,7 @@ class FirebaseController: NSObject,DatabaseProtocol{
                                 if listener.listenerType == ListenerType.post || listener.listenerType == ListenerType.all {
     //                                self.defaultUser = self.findUserById(id: self.currentUser!.uid)!
                                     listener.onPostChange(change: .update, posts: self.postList,defaultUser: self.defaultUser)
+                                    listener.onUserPostsDetail(change: .update,user: self.defaultUser)
                                     completion()
                                 }
                             }
@@ -1157,6 +1175,7 @@ class FirebaseController: NSObject,DatabaseProtocol{
             }
         }
     }
+    
     
     func parseSpecificComment(commentRefArray:[DocumentReference], completion: @escaping ([Comment]) -> Void){
         if commentRefArray.count == 0{
@@ -1538,6 +1557,5 @@ class FirebaseController: NSObject,DatabaseProtocol{
                 listener.onAuthAccount(change:.login,user: self.currentUser)
             }
         }
-        
     }
 }
