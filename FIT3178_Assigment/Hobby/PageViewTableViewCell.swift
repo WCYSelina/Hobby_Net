@@ -15,9 +15,10 @@ class PageViewTableViewCell: UITableViewCell {
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         // Create the container view
-        containerView = UIView(frame: bounds)
-        containerView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
-        contentView.addSubview(containerView)
+//        containerView = UIView(frame: bounds)
+//        containerView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+//        contentView.addSubview(containerView)
+        
         
         let swipeRight = UISwipeGestureRecognizer(target: self, action: #selector(respondToSwipeGesture))
         swipeRight.direction = UISwipeGestureRecognizer.Direction.right

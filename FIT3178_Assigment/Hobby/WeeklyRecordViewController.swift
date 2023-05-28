@@ -31,7 +31,6 @@ class WeeklyRecordViewController: UIViewController,DatabaseListener,UITableViewD
     func onCreateAccount(change: DatabaseChange, user: FirebaseAuth.User?) {
     }
     
-    
     func numberOfSections(in tableView: UITableView) -> Int {
         if let records = records{
             return records.count
@@ -47,16 +46,28 @@ class WeeklyRecordViewController: UIViewController,DatabaseListener,UITableViewD
         let cell = tableView.dequeueReusableCell(withIdentifier: "viewRecord", for: indexPath) as! PageViewTableViewCell
         
         // Configure the cell
-        
+        var notesText: [(String,String?)] = []
+        if records != nil{
+            records![indexPath.section].notes.forEach{ note in
+                if let noteDetail = note.noteDetails, let image = note.image{
+                    notesText.append((noteDetail,image))
+                }
+                else if let noteDetail = note.noteDetails,note.image == nil{
+                    notesText.append((noteDetail,nil))
+                }
+            }
+        }
         let containerViewController = PageContainerViewController()
         cell.pageViewControlObj = containerViewController
+        cell.pageViewControlObj.notesText = notesText
         cell.contentView.addSubview(containerViewController.view)
         containerViewController.view.frame = cell.contentView.bounds
 //        containerViewController.view.autoresizingMask = [.flexibleWidth, .flexibleHeight]
         containerViewController.didMove(toParent: self)
-        
         return cell
     }
+    
+    
     
     func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
         return false
@@ -88,7 +99,7 @@ class WeeklyRecordViewController: UIViewController,DatabaseListener,UITableViewD
 //    }
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
 //        return UIScreen.main.bounds.height * 0.5
-        return 600
+        return 300
     }
     
     func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
