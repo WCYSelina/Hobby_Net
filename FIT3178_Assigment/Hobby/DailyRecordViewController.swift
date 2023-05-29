@@ -37,15 +37,16 @@ class DailyRecordViewController: UIViewController,DatabaseListener,UITableViewDa
         let containerViewController = PageContainerViewController()
         cell.pageViewControlObj = containerViewController
         cell.pageViewControlObj.notesText = notesText
+        cell.pageViewControlObj.setUpPage()
         cell.contentView.addSubview(containerViewController.view)
         containerViewController.view.frame = cell.contentView.bounds
-        containerViewController.didMove(toParent: self)
+//        containerViewController.didMove(toParent: self)
         return cell
     }
     
     func onRecordChange(change: DatabaseChange, record: Records?) {
         self.record = record
-        tableView.reloadData()
+//        tableView.reloadData()
     }
     
     func onUserPostsDetail(change: DatabaseChange, user: User?) {
@@ -134,7 +135,7 @@ class DailyRecordViewController: UIViewController,DatabaseListener,UITableViewDa
 
         databaseController?.showCorrespondingRecord(hobby: self.hobby!, date: formattedDate){ record in
         }
-        tableView.reloadData()
+//        tableView.reloadData()
 
     }
     override func viewWillAppear(_ animated: Bool) {

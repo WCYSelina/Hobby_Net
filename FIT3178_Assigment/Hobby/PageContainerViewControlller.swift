@@ -7,6 +7,7 @@ class PageContainerViewController: UIPageViewController, UIPageViewControllerDat
     var pageControl = UIPageControl()
     var currentViewController: UIViewController!
     var notesText: [(String,String?)] = []
+    var pages: [RecordImageViewController] = []
     
     override init(transitionStyle style: UIPageViewController.TransitionStyle, navigationOrientation: UIPageViewController.NavigationOrientation, options: [UIPageViewController.OptionsKey : Any]? = nil) {
         super.init(transitionStyle: .scroll, navigationOrientation: .horizontal, options: nil)
@@ -16,25 +17,41 @@ class PageContainerViewController: UIPageViewController, UIPageViewControllerDat
         super.init(transitionStyle: .scroll, navigationOrientation: .horizontal, options: nil)
     }
     
+    func setUpPage(){
+        var current = 0
+        for noteText in notesText{
+            pages.append(RecordImageViewController(path: noteText.1!, pageControlIndex: current, pageControlTotalPage: notesText.count))
+//            var page = RecordImageViewController()
+//            page.path = noteText.1!
+//            page.pageControlIndex = current
+//            page.pageControlTotalPage = notesText.count
+//            pages.append(page)
+            current += 1
+        }
+    }
+    
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         self.dataSource = self
         self.delegate = self
         self.didMove(toParent: self)
         
+        self.view.isUserInteractionEnabled = true
         // Set the initial view controller
-        if let initialViewController = viewController(at: 0) {
-            self.setViewControllers([initialViewController], direction: .forward, animated: false, completion: nil)
-        }
-        else{
-            if let initialViewControllerBlank = blankViewController(){
-                self.setViewControllers([initialViewControllerBlank], direction: .forward, animated: false)
-            }
-    
-        }
+//        if let initialViewController = viewController(at: 0) {
+//            self.setViewControllers([initialViewController], direction: .forward, animated: false, completion: nil)
+//        }
+//        else{
+//            if let initialViewControllerBlank = blankViewController(){
+//                self.setViewControllers([initialViewControllerBlank], direction: .forward, animated: false)
+//            }
+//        }
+        self.currentViewController = self.pages[0]
+        self.setViewControllers([pages[0]], direction: .forward, animated: false)
         
         // Additional configuration of the page view controller
-        configurePageControl()
+//        configurePageControl()
      }
     func configurePageControl() {
         pageControl.numberOfPages = notesText.count
@@ -48,31 +65,33 @@ class PageContainerViewController: UIPageViewController, UIPageViewControllerDat
     }
     
     func pageViewController(_ pageViewController: UIPageViewController, didFinishAnimating finished: Bool, previousViewControllers: [UIViewController], transitionCompleted completed: Bool) {
+        print("finished")
         if completed, let visibleViewController = pageViewController.viewControllers?.first,
            let index = viewControllerIndex(visibleViewController) {
             pageControl.currentPage = index
         }
     }
-    func blankViewController() -> UIViewController? {
-        let viewController = UIViewController()
-        viewController.view.backgroundColor = UIColor.systemBackground
-        self.currentViewController = viewController
-        return viewController
-    }
+//    func blankViewController() -> UIViewController? {
+//        let viewController = UIViewController()
+//        viewController.view.backgroundColor = UIColor.systemBackground
+//        self.currentViewController = viewController
+//        return viewController
+//    }
     func viewController(at index: Int) -> UIViewController? {
-        guard index >= 0 && index < notesText.count else {
-            return nil
-        }
+//        guard index >= 0 && index < notesText.count else {
+//            return nil
+//        }
+        print("index:\(index)")
         
         let viewController = UIViewController()
         viewController.view.backgroundColor = UIColor.systemBackground
         
         viewController.title = notesText[index].0 // Set the title for the view controller
-        print(notesText[index].0)
         
         let label = UILabel()
         label.numberOfLines = 0
         label.text = self.notesText[index].0
+        print(label.text)
         label.translatesAutoresizingMaskIntoConstraints = false
         viewController.view.addSubview(label)
         
@@ -83,18 +102,24 @@ class PageContainerViewController: UIPageViewController, UIPageViewControllerDat
         let imageView = UIImageView()
         imageView.contentMode = .scaleAspectFit
         let image = notesText[index].1
-        if image != ""{
-            let storageRef = Storage.storage().reference(forURL: image!)
-            storageRef.getData(maxSize: 10*1024*1024){ data,error in
-                if let error = error{
-                    print(error.localizedDescription)
-                } else{
-                    let image = UIImage(data: data!)
-                    print("download hahahah")
-                    imageView.image = image
+        Task{
+            do{
+                if image != ""{
+                    let storageRef = Storage.storage().reference(forURL: image!)
+                    await storageRef.getData(maxSize: 10*1024*1024){ data,error in
+                        if let error = error{
+                            print(error.localizedDescription)
+                        } else{
+                            let image = UIImage(data: data!)
+                            print("download hahahah")
+                            imageView.image = image
+                            
+                        }
+                    }
                 }
             }
         }
+        
         viewController.view.addSubview(imageView)
         imageView.translatesAutoresizingMaskIntoConstraints = false
         
@@ -120,32 +145,64 @@ class PageContainerViewController: UIPageViewController, UIPageViewControllerDat
             pageControl.centerXAnchor.constraint(equalTo: viewController.view.centerXAnchor)
         ])
         self.currentViewController = viewController
-        
+        print("==S==")
+        print("helllooo")
+        print("label: \(label.text)")
+        print("image: \(imageView.image)")
+        print("==E==")
         return viewController
     }
     
     // MARK: - UIPageViewControllerDataSource
     
     func pageViewController(_ pageViewController: UIPageViewController, viewControllerBefore viewController: UIViewController) -> UIViewController? {
-        guard let currentIndex = viewControllerIndex(viewController), currentIndex > 0 else {
-            return nil
+//        print("ddddd\(viewControllerIndex(viewController))")
+//        guard let currentIndex = viewControllerIndex(viewController) else {
+//            print("noooo")
+//            return nil
+//        }
+//        if currentIndex - 1 == -1{
+//            return self.viewController(at: 0)
+//        }
+//        print("????")
+//        return self.viewController(at: currentIndex - 1)
+        let currentIndex = viewControllerIndex(viewController)
+        
+        if currentIndex! - 1 == -1{
+            self.currentViewController = self.pages[0]
+            return self.pages[0]
         }
-        print(currentIndex - 1)
-        return self.viewController(at: currentIndex - 1)
+        self.currentViewController = self.pages[currentIndex! - 1]
+        return self.pages[currentIndex! - 1]
+        
     }
     
     func pageViewController(_ pageViewController: UIPageViewController, viewControllerAfter viewController: UIViewController) -> UIViewController? {
-        guard let currentIndex = viewControllerIndex(viewController), currentIndex < notesText.count - 1 else {
-            return nil
+//        print("ssssss\(viewControllerIndex(viewController))")
+//        guard let currentIndex = viewControllerIndex(viewController) else {
+//            return nil
+//        }
+//        print("lalala")
+//        if currentIndex + 1 == notesText.count{
+//            return self.viewController(at: currentIndex)
+//        }
+//        return self.viewController(at: currentIndex + 1)
+        let currentIndex = viewControllerIndex(viewController)
+        
+        if currentIndex! + 1 == pages.count{
+            self.currentViewController = self.pages[pages.count-1]
+            return self.pages[pages.count-1]
         }
-        print(currentIndex + 1)
-        return self.viewController(at: currentIndex + 1)
+        self.currentViewController = self.pages[currentIndex! + 1]
+        return self.pages[currentIndex! + 1]
     }
     
     func viewControllerIndex(_ viewController: UIViewController) -> Int? {
-        guard let title = viewController.title else {
-            return nil
+        guard let viewController = viewController as? RecordImageViewController else{
+            print("error")
+            return -1
         }
-        return notesText.firstIndex(where:{ $0.0 == title})
+        let index = notesText.firstIndex(where:{ $0.1 == viewController.path})
+        return index
     }
 }
