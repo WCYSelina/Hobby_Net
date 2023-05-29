@@ -100,7 +100,7 @@ class DailyRecordViewController: UIViewController,DatabaseListener,UITableViewDa
         print(formattedDate)
         dateRecord.text = formattedDate
         self.record = nil
-        databaseController?.showCorrespondingRecord(hobby: self.hobby!, date: formattedDate){ () in
+        databaseController?.showCorrespondingRecord(hobby: self.hobby!, date: formattedDate){ record in
         }
     }
     
@@ -132,7 +132,7 @@ class DailyRecordViewController: UIViewController,DatabaseListener,UITableViewDa
         dateRecord.text = formattedDate
         
 
-        databaseController?.showCorrespondingRecord(hobby: self.hobby!, date: formattedDate){ () in
+        databaseController?.showCorrespondingRecord(hobby: self.hobby!, date: formattedDate){ record in
         }
         tableView.reloadData()
 

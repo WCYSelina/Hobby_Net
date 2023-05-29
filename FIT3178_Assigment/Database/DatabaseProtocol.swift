@@ -78,7 +78,7 @@ protocol DatabaseProtocol: AnyObject {
     func addEvent(eventDate:Timestamp, eventDescription:String, eventLocation:String,eventName:String, showWeather:Bool) -> Event
     func uploadImageToStorage(folderPath:String, image:UIImage, completion:@escaping (String) -> Void)
     func addRecordToHobby(record: Records, hobby: Hobby) -> Bool
-    func showCorrespondingRecord(hobby:Hobby,date:String,completion: @escaping () -> Void)
+    func showCorrespondingRecord(hobby:Hobby,date:String,completion: @escaping (Records?) -> Void)
     func showRecordWeekly(hobby:Hobby,startWeek:Date, endWeek:Date,completion: @escaping ([Records],[String]) -> Void)
     func addNoteToRecord(note:Notes,date:String,record:Records, completion: @escaping (Records) -> Void)
     func removeNoteFromRecord(note: Notes, record: Records)

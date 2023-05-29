@@ -111,7 +111,7 @@ class HobbyTableViewController: UITableViewController,DatabaseListener{
         dateFormatter.dateFormat = "dd MMM yyyy"
         let date = dateFormatter.string(from: Date())
         databaseController?.currentDate = date
-        databaseController?.showCorrespondingRecord(hobby: currentHobby!,date: date){ () in
+        databaseController?.showCorrespondingRecord(hobby: currentHobby!,date: date){ record in
             //
         }
         let currentDate = Date()

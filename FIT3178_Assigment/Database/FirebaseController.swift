@@ -613,7 +613,7 @@ class FirebaseController: NSObject,DatabaseProtocol{
             completion(records,datesInRange)
         }
     }
-    func showCorrespondingRecord(hobby:Hobby,date:String,completion: @escaping () -> Void) {
+    func showCorrespondingRecord(hobby:Hobby,date:String,completion: @escaping (Records?) -> Void) {
         self.currentHobby = hobby
         let records = hobby.records
         let record:Records? = records.first(where: {$0.date == date})
@@ -622,33 +622,7 @@ class FirebaseController: NSObject,DatabaseProtocol{
                 listener.onRecordChange(change: .update, record: record ?? nil)
             }
         }
-        completion()
-        
-//        if record != nil {
-//            let docRef = database.collection("records").document((record?.id)!)
-//            docRef.getDocument{ (document, error) in
-//                let oneRecordNotes = document!.data()!["notes"] as! [DocumentReference]
-//                self.parseSpecificNote(noteRefArray: oneRecordNotes){ allNotes in
-//                    record?.notes = allNotes
-//                    self.currentRecNotesList = record?.notes
-//                    self.listeners.invoke { (listener) in
-//                        if listener.listenerType == ListenerType.record || listener.listenerType == ListenerType.all {
-//                            listener.onRecordChange(change: .update, record: self.currentRecNotesList!)
-//                        }
-//                    }
-//                    completion()
-//                }
-//            }
-//        }
-//        else{
-//            currentRecNotesList = []
-//            self.listeners.invoke { (listener) in
-//                if listener.listenerType == ListenerType.record || listener.listenerType == ListenerType.all {
-//                    listener.onRecordChange(change: .update, record: self.currentRecNotesList!)
-//                }
-//            }
-//            completion()
-//        }
+        completion(record ?? nil)
     }
     func setupUserListener(completion: @escaping () -> Void){
         userRef = database.collection("user")
@@ -1436,6 +1410,14 @@ class FirebaseController: NSObject,DatabaseProtocol{
             }
         }
     }
+    func findRecordIndexById(id:String) -> Int?{
+        for i in 0..<recordList.count{
+            if recordList[i].id == id{
+                return i
+            }
+        }
+        return nil
+    }
     func addToRecordList(change:DocumentChange,parsedRecord:Records){
         if change.type == .added {
             if self.recordList.count == change.newIndex{
@@ -1446,9 +1428,14 @@ class FirebaseController: NSObject,DatabaseProtocol{
             let dateFormatter = DateFormatter()
             dateFormatter.dateFormat = "dd MMM yyyy"
             let date = dateFormatter.string(from: Date())
-            self.showCorrespondingRecord(hobby: self.currentHobby!,date: date){ [weak self] in
-                guard let self = self else { return }
-                self.recordList[Int(change.oldIndex)] = parsedRecord
+            self.showCorrespondingRecord(hobby: self.currentHobby!,date: date){ record in
+//                guard let self = self else { return }
+//                self.recordList[Int(change.oldIndex)] = parsedRecord
+                if let record = record{
+                    if let index = self.findRecordIndexById(id: record.id!){
+                        self.recordList[index] = parsedRecord
+                    }
+                }
             }
         }
         else if change.type == .removed {
