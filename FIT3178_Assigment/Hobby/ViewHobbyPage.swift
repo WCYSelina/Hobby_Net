@@ -43,6 +43,9 @@ struct WeeklyViewControllerWrapper: UIViewControllerRepresentable{
 }
 
 class viewHobbyPageListener: NSObject, DatabaseListener {
+    func onRecordChange(change: DatabaseChange, record: Records) {
+    }
+    
     func onUserPostsDetail(change: DatabaseChange, user: User?) {
     }
     
@@ -74,14 +77,6 @@ class viewHobbyPageListener: NSObject, DatabaseListener {
 
     }
     
-    func onRecordChange(change: DatabaseChange, record: [Notes]) {
-        Task{
-            DispatchQueue.main.async{
-                self.notesList = record
-            }
-        }
-    }
-    
     func onNoteChange(change: DatabaseChange, notes: [Notes]) {
     }
     
@@ -94,9 +89,9 @@ class DatabaseControllerModel: ObservableObject {
 }
 
 struct ViewHobbyPage: View{
-    var dateString:String
-    var startOfWeek:Date
-    var endOfWeek:Date
+//    var dateString:String
+//    var startOfWeek:Date
+//    var endOfWeek:Date
     @State private var navigateToAddRecord = false
     @State private var notesList:[Notes] = []
     @StateObject private var databaseModel = DatabaseControllerModel() //@StateObject ensures that the object is only created once during the view's lifecycle and is not destroyed and recreated during updates.

@@ -10,6 +10,9 @@ import SwiftUI
 import FirebaseAuth
 
 class HobbyTableViewController: UITableViewController,DatabaseListener{
+    func onRecordChange(change: DatabaseChange, record: Records) {
+    }
+    
     func onUserPostsDetail(change: DatabaseChange, user: User?) {
     }
     
@@ -42,10 +45,6 @@ class HobbyTableViewController: UITableViewController,DatabaseListener{
         allHobbies = hobbies
         tableView.reloadData()
     }
-    
-    func onRecordChange(change: DatabaseChange, record: [Notes]) {
-    }
-    
     func onNoteChange(change: DatabaseChange, notes: [Notes]) {
     }
     
@@ -116,13 +115,14 @@ class HobbyTableViewController: UITableViewController,DatabaseListener{
             //
         }
         let currentDate = Date()
-        print(currentDate.timeIntervalSinceNow)
         let calendar = Calendar.current
         let oneWeekAfter = calendar.date(byAdding: .weekOfYear, value: 1, to: currentDate)!
         let dateString = "\(dateFormatter.string(from: oneWeekAfter)) - \(dateFormatter.string(from: currentDate))"
-        let swiftUIView = ViewHobbyPage(dateString: dateString,startOfWeek: currentDate,endOfWeek: oneWeekAfter, hobby: currentHobby!)
-        let hostingController = UIHostingController(rootView: swiftUIView) //UIHostingController allow swiftUI to be embedded into UIKit
-        present(hostingController, animated: true, completion: nil)
+        performSegue(withIdentifier: "dailyRecord", sender: currentHobby)
+//        let swiftUIView = ViewHobbyPage(dateString: dateString,startOfWeek: currentDate,endOfWeek: oneWeekAfter, hobby: currentHobby!)
+//        let swiftUIView = ViewHobbyPage(hobby: currentHobby!)
+//        let hostingController = UIHostingController(rootView: swiftUIView) //UIHostingController allow swiftUI to be embedded into UIKit
+//        present(hostingController, animated: true, completion: nil)
     }
 
 
@@ -132,6 +132,14 @@ class HobbyTableViewController: UITableViewController,DatabaseListener{
             // Delete the row from the data source
             print(allHobbies[indexPath.row])
             self.databaseController?.deleteHobby(hobby: allHobbies[indexPath.row])
+        }
+    }
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if segue.identifier == "dailyRecord", let destinationVC = segue.destination as? DailyRecordViewController{
+            if let hobby = sender as? Hobby{
+                destinationVC.hobby = hobby
+            }
         }
     }
 }

@@ -31,7 +31,7 @@ enum ListenerType{
 protocol DatabaseListener: AnyObject {
     var listenerType: ListenerType {get set}
     func onHobbyChange(change: DatabaseChange, hobbies: [Hobby])
-    func onRecordChange(change: DatabaseChange, record: [Notes])
+    func onRecordChange(change: DatabaseChange, record: Records)
     func onNoteChange(change: DatabaseChange, notes: [Notes])
     func onHobbyRecordFirstChange(change:DatabaseChange, hobby:Hobby)
     func onWeeklyRecordChange(change:DatabaseChange, records:[Records])

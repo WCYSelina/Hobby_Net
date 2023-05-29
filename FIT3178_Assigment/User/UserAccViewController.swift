@@ -8,6 +8,9 @@
 import UIKit
 import FirebaseAuth
 class UserAccViewController: UIViewController,DatabaseListener{
+    func onRecordChange(change: DatabaseChange, record: Records) {
+    }
+    
     func onUserPostsDetail(change: DatabaseChange, user: User?) {
     }
     
@@ -61,9 +64,6 @@ class UserAccViewController: UIViewController,DatabaseListener{
     }
     
     func onHobbyChange(change: DatabaseChange, hobbies: [Hobby]) {
-    }
-    
-    func onRecordChange(change: DatabaseChange, record: [Notes]) {
     }
     
     func onNoteChange(change: DatabaseChange, notes: [Notes]) {

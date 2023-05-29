@@ -4,7 +4,6 @@ import FirebaseStorage
 class PageContainerViewController: UIPageViewController, UIPageViewControllerDataSource, UIPageViewControllerDelegate {
 //    var pageViewController: UIPageViewController!
     
-    let sampleData = ["Page 1", "Page 2", "Page 3"]
     var pageControl = UIPageControl()
     var currentViewController: UIViewController!
     var notesText: [(String,String?)] = []
@@ -19,14 +18,9 @@ class PageContainerViewController: UIPageViewController, UIPageViewControllerDat
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+        print("heyheyhey")
         self.dataSource = self
         self.delegate = self
-        
-
-//        self.view.frame = view.bounds
-//        self.view.autoresizingMask = [.flexibleWidth, .flexibleHeight]
-        
         self.didMove(toParent: self)
         
         // Set the initial view controller

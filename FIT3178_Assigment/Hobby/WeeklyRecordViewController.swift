@@ -10,6 +10,9 @@ import FirebaseStorage
 import FirebaseAuth
 
 class WeeklyRecordViewController: UIViewController,DatabaseListener,UITableViewDataSource,UITableViewDelegate{
+    func onRecordChange(change: DatabaseChange, record: Records) {
+    }
+
     func onUserPostsDetail(change: DatabaseChange, user: User?) {
     }
     

@@ -79,14 +79,14 @@ class FirebaseController: NSObject,DatabaseProtocol{
         }
         if listener.listenerType == .record || listener.listenerType == .all {
             let records = defaultHobby.records
-            let record = records.first(where: {$0.date == currentDate})
-            if record != nil {
-                self.notes.append(contentsOf:record!.notes)
-                currentRecNotesList = self.notes
-            }
-            else{
-                currentRecNotesList = []
-            }
+//            let record = records.first(where: {$0.date == currentDate})
+//            if record != nil {
+//                self.notes.append(contentsOf:record!.notes)
+//                currentRecNotesList = self.notes
+//            }
+//            else{
+//                currentRecNotesList = []
+//            }
             
             let dateFormatter = DateFormatter()
             dateFormatter.dateFormat = "dd MMM yyyy"
@@ -105,8 +105,9 @@ class FirebaseController: NSObject,DatabaseProtocol{
                     recordsCorrespondToDates.append(recordToAdd!)
                 }
             }
- 
-            listener.onRecordChange(change: .update, record: currentRecNotesList!)
+            if let record = records.first(where: {$0.date == currentDate}){
+                listener.onRecordChange(change: .update, record: record)
+            }
             listener.onHobbyRecordFirstChange(change: .update, hobby: defaultHobby)
             listener.onWeeklyRecordChange(change: .update, records: recordsCorrespondToDates)
         }
@@ -614,38 +615,46 @@ class FirebaseController: NSObject,DatabaseProtocol{
     }
     func showCorrespondingRecord(hobby:Hobby,date:String,completion: @escaping () -> Void) {
         self.currentHobby = hobby
-        self.notes = []
         let records = hobby.records
         var record = records.first(where: {$0.date == date})
-        if defaultRecord != nil , record == nil, currentDate == date{
-            record = defaultRecord
-            defaultRecord = nil
-        }
-        if record != nil {
-            let docRef = database.collection("records").document((record?.id)!)
-            docRef.getDocument{ (document, error) in
-                let oneRecordNotes = document!.data()!["notes"] as! [DocumentReference]
-                self.parseSpecificNote(noteRefArray: oneRecordNotes){ allNotes in
-                    record?.notes = allNotes
-                    self.currentRecNotesList = record?.notes
-                    self.listeners.invoke { (listener) in
-                        if listener.listenerType == ListenerType.record || listener.listenerType == ListenerType.all {
-                            listener.onRecordChange(change: .update, record: self.currentRecNotesList!)
-                        }
-                    }
-                    completion()
+//        if defaultRecord != nil , record == nil, currentDate == date{
+//            record = defaultRecord
+//            defaultRecord = nil
+//        }
+        self.listeners.invoke { (listener) in
+            if listener.listenerType == ListenerType.record || listener.listenerType == ListenerType.all {
+                if let record = record{
+                    listener.onRecordChange(change: .update, record: record)
                 }
             }
         }
-        else{
-            currentRecNotesList = []
-            self.listeners.invoke { (listener) in
-                if listener.listenerType == ListenerType.record || listener.listenerType == ListenerType.all {
-                    listener.onRecordChange(change: .update, record: self.currentRecNotesList!)
-                }
-            }
-            completion()
-        }
+        completion()
+        
+//        if record != nil {
+//            let docRef = database.collection("records").document((record?.id)!)
+//            docRef.getDocument{ (document, error) in
+//                let oneRecordNotes = document!.data()!["notes"] as! [DocumentReference]
+//                self.parseSpecificNote(noteRefArray: oneRecordNotes){ allNotes in
+//                    record?.notes = allNotes
+//                    self.currentRecNotesList = record?.notes
+//                    self.listeners.invoke { (listener) in
+//                        if listener.listenerType == ListenerType.record || listener.listenerType == ListenerType.all {
+//                            listener.onRecordChange(change: .update, record: self.currentRecNotesList!)
+//                        }
+//                    }
+//                    completion()
+//                }
+//            }
+//        }
+//        else{
+//            currentRecNotesList = []
+//            self.listeners.invoke { (listener) in
+//                if listener.listenerType == ListenerType.record || listener.listenerType == ListenerType.all {
+//                    listener.onRecordChange(change: .update, record: self.currentRecNotesList!)
+//                }
+//            }
+//            completion()
+//        }
     }
     func setupUserListener(completion: @escaping () -> Void){
         userRef = database.collection("user")

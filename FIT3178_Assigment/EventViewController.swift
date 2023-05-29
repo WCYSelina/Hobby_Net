@@ -10,6 +10,9 @@ import FirebaseAuth
 import CoreLocation
 import UserNotifications
 class EventViewController: UIViewController,DatabaseListener,UITableViewDataSource,UITableViewDelegate,UNUserNotificationCenterDelegate{
+    func onRecordChange(change: DatabaseChange, record: Records) {
+    }
+    
     func onUserPostsDetail(change: DatabaseChange, user: User?) {
     }
     
@@ -45,9 +48,6 @@ class EventViewController: UIViewController,DatabaseListener,UITableViewDataSour
     }
     
     func onHobbyChange(change: DatabaseChange, hobbies: [Hobby]) {
-    }
-    
-    func onRecordChange(change: DatabaseChange, record: [Notes]) {
     }
     
     func onNoteChange(change: DatabaseChange, notes: [Notes]) {

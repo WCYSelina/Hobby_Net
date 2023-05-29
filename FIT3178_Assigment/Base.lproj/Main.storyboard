@@ -115,6 +115,9 @@
                             </connections>
                         </barButtonItem>
                     </navigationItem>
+                    <connections>
+                        <segue destination="kYU-8z-MEA" kind="show" identifier="dailyRecord" id="dvW-ED-d9M"/>
+                    </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="uuA-54-G8y" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
@@ -197,7 +200,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="sj5-8D-iv6" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="9481.6793893129761" y="-27.464788732394368"/>
+            <point key="canvasLocation" x="3578" y="-838"/>
         </scene>
         <!--Sheet View Controller-->
         <scene sceneID="i9O-4L-20B">
@@ -372,25 +375,6 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="fRJ-d9-lFI" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="6641.9847328244268" y="-27.464788732394368"/>
-        </scene>
-        <!--Item-->
-        <scene sceneID="bjB-zO-Xas">
-            <objects>
-                <navigationController automaticallyAdjustsScrollViewInsets="NO" id="Xyp-Ap-fkL" sceneMemberID="viewController">
-                    <tabBarItem key="tabBarItem" title="Item" id="fi5-6k-d79"/>
-                    <toolbarItems/>
-                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="jJ3-Qt-Dj8">
-                        <rect key="frame" x="0.0" y="59" width="393" height="44"/>
-                        <autoresizingMask key="autoresizingMask"/>
-                    </navigationBar>
-                    <nil name="viewControllers"/>
-                    <connections>
-                        <segue destination="ohW-mb-v5s" kind="relationship" relationship="rootViewController" id="y5b-4l-d7y"/>
-                    </connections>
-                </navigationController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="tg6-f3-uZ6" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="8548.8549618320612" y="-27.464788732394368"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="rov-ev-3Cg">
@@ -589,6 +573,85 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="iKQ-ah-uuz" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="9373" y="943"/>
+        </scene>
+        <!--Daily Record View Controller-->
+        <scene sceneID="8I5-OP-Ofw">
+            <objects>
+                <viewController id="kYU-8z-MEA" customClass="DailyRecordViewController" customModule="FIT3178_Assignment" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="zN7-Wp-Z3k">
+                        <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <datePicker contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" datePickerMode="date" style="inline" translatesAutoresizingMaskIntoConstraints="NO" id="Wjk-5H-Jre">
+                                <rect key="frame" x="20" y="154" width="353" height="330"/>
+                                <connections>
+                                    <action selector="datePickerValueChange:" destination="kYU-8z-MEA" eventType="valueChanged" id="5vw-fO-riM"/>
+                                </connections>
+                            </datePicker>
+                            <segmentedControl opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="plain" selectedSegmentIndex="0" translatesAutoresizingMaskIntoConstraints="NO" id="kAV-0J-Ujg">
+                                <rect key="frame" x="20" y="123" width="353" height="32"/>
+                                <segments>
+                                    <segment title="Daily"/>
+                                    <segment title="Weekly"/>
+                                </segments>
+                                <connections>
+                                    <action selector="segmentedControlValueChanged:" destination="kYU-8z-MEA" eventType="valueChanged" id="oKZ-g6-Uaj"/>
+                                </connections>
+                            </segmentedControl>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="xD1-aj-MrX">
+                                <rect key="frame" x="20" y="494" width="353" height="21"/>
+                                <fontDescription key="fontDescription" type="boldSystem" pointSize="17"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" misplaced="YES" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="-1" estimatedSectionHeaderHeight="-1" sectionFooterHeight="-1" estimatedSectionFooterHeight="-1" translatesAutoresizingMaskIntoConstraints="NO" id="Dbp-Ul-aka">
+                                <rect key="frame" x="20" y="523" width="353" height="259"/>
+                                <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                                <prototypes>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="dailyRecordCell" id="dgR-pl-GtS">
+                                        <rect key="frame" x="0.0" y="50" width="353" height="43.666667938232422"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="dgR-pl-GtS" id="8bu-I6-2sa">
+                                            <rect key="frame" x="0.0" y="0.0" width="353" height="43.666667938232422"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                        </tableViewCellContentView>
+                                    </tableViewCell>
+                                </prototypes>
+                            </tableView>
+                        </subviews>
+                        <viewLayoutGuide key="safeArea" id="Xhj-8y-lWE"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                        <constraints>
+                            <constraint firstItem="kAV-0J-Ujg" firstAttribute="leading" secondItem="Wjk-5H-Jre" secondAttribute="leading" id="B4k-cP-dbV"/>
+                            <constraint firstItem="Dbp-Ul-aka" firstAttribute="leading" secondItem="Xhj-8y-lWE" secondAttribute="leading" constant="20" id="Dfn-aS-xG1"/>
+                            <constraint firstItem="Xhj-8y-lWE" firstAttribute="trailing" secondItem="Wjk-5H-Jre" secondAttribute="trailing" constant="20" id="GrH-Uw-kCi"/>
+                            <constraint firstItem="kAV-0J-Ujg" firstAttribute="leading" secondItem="Xhj-8y-lWE" secondAttribute="leading" constant="20" id="Ilw-59-lFW"/>
+                            <constraint firstItem="xD1-aj-MrX" firstAttribute="leading" secondItem="Wjk-5H-Jre" secondAttribute="leading" id="NID-6F-Th7"/>
+                            <constraint firstItem="Xhj-8y-lWE" firstAttribute="bottom" secondItem="Dbp-Ul-aka" secondAttribute="bottom" constant="20" id="Nff-Cu-OAw"/>
+                            <constraint firstItem="xD1-aj-MrX" firstAttribute="top" secondItem="Wjk-5H-Jre" secondAttribute="bottom" constant="10" id="OxZ-dH-Skl"/>
+                            <constraint firstItem="kAV-0J-Ujg" firstAttribute="centerX" secondItem="zN7-Wp-Z3k" secondAttribute="centerX" id="PgG-gX-zhQ"/>
+                            <constraint firstItem="Xhj-8y-lWE" firstAttribute="trailing" secondItem="Dbp-Ul-aka" secondAttribute="trailing" constant="20" id="PyJ-49-w2O"/>
+                            <constraint firstItem="kAV-0J-Ujg" firstAttribute="top" secondItem="Xhj-8y-lWE" secondAttribute="top" constant="20" id="Tre-7G-M46"/>
+                            <constraint firstItem="kAV-0J-Ujg" firstAttribute="trailing" secondItem="xD1-aj-MrX" secondAttribute="trailing" id="by4-eh-Kue"/>
+                            <constraint firstItem="Dbp-Ul-aka" firstAttribute="top" secondItem="xD1-aj-MrX" secondAttribute="bottom" constant="8" id="ieZ-Vg-qXg"/>
+                            <constraint firstItem="Wjk-5H-Jre" firstAttribute="top" secondItem="kAV-0J-Ujg" secondAttribute="bottom" id="kQW-rL-JGp"/>
+                            <constraint firstItem="Dbp-Ul-aka" firstAttribute="top" secondItem="xD1-aj-MrX" secondAttribute="bottom" constant="8" id="rsN-6d-S25"/>
+                        </constraints>
+                    </view>
+                    <toolbarItems/>
+                    <navigationItem key="navigationItem" id="bPm-cH-NMt">
+                        <barButtonItem key="rightBarButtonItem" systemItem="add" id="Ge9-FH-afG"/>
+                    </navigationItem>
+                    <simulatedToolbarMetrics key="simulatedBottomBarMetrics"/>
+                    <connections>
+                        <outlet property="dateRecord" destination="xD1-aj-MrX" id="2hR-rG-mCG"/>
+                        <outlet property="tableView" destination="Dbp-Ul-aka" id="YRe-b5-V26"/>
+                        <segue destination="ohW-mb-v5s" kind="show" identifier="weeklyRecord" id="Zbv-yd-tQP"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="F2l-OG-F3w" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="4351.9083969465646" y="-831.69014084507046"/>
         </scene>
         <!--Tab Bar Controller-->
         <scene sceneID="KNs-cL-5jm">

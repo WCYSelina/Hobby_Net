@@ -16,15 +16,8 @@ class SheetAddRecordViewController: UIViewController {
     
     @IBAction func uploadImage(_ sender: Any) {
         let viewController = SelectPhotosViewController()
-//        let navigationController = UINavigationController(rootViewController: viewController)
-//        viewController.viewDidLoad()
-//        present(navigationController, animated: true)
-//        performSegue(withIdentifier: "SelectPhotoIdentifier", sender: nil)
-//        let storyboard = UIStoryboard(name: "Main", bundle: nil)
-//        let destinationVC = storyboard.instantiateViewController(withIdentifier: "SelectPhotosViewController")
         present(viewController, animated: true){ () in
         }
-//        navigationController?.pushViewController(destinationVC, animated: true)
     }
     
     @IBAction func addRecord(_ sender: Any) {

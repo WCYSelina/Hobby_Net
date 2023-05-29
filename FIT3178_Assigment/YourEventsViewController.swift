@@ -8,6 +8,9 @@
 import UIKit
 import FirebaseAuth
 class YourEventsViewController: UIViewController,UITableViewDataSource,UITableViewDelegate,DatabaseListener{
+    func onRecordChange(change: DatabaseChange, record: Records) {
+    }
+    
     func onUserPostsDetail(change: DatabaseChange, user: User?) {
     }
     
@@ -19,9 +22,6 @@ class YourEventsViewController: UIViewController,UITableViewDataSource,UITableVi
     
     var listenerType = ListenerType.userEvents
     func onHobbyChange(change: DatabaseChange, hobbies: [Hobby]) {
-    }
-    
-    func onRecordChange(change: DatabaseChange, record: [Notes]) {
     }
     
     func onNoteChange(change: DatabaseChange, notes: [Notes]) {    }

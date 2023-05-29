@@ -35,7 +35,7 @@ class ViewCommentViewController: UIViewController,DatabaseListener,UITableViewDa
     func onHobbyChange(change: DatabaseChange, hobbies: [Hobby]) {
     }
     
-    func onRecordChange(change: DatabaseChange, record: [Notes]) {
+    func onRecordChange(change: DatabaseChange, record: Records) {
     }
     
     func onNoteChange(change: DatabaseChange, notes: [Notes]) {
