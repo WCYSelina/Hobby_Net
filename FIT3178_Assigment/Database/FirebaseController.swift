@@ -301,6 +301,11 @@ class FirebaseController: NSObject,DatabaseProtocol{
                             }else{
                                 self.tempRecord = record
                                 self.tempRecord?.notes.append(note)
+                                self.listeners.invoke { listener in
+                                    if listener.listenerType == ListenerType.record || listener.listenerType == ListenerType.all {
+                                        listener.onRecordChange(change: .update, record: record)
+                                    }
+                                }
                                 completion(self.tempRecord!)
                                 }
                             }
