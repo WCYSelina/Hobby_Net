@@ -44,10 +44,8 @@ class PageContainerViewController: UIPageViewController, UIPageViewControllerDat
         pageControl.pageIndicatorTintColor = UIColor.lightGray
         pageControl.currentPageIndicatorTintColor = UIColor.darkGray
         
-        view.addSubview(pageControl)
         pageControl.translatesAutoresizingMaskIntoConstraints = false
-        pageControl.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -20).isActive = true
-        pageControl.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
+
     }
     
     func pageViewController(_ pageViewController: UIPageViewController, didFinishAnimating finished: Bool, previousViewControllers: [UIViewController], transitionCompleted completed: Bool) {
@@ -66,15 +64,20 @@ class PageContainerViewController: UIPageViewController, UIPageViewControllerDat
         
         viewController.title = notesText[index].0 // Set the title for the view controller
         print(notesText[index].0)
-//        let label = UILabel(frame: CGRect(x: 0, y: 0, width: 200, height: 50))
-//        label.numberOfLines = 0
-//        label.text = notesText[index].0
-//        viewController.view.addSubview(label)
+        
+        let label = UILabel()
+        label.numberOfLines = 0
+        label.text = self.notesText[index].0
+        label.translatesAutoresizingMaskIntoConstraints = false
+        viewController.view.addSubview(label)
+        
+        let containerView = UIView()
+        containerView.translatesAutoresizingMaskIntoConstraints = false
+        viewController.view.addSubview(containerView)
         
         let imageView = UIImageView()
         imageView.contentMode = .scaleAspectFit
         let image = notesText[index].1
-        print(image)
         if image != ""{
             let storageRef = Storage.storage().reference(forURL: image!)
             storageRef.getData(maxSize: 10*1024*1024){ data,error in
@@ -84,81 +87,36 @@ class PageContainerViewController: UIPageViewController, UIPageViewControllerDat
                     let image = UIImage(data: data!)
                     print("download hahahah")
                     imageView.image = image
-                    
-                    // Add constraints to maintain the aspect ratio of the image
-                    imageView.translatesAutoresizingMaskIntoConstraints = false
-//                    NSLayoutConstraint.activate([
-//                        imageView.topAnchor.constraint(equalTo: viewController.view.topAnchor,constant: 8),
-//                        imageView.leadingAnchor.constraint(equalTo: viewController.view.leadingAnchor,constant: 20),
-//                        imageView.trailingAnchor.constraint(equalTo: viewController.view.trailingAnchor,constant: 20)
-////                        imageView.bottomAnchor.constraint(equalTo: viewController.view.bottomAnchor)
-//                    ])
-                    
-//                    // Calculate the appropriate dimensions based on the image's aspect ratio
-//                    let aspectRatio = image!.size.width / image!.size.height
-//                    let maxWidth: CGFloat = 200 // Maximum width for the imageView
-//                    let maxHeight = maxWidth / aspectRatio
-//                    let imageSize = CGSize(width: maxWidth, height: maxHeight)
-//
-//                    // Scale and set the image with the adjusted dimensions
-//                    let scaledImage = image!.scaleToSize(imageSize)
-//                    imageView.image = scaledImage
-//                    imageView.frame = CGRect(origin: .zero, size: imageSize)
-//                    imageView.center = viewController.view.center
                 }
             }
         }
-//        viewController.view.addSubview(imageView)
+        viewController.view.addSubview(imageView)
+        imageView.translatesAutoresizingMaskIntoConstraints = false
         
-//        let label = UILabel(frame: CGRect(x: 0, y: 0, width: 200, height: 50))
-        let label = UILabel()
-        label.numberOfLines = 0
-        label.text = notesText[index].0
-//        viewController.view.addSubview(label)
-        label.translatesAutoresizingMaskIntoConstraints = false
-//        NSLayoutConstraint.activate([
-//            label.topAnchor.constraint(equalTo: imageView.bottomAnchor,constant: 20),
-//            label.leadingAnchor.constraint(equalTo: viewController.view.leadingAnchor,constant: 20),
-//            label.trailingAnchor.constraint(equalTo: viewController.view.leadingAnchor,constant: 20)
-////                        imageView.bottomAnchor.constraint(equalTo: viewController.view.bottomAnchor)
-//        ])
-//
+        viewController.view.addSubview(pageControl)
         
-        let stack = UIStackView()
-        stack.addArrangedSubview(imageView)
         NSLayoutConstraint.activate([
-            imageView.topAnchor.constraint(equalTo: stack.topAnchor),
-            imageView.leadingAnchor.constraint(equalTo: stack.leadingAnchor),
-            imageView.trailingAnchor.constraint(equalTo: stack.trailingAnchor)
+            containerView.topAnchor.constraint(equalTo: viewController.view.topAnchor, constant: 8),
+            containerView.leadingAnchor.constraint(equalTo: viewController.view.leadingAnchor, constant: 20),
+            containerView.trailingAnchor.constraint(equalTo: viewController.view.trailingAnchor, constant: -20),
+            containerView.bottomAnchor.constraint(equalTo: viewController.view.bottomAnchor),
+            
+            imageView.topAnchor.constraint(equalTo: containerView.topAnchor),
+            imageView.leadingAnchor.constraint(equalTo: containerView.leadingAnchor),
+            imageView.trailingAnchor.constraint(equalTo: containerView.trailingAnchor),
+            
+            label.topAnchor.constraint(equalTo: imageView.bottomAnchor, constant: 20),
+            label.leadingAnchor.constraint(equalTo: containerView.leadingAnchor),
+            label.trailingAnchor.constraint(equalTo: containerView.trailingAnchor),
+            label.bottomAnchor.constraint(equalTo: pageControl.topAnchor, constant: -20),
+            
+
+            pageControl.bottomAnchor.constraint(equalTo: viewController.view.bottomAnchor, constant: -20),
+            pageControl.centerXAnchor.constraint(equalTo: viewController.view.centerXAnchor)
         ])
-        stack.addArrangedSubview(label)
-        NSLayoutConstraint.activate([
-            label.topAnchor.constraint(equalTo: imageView.bottomAnchor),
-            label.leadingAnchor.constraint(equalTo: stack.leadingAnchor),
-            label.trailingAnchor.constraint(equalTo: stack.leadingAnchor)
-        ])
+        self.currentViewController = viewController
         
-        viewController.view.addSubview(stack)
-        stack.translatesAutoresizingMaskIntoConstraints = false
-        NSLayoutConstraint.activate([
-            stack.topAnchor.constraint(equalTo: viewController.view.bottomAnchor),
-            stack.leadingAnchor.constraint(equalTo: viewController.view.leadingAnchor),
-            stack.trailingAnchor.constraint(equalTo: viewController.view.leadingAnchor),
-            stack.bottomAnchor.constraint(equalTo: viewController.view.bottomAnchor)
-        ])
-        
-        print( stack.constraints[0])
-        print( stack.constraints[1])
-        print( stack.constraints[2])
-        print( stack.constraints[3])
-       
-//        view.addSubview(viewController.view)
-        
-        let viewController2 = RecordCellImageViewController(path: notesText[index].1!)
-        
-        self.currentViewController = viewController2
-        
-        return viewController2
+        return viewController
     }
     
     // MARK: - UIPageViewControllerDataSource
@@ -167,6 +125,7 @@ class PageContainerViewController: UIPageViewController, UIPageViewControllerDat
         guard let currentIndex = viewControllerIndex(viewController), currentIndex > 0 else {
             return nil
         }
+        print(currentIndex - 1)
         return self.viewController(at: currentIndex - 1)
     }
     
@@ -174,6 +133,7 @@ class PageContainerViewController: UIPageViewController, UIPageViewControllerDat
         guard let currentIndex = viewControllerIndex(viewController), currentIndex < notesText.count - 1 else {
             return nil
         }
+        print(currentIndex + 1)
         return self.viewController(at: currentIndex + 1)
     }
     
@@ -181,7 +141,6 @@ class PageContainerViewController: UIPageViewController, UIPageViewControllerDat
         guard let title = viewController.title else {
             return nil
         }
-        
-        return sampleData.firstIndex(of: title)
+        return notesText.firstIndex(where:{ $0.0 == title})
     }
 }

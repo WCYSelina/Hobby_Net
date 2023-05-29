@@ -7,18 +7,16 @@
 
 import UIKit
 
-class PageViewTableViewCell: UITableViewCell {
+class PageViewTableViewCell: UITableViewCell{
 
     var containerView: UIView!
     var pageViewControlObj: PageContainerViewController!
         
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
+        print("init cell")
         super.init(style: style, reuseIdentifier: reuseIdentifier)
-        // Create the container view
-//        containerView = UIView(frame: bounds)
-//        containerView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
-//        contentView.addSubview(containerView)
-        
+
+        isUserInteractionEnabled = true
         
         let swipeRight = UISwipeGestureRecognizer(target: self, action: #selector(respondToSwipeGesture))
         swipeRight.direction = UISwipeGestureRecognizer.Direction.right
@@ -27,8 +25,6 @@ class PageViewTableViewCell: UITableViewCell {
         let swipeLeft = UISwipeGestureRecognizer(target: self, action: #selector(respondToSwipeGesture))
         swipeLeft.direction = UISwipeGestureRecognizer.Direction.left
         self.addGestureRecognizer(swipeLeft)
-        
-        
     }
     
     required init?(coder aDecoder: NSCoder) {
@@ -40,11 +36,11 @@ class PageViewTableViewCell: UITableViewCell {
             switch swipeGesture.direction {
             case UISwipeGestureRecognizer.Direction.right:
                 print("Swiped right")
-                pageViewControlObj.pageViewController(pageViewControlObj, viewControllerBefore: pageViewControlObj.currentViewController)
+                let _ = pageViewControlObj.pageViewController(pageViewControlObj, viewControllerBefore: pageViewControlObj.currentViewController)
                 
             case UISwipeGestureRecognizer.Direction.left:
                 print("Swiped left")
-                pageViewControlObj.pageViewController(pageViewControlObj, viewControllerBefore: pageViewControlObj.currentViewController)
+                let _ = pageViewControlObj.pageViewController(pageViewControlObj, viewControllerAfter: pageViewControlObj.currentViewController)
             default:
                 break
             }
