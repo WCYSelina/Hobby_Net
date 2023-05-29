@@ -18,9 +18,6 @@ class AddRecordViewController: UIViewController {
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "dd MMMM yyyy"
         selectedDate = dateFormatter.string(from: sender.date)
-        
-//        let storyboard = UIStoryboard(name: "Main", bundle: nil)
-//        let sheetPresentationControler = storyboard.instantiateViewController(withIdentifier: "SheetAddRecordViewController") as! SheetAddRecordViewController
         performSegue(withIdentifier: "addRecordNavigate", sender: nil)
 //        sheetPresentationControler.hobbyDelegate = self
         
@@ -28,8 +25,6 @@ class AddRecordViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        // Do any additional setup after loading the view.
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
@@ -39,16 +34,4 @@ class AddRecordViewController: UIViewController {
         }
             
     }
-    
-
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destination.
-        // Pass the selected object to the new view controller.
-    }
-    */
-
 }

@@ -10,7 +10,7 @@ import SwiftUI
 import FirebaseAuth
 
 class HobbyTableViewController: UITableViewController,DatabaseListener{
-    func onRecordChange(change: DatabaseChange, record: Records) {
+    func onRecordChange(change: DatabaseChange, record: Records?) {
     }
     
     func onUserPostsDetail(change: DatabaseChange, user: User?) {
@@ -111,7 +111,7 @@ class HobbyTableViewController: UITableViewController,DatabaseListener{
         dateFormatter.dateFormat = "dd MMM yyyy"
         let date = dateFormatter.string(from: Date())
         databaseController?.currentDate = date
-        databaseController?.showCorrespondingRecord(hobby: currentHobby!,date: date){() in
+        databaseController?.showCorrespondingRecord(hobby: currentHobby!,date: date){ () in
             //
         }
         let currentDate = Date()

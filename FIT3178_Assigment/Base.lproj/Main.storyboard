@@ -128,11 +128,11 @@
             <objects>
                 <viewController storyboardIdentifier="AddRecordViewController" useStoryboardIdentifierAsRestorationIdentifier="YES" id="fYe-Oj-eD4" customClass="AddRecordViewController" customModule="FIT3178_Assignment" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="wQR-oK-6tk">
-                        <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
+                        <rect key="frame" x="0.0" y="0.0" width="393" height="783"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <datePicker contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" datePickerMode="dateAndTime" minuteInterval="1" style="inline" translatesAutoresizingMaskIntoConstraints="NO" id="SNQ-9Q-arR">
-                                <rect key="frame" x="20" y="122.99999999999997" width="353" height="370.33333333333326"/>
+                                <rect key="frame" x="20" y="78.999999999999972" width="353" height="370.33333333333326"/>
                                 <connections>
                                     <action selector="datePickedAddRecord:" destination="fYe-Oj-eD4" eventType="valueChanged" id="drF-bP-4PG"/>
                                 </connections>
@@ -282,28 +282,28 @@
             <objects>
                 <viewController storyboardIdentifier="SheetAddRecordViewController" useStoryboardIdentifierAsRestorationIdentifier="YES" id="J6z-S4-SeQ" customClass="SheetAddRecordViewController" customModule="FIT3178_Assignment" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="qM4-as-Nnn">
-                        <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
+                        <rect key="frame" x="0.0" y="0.0" width="393" height="783"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Add Record" textAlignment="center" lineBreakMode="tailTruncation" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="fxy-nE-TsW">
-                                <rect key="frame" x="20" y="123" width="353" height="27"/>
+                                <rect key="frame" x="20" y="79" width="353" height="27"/>
                                 <fontDescription key="fontDescription" type="boldSystem" pointSize="22"/>
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Add Notes:" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Mnt-eE-KfE">
-                                <rect key="frame" x="20" y="170" width="353" height="21"/>
+                                <rect key="frame" x="20" y="126" width="353" height="21"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
                             <textField opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="248" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="Vsd-qR-k0S">
-                                <rect key="frame" x="20" y="199" width="353" height="34"/>
+                                <rect key="frame" x="20" y="155" width="353" height="34"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                 <textInputTraits key="textInputTraits"/>
                             </textField>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="huT-qB-9Bp">
-                                <rect key="frame" x="298.33333333333331" y="307.33333333333331" width="74.666666666666686" height="35"/>
+                                <rect key="frame" x="298.33333333333331" y="263.33333333333331" width="74.666666666666686" height="35"/>
                                 <state key="normal" title="Button"/>
                                 <buttonConfiguration key="configuration" style="filled" title="Create"/>
                                 <connections>
@@ -312,7 +312,7 @@
                                 </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="pI9-eM-X9k" userLabel="Button">
-                                <rect key="frame" x="20" y="253.00000000000003" width="353" height="34.333333333333343"/>
+                                <rect key="frame" x="20" y="209" width="353" height="34.333333333333343"/>
                                 <buttonConfiguration key="configuration" style="gray" image="tray.and.arrow.up.fill" catalog="system" title="Upload Image"/>
                                 <connections>
                                     <action selector="uploadImage:" destination="J6z-S4-SeQ" eventType="touchUpInside" id="vGh-fg-uBx"/>
@@ -595,7 +595,7 @@
                                     <segment title="Weekly"/>
                                 </segments>
                                 <connections>
-                                    <action selector="segmentedControlValueChanged:" destination="kYU-8z-MEA" eventType="valueChanged" id="oKZ-g6-Uaj"/>
+                                    <action selector="segmentedControlValueChanged:" destination="kYU-8z-MEA" eventType="valueChanged" id="TVr-Yh-f2f"/>
                                 </connections>
                             </segmentedControl>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="xD1-aj-MrX">
@@ -640,11 +640,19 @@
                     </view>
                     <toolbarItems/>
                     <navigationItem key="navigationItem" id="bPm-cH-NMt">
-                        <barButtonItem key="rightBarButtonItem" systemItem="add" id="Ge9-FH-afG"/>
+                        <barButtonItem key="rightBarButtonItem" systemItem="add" id="Ge9-FH-afG">
+                            <connections>
+                                <action selector="addRecord:" destination="kYU-8z-MEA" id="MV7-fa-uS3"/>
+                                <segue destination="fYe-Oj-eD4" kind="popoverPresentation" identifier="addRecordChooseDate" popoverAnchorBarButtonItem="Ge9-FH-afG" id="kcS-xc-7kA">
+                                    <popoverArrowDirection key="popoverArrowDirection" up="YES" down="YES" left="YES" right="YES"/>
+                                </segue>
+                            </connections>
+                        </barButtonItem>
                     </navigationItem>
                     <simulatedToolbarMetrics key="simulatedBottomBarMetrics"/>
                     <connections>
                         <outlet property="dateRecord" destination="xD1-aj-MrX" id="2hR-rG-mCG"/>
+                        <outlet property="segmentedControl" destination="kAV-0J-Ujg" id="tel-kV-Tab"/>
                         <outlet property="tableView" destination="Dbp-Ul-aka" id="YRe-b5-V26"/>
                         <segue destination="ohW-mb-v5s" kind="show" identifier="weeklyRecord" id="Zbv-yd-tQP"/>
                     </connections>
@@ -1223,6 +1231,7 @@
     </scenes>
     <inferredMetricsTieBreakers>
         <segue reference="VV8-Vd-IQq"/>
+        <segue reference="kcS-xc-7kA"/>
         <segue reference="CIY-or-Qm6"/>
     </inferredMetricsTieBreakers>
     <resources>

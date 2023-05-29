@@ -22,7 +22,6 @@ class DailyRecordViewController: UIViewController,DatabaseListener,UITableViewDa
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "dailyRecordCell", for: indexPath) as! PageViewTableViewCell
-        
         // Configure the cell
         var notesText: [(String,String?)] = []
         if record != nil{
@@ -44,8 +43,9 @@ class DailyRecordViewController: UIViewController,DatabaseListener,UITableViewDa
         return cell
     }
     
-    func onRecordChange(change: DatabaseChange, record: Records) {
+    func onRecordChange(change: DatabaseChange, record: Records?) {
         self.record = record
+        tableView.reloadData()
     }
     
     func onUserPostsDetail(change: DatabaseChange, user: User?) {
@@ -82,6 +82,9 @@ class DailyRecordViewController: UIViewController,DatabaseListener,UITableViewDa
         self.hobby = hobby
     }
     
+    @IBOutlet weak var segmentedControl: UISegmentedControl!
+    
+    
     @IBAction func segmentedControlValueChanged(_ sender: UISegmentedControl) {
         if sender.selectedSegmentIndex == 0 {
             performSegue(withIdentifier: "dailyRecord", sender: self.hobby)
@@ -94,15 +97,13 @@ class DailyRecordViewController: UIViewController,DatabaseListener,UITableViewDa
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "dd MMM yyyy"
         let formattedDate = dateFormatter.string(from: selectedDate)
+        print(formattedDate)
         dateRecord.text = formattedDate
+        self.record = nil
         databaseController?.showCorrespondingRecord(hobby: self.hobby!, date: formattedDate){ () in
-            self.record?.notes.forEach{ note in
-                self.notesText.append((note.noteDetails!,note.image ?? ""))
-            }
-            print(self.notesText)
-            self.tableView.reloadData()
         }
     }
+    
     
     @IBOutlet weak var tableView: UITableView!
     
@@ -138,7 +139,7 @@ class DailyRecordViewController: UIViewController,DatabaseListener,UITableViewDa
     }
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        
+        segmentedControl.selectedSegmentIndex = 0
         databaseController?.addListener(listener: self)
     }
     
@@ -157,6 +158,9 @@ class DailyRecordViewController: UIViewController,DatabaseListener,UITableViewDa
             if let hobby = sender as? Hobby{
                 destinationVC.hobby = hobby
             }
+        }
+        if segue.identifier == "addRecordChooseDate", let destinationVC = segue.destination as? AddRecordViewController{
+            destinationVC.currentHobby = hobby
         }
     }
 }

@@ -18,7 +18,6 @@ class PageContainerViewController: UIPageViewController, UIPageViewControllerDat
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        print("heyheyhey")
         self.dataSource = self
         self.delegate = self
         self.didMove(toParent: self)
@@ -26,6 +25,12 @@ class PageContainerViewController: UIPageViewController, UIPageViewControllerDat
         // Set the initial view controller
         if let initialViewController = viewController(at: 0) {
             self.setViewControllers([initialViewController], direction: .forward, animated: false, completion: nil)
+        }
+        else{
+            if let initialViewControllerBlank = blankViewController(){
+                self.setViewControllers([initialViewControllerBlank], direction: .forward, animated: false)
+            }
+    
         }
         
         // Additional configuration of the page view controller
@@ -47,6 +52,12 @@ class PageContainerViewController: UIPageViewController, UIPageViewControllerDat
            let index = viewControllerIndex(visibleViewController) {
             pageControl.currentPage = index
         }
+    }
+    func blankViewController() -> UIViewController? {
+        let viewController = UIViewController()
+        viewController.view.backgroundColor = UIColor.systemBackground
+        self.currentViewController = viewController
+        return viewController
     }
     func viewController(at index: Int) -> UIViewController? {
         guard index >= 0 && index < notesText.count else {

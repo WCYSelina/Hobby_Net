@@ -13,7 +13,7 @@ import SwiftUI
 import FirebaseStorage
 
 class FirebaseController: NSObject,DatabaseProtocol{
-    
+
     var defaultEvent: Event?
     var email: String?
     var selectedImage: UIImage?
@@ -616,16 +616,10 @@ class FirebaseController: NSObject,DatabaseProtocol{
     func showCorrespondingRecord(hobby:Hobby,date:String,completion: @escaping () -> Void) {
         self.currentHobby = hobby
         let records = hobby.records
-        var record = records.first(where: {$0.date == date})
-//        if defaultRecord != nil , record == nil, currentDate == date{
-//            record = defaultRecord
-//            defaultRecord = nil
-//        }
+        let record:Records? = records.first(where: {$0.date == date})
         self.listeners.invoke { (listener) in
             if listener.listenerType == ListenerType.record || listener.listenerType == ListenerType.all {
-                if let record = record{
-                    listener.onRecordChange(change: .update, record: record)
-                }
+                listener.onRecordChange(change: .update, record: record ?? nil)
             }
         }
         completion()
@@ -702,6 +696,7 @@ class FirebaseController: NSObject,DatabaseProtocol{
     
      
     func parseUserSnapshot(snapshot: QuerySnapshot, completion: @escaping (User) -> Void){
+        print("hhhh")
         var counter = 0
         let userFieldCount = 5
         snapshot.documentChanges.forEach{ (change) in
@@ -1453,8 +1448,6 @@ class FirebaseController: NSObject,DatabaseProtocol{
             let date = dateFormatter.string(from: Date())
             self.showCorrespondingRecord(hobby: self.currentHobby!,date: date){ [weak self] in
                 guard let self = self else { return }
-                print(self.recordList.count)
-                print(change.oldIndex)
                 self.recordList[Int(change.oldIndex)] = parsedRecord
             }
         }

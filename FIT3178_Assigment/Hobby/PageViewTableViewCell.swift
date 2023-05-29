@@ -13,7 +13,6 @@ class PageViewTableViewCell: UITableViewCell{
     var pageViewControlObj: PageContainerViewController!
         
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
-        print("init cell")
         super.init(style: style, reuseIdentifier: reuseIdentifier)
 
         isUserInteractionEnabled = true
