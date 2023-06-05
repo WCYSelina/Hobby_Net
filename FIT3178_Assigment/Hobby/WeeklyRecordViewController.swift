@@ -63,9 +63,9 @@ class WeeklyRecordViewController: UIViewController,DatabaseListener,UITableViewD
         let containerViewController = PageContainerViewController()
         cell.pageViewControlObj = containerViewController
         cell.pageViewControlObj.notesText = notesText
+        containerViewController.setUpPage()
         cell.contentView.addSubview(containerViewController.view)
         containerViewController.view.frame = cell.contentView.bounds
-        containerViewController.didMove(toParent: self)
         return cell
     }
     
@@ -131,7 +131,7 @@ class WeeklyRecordViewController: UIViewController,DatabaseListener,UITableViewD
     }
     
     
-    
+    @IBOutlet weak var tableView: UITableView!
     @IBOutlet weak var weekPickerstackView: UIStackView!
     weak var databaseController:DatabaseProtocol?
     var listenerType = ListenerType.record
@@ -145,10 +145,6 @@ class WeeklyRecordViewController: UIViewController,DatabaseListener,UITableViewD
             updateWeekLabel()
         }
     }
-    private let tableView: UITableView = {
-        let tableView = UITableView()
-        return tableView
-    }()
     override func viewDidLoad() {
         super.viewDidLoad()
         view.addSubview(tableView)

@@ -37,6 +37,7 @@ class DailyRecordViewController: UIViewController,DatabaseListener,UITableViewDa
         let containerViewController = PageContainerViewController()
         cell.pageViewControlObj = containerViewController
         cell.pageViewControlObj.notesText = notesText
+        print(record)
         cell.pageViewControlObj.setUpPage()
         cell.contentView.addSubview(containerViewController.view)
         containerViewController.view.frame = cell.contentView.bounds
@@ -89,8 +90,12 @@ class DailyRecordViewController: UIViewController,DatabaseListener,UITableViewDa
     @IBAction func segmentedControlValueChanged(_ sender: UISegmentedControl) {
         if sender.selectedSegmentIndex == 0 {
             performSegue(withIdentifier: "dailyRecord", sender: self.hobby)
-        }else{
+        }
+        else if sender.selectedSegmentIndex == 1{
             performSegue(withIdentifier: "weeklyRecord", sender: self.hobby)
+        }
+        else{
+            performSegue(withIdentifier: "customRecord", sender: self.hobby)
         }
     }
     @IBAction func datePickerValueChange(_ sender: UIDatePicker) {
@@ -102,7 +107,9 @@ class DailyRecordViewController: UIViewController,DatabaseListener,UITableViewDa
         dateRecord.text = formattedDate
         self.record = nil
         databaseController?.showCorrespondingRecord(hobby: self.hobby!, date: formattedDate){ record in
+            self.tableView.reloadData()
         }
+        
     }
     
     
@@ -134,8 +141,8 @@ class DailyRecordViewController: UIViewController,DatabaseListener,UITableViewDa
         
 
         databaseController?.showCorrespondingRecord(hobby: self.hobby!, date: formattedDate){ record in
+            self.tableView.reloadData()
         }
-//        tableView.reloadData()
 
     }
     override func viewWillAppear(_ animated: Bool) {
@@ -155,12 +162,17 @@ class DailyRecordViewController: UIViewController,DatabaseListener,UITableViewDa
                 destinationVC.hobby = hobby
             }
         }
-        if segue.identifier == "weeklyRecord", let destinationVC = segue.destination as? WeeklyRecordViewController{
+        else if segue.identifier == "weeklyRecord", let destinationVC = segue.destination as? WeeklyRecordViewController{
             if let hobby = sender as? Hobby{
                 destinationVC.hobby = hobby
             }
         }
-        if segue.identifier == "addRecordChooseDate", let destinationVC = segue.destination as? AddRecordViewController{
+        else if segue.identifier == "customRecord", let destinationVC = segue.destination as? CustomViewHobbyViewController{
+            if let hobby = sender as? Hobby{
+                destinationVC.hobby = hobby
+            }
+        }
+        else if segue.identifier == "addRecordChooseDate", let destinationVC = segue.destination as? AddRecordViewController{
             destinationVC.currentHobby = hobby
         }
     }

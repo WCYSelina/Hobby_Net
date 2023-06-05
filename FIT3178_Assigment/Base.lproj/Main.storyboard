@@ -163,12 +163,15 @@
                         <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <stackView opaque="NO" contentMode="scaleToFill" ambiguous="YES" distribution="equalSpacing" spacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="3yS-Jw-ex7">
+                            <stackView opaque="NO" contentMode="scaleToFill" distribution="equalSpacing" spacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="3yS-Jw-ex7">
                                 <rect key="frame" x="0.0" y="103" width="393" height="61"/>
                             </stackView>
-                            <tableView clipsSubviews="YES" contentMode="scaleToFill" ambiguous="YES" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="-1" estimatedSectionHeaderHeight="-1" sectionFooterHeight="-1" estimatedSectionFooterHeight="-1" translatesAutoresizingMaskIntoConstraints="NO" id="zcY-ul-ei2">
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="-1" estimatedSectionHeaderHeight="-1" sectionFooterHeight="-1" estimatedSectionFooterHeight="-1" translatesAutoresizingMaskIntoConstraints="NO" id="zcY-ul-ei2">
                                 <rect key="frame" x="20" y="172" width="353" height="615"/>
                                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="615" id="OnA-Vz-fUA"/>
+                                </constraints>
                                 <prototypes>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="viewRecord" id="a0y-RZ-hRn" customClass="PageViewTableViewCell" customModule="FIT3178_Assignment" customModuleProvider="target">
                                         <rect key="frame" x="0.0" y="50" width="353" height="43.666667938232422"/>
@@ -184,17 +187,20 @@
                         <viewLayoutGuide key="safeArea" id="MO0-eq-j2H"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <constraints>
+                            <constraint firstItem="3yS-Jw-ex7" firstAttribute="trailing" secondItem="MO0-eq-j2H" secondAttribute="trailing" id="HB6-zv-fav"/>
                             <constraint firstItem="3yS-Jw-ex7" firstAttribute="leading" secondItem="MO0-eq-j2H" secondAttribute="leading" id="HxV-cr-AsW"/>
                             <constraint firstItem="3yS-Jw-ex7" firstAttribute="top" secondItem="MO0-eq-j2H" secondAttribute="top" id="Jef-cM-zHU"/>
                             <constraint firstItem="3yS-Jw-ex7" firstAttribute="trailing" secondItem="MO0-eq-j2H" secondAttribute="trailing" id="Rg4-Ju-VlF"/>
+                            <constraint firstItem="zcY-ul-ei2" firstAttribute="top" secondItem="3yS-Jw-ex7" secondAttribute="bottom" constant="8" symbolic="YES" id="Rk2-5O-LNR"/>
                             <constraint firstItem="zcY-ul-ei2" firstAttribute="leading" secondItem="MO0-eq-j2H" secondAttribute="leading" constant="20" id="Wdc-Ku-DNm"/>
                             <constraint firstItem="MO0-eq-j2H" firstAttribute="trailing" secondItem="zcY-ul-ei2" secondAttribute="trailing" constant="20" id="XH0-mj-pfg"/>
-                            <constraint firstItem="zcY-ul-ei2" firstAttribute="top" secondItem="3yS-Jw-ex7" secondAttribute="bottom" constant="70" id="Xqz-r8-IqV"/>
-                            <constraint firstItem="MO0-eq-j2H" firstAttribute="bottom" secondItem="zcY-ul-ei2" secondAttribute="bottom" constant="50" id="blj-vx-Cwz"/>
+                            <constraint firstItem="3yS-Jw-ex7" firstAttribute="leading" secondItem="MO0-eq-j2H" secondAttribute="leading" id="p4h-cE-KUs"/>
+                            <constraint firstAttribute="bottom" secondItem="zcY-ul-ei2" secondAttribute="bottom" constant="65" id="vpm-ed-nKt"/>
                         </constraints>
                     </view>
                     <navigationItem key="navigationItem" id="17U-nb-rbc"/>
                     <connections>
+                        <outlet property="tableView" destination="zcY-ul-ei2" id="alk-tt-xtL"/>
                         <outlet property="weekPickerstackView" destination="3yS-Jw-ex7" id="b9m-Vn-8pY"/>
                     </connections>
                 </viewController>
@@ -574,6 +580,87 @@
             </objects>
             <point key="canvasLocation" x="9373" y="943"/>
         </scene>
+        <!--Custom View Hobby View Controller-->
+        <scene sceneID="Eme-2S-qm3">
+            <objects>
+                <viewController id="kfl-vp-lcf" customClass="CustomViewHobbyViewController" customModule="FIT3178_Assignment" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="Qjk-sD-gyW">
+                        <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <datePicker contentMode="scaleToFill" contentHorizontalAlignment="leading" contentVerticalAlignment="center" datePickerMode="date" style="compact" translatesAutoresizingMaskIntoConstraints="NO" id="cNR-ps-ePF">
+                                <rect key="frame" x="84" y="122.99999999999999" width="289" height="34.333333333333329"/>
+                            </datePicker>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="From:" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="GBI-ED-Ijn">
+                                <rect key="frame" x="20" y="123" width="44" height="21"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <datePicker contentMode="scaleToFill" contentHorizontalAlignment="leading" contentVerticalAlignment="center" datePickerMode="date" style="compact" translatesAutoresizingMaskIntoConstraints="NO" id="kuA-vN-4Xl">
+                                <rect key="frame" x="84" y="177.33333333333334" width="289" height="34.333333333333343"/>
+                            </datePicker>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="To:" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="IVu-ky-A8d">
+                                <rect key="frame" x="20" y="177.33333333333334" width="23" height="21"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="-1" estimatedSectionHeaderHeight="-1" sectionFooterHeight="-1" estimatedSectionFooterHeight="-1" translatesAutoresizingMaskIntoConstraints="NO" id="1G0-nA-BpI">
+                                <rect key="frame" x="20" y="286.66666666666674" width="353" height="500.33333333333326"/>
+                                <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                                <prototypes>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="viewRecordCell" id="vx6-uY-UaT">
+                                        <rect key="frame" x="0.0" y="50" width="353" height="43.666667938232422"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="vx6-uY-UaT" id="EyH-Bs-vuD">
+                                            <rect key="frame" x="0.0" y="0.0" width="353" height="43.666667938232422"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                        </tableViewCellContentView>
+                                    </tableViewCell>
+                                </prototypes>
+                            </tableView>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Gud-5v-X1T">
+                                <rect key="frame" x="234" y="231.66666666666666" width="139" height="34.999999999999972"/>
+                                <state key="normal" title="Button"/>
+                                <buttonConfiguration key="configuration" style="filled" title="Update Record"/>
+                                <connections>
+                                    <action selector="updateView:" destination="kfl-vp-lcf" eventType="touchUpInside" id="1a3-QH-itX"/>
+                                </connections>
+                            </button>
+                        </subviews>
+                        <viewLayoutGuide key="safeArea" id="Ohc-bq-cUD"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                        <constraints>
+                            <constraint firstItem="GBI-ED-Ijn" firstAttribute="leading" secondItem="Ohc-bq-cUD" secondAttribute="leading" constant="20" id="Ckc-Sn-CoE"/>
+                            <constraint firstItem="kuA-vN-4Xl" firstAttribute="leading" secondItem="cNR-ps-ePF" secondAttribute="leading" id="MA5-Wv-sYa"/>
+                            <constraint firstItem="cNR-ps-ePF" firstAttribute="leading" secondItem="GBI-ED-Ijn" secondAttribute="trailing" constant="20" id="RMk-C3-AJz"/>
+                            <constraint firstItem="Ohc-bq-cUD" firstAttribute="trailing" secondItem="cNR-ps-ePF" secondAttribute="trailing" constant="20" id="TQa-Da-9XD"/>
+                            <constraint firstItem="Ohc-bq-cUD" firstAttribute="trailing" secondItem="1G0-nA-BpI" secondAttribute="trailing" constant="20" id="TwC-JH-Fg5"/>
+                            <constraint firstItem="cNR-ps-ePF" firstAttribute="top" secondItem="Ohc-bq-cUD" secondAttribute="top" constant="20" id="YUZ-B6-wvz"/>
+                            <constraint firstItem="1G0-nA-BpI" firstAttribute="leading" secondItem="Ohc-bq-cUD" secondAttribute="leading" constant="20" id="iBm-6c-HHc"/>
+                            <constraint firstItem="kuA-vN-4Xl" firstAttribute="trailing" secondItem="cNR-ps-ePF" secondAttribute="trailing" id="lFw-vR-8tU"/>
+                            <constraint firstItem="IVu-ky-A8d" firstAttribute="leading" secondItem="Ohc-bq-cUD" secondAttribute="leading" constant="20" id="m5d-eR-3HT"/>
+                            <constraint firstAttribute="bottom" secondItem="1G0-nA-BpI" secondAttribute="bottom" constant="65" id="mDr-xD-kb1"/>
+                            <constraint firstItem="Gud-5v-X1T" firstAttribute="top" secondItem="kuA-vN-4Xl" secondAttribute="bottom" constant="20" id="mpj-57-3hw"/>
+                            <constraint firstItem="GBI-ED-Ijn" firstAttribute="top" secondItem="Ohc-bq-cUD" secondAttribute="top" constant="20" id="nQl-2y-gUZ"/>
+                            <constraint firstItem="1G0-nA-BpI" firstAttribute="top" secondItem="Gud-5v-X1T" secondAttribute="bottom" constant="20" id="qpX-zQ-Ujj"/>
+                            <constraint firstItem="kuA-vN-4Xl" firstAttribute="top" secondItem="IVu-ky-A8d" secondAttribute="top" id="vTq-m5-JF3"/>
+                            <constraint firstItem="kuA-vN-4Xl" firstAttribute="top" secondItem="cNR-ps-ePF" secondAttribute="bottom" constant="20" id="xMR-Hi-Vmd"/>
+                            <constraint firstItem="Ohc-bq-cUD" firstAttribute="trailing" secondItem="Gud-5v-X1T" secondAttribute="trailing" constant="20" id="zk4-jU-uHg"/>
+                        </constraints>
+                    </view>
+                    <navigationItem key="navigationItem" id="sNx-b3-u7F"/>
+                    <connections>
+                        <outlet property="fromDate" destination="cNR-ps-ePF" id="j6B-VO-XAl"/>
+                        <outlet property="tableView" destination="1G0-nA-BpI" id="o9q-31-LfU"/>
+                        <outlet property="toDate" destination="kuA-vN-4Xl" id="BcG-TL-MHD"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="hYB-Tk-vuU" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="5396.1832061068699" y="-1420.4225352112676"/>
+        </scene>
         <!--Daily Record View Controller-->
         <scene sceneID="8I5-OP-Ofw">
             <objects>
@@ -593,6 +680,7 @@
                                 <segments>
                                     <segment title="Daily"/>
                                     <segment title="Weekly"/>
+                                    <segment title="Custom"/>
                                 </segments>
                                 <connections>
                                     <action selector="segmentedControlValueChanged:" destination="kYU-8z-MEA" eventType="valueChanged" id="TVr-Yh-f2f"/>
@@ -655,6 +743,7 @@
                         <outlet property="segmentedControl" destination="kAV-0J-Ujg" id="tel-kV-Tab"/>
                         <outlet property="tableView" destination="Dbp-Ul-aka" id="YRe-b5-V26"/>
                         <segue destination="ohW-mb-v5s" kind="show" identifier="weeklyRecord" id="Zbv-yd-tQP"/>
+                        <segue destination="kfl-vp-lcf" kind="show" identifier="customRecord" id="1Eb-2R-FzL"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="F2l-OG-F3w" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>

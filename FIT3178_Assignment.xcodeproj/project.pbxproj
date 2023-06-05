@@ -43,6 +43,7 @@
 		6A8E89E02A237F130007B9BF /* PageContainerViewControlller.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A8E89DF2A237F130007B9BF /* PageContainerViewControlller.swift */; };
 		6A8E89E22A2380690007B9BF /* PageViewTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A8E89E12A2380690007B9BF /* PageViewTableViewCell.swift */; };
 		6A9B56B52A10D41300FB28A3 /* ViewCommentTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A9B56B42A10D41300FB28A3 /* ViewCommentTableViewController.swift */; };
+		6AA6FFF32A2DEABF0062F8B4 /* CustomViewHobbyViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6AA6FFF22A2DEABF0062F8B4 /* CustomViewHobbyViewController.swift */; };
 		6AB99CE42A0FB02400544DD6 /* SocialNetTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6AB99CE32A0FB02400544DD6 /* SocialNetTableViewController.swift */; };
 		6ABD73432A0E847700FBC5A1 /* Comment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6ABD73422A0E847700FBC5A1 /* Comment.swift */; };
 		6ABD73452A0E84B700FBC5A1 /* Post.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6ABD73442A0E84B700FBC5A1 /* Post.swift */; };
@@ -83,6 +84,7 @@
 		6A8E89DF2A237F130007B9BF /* PageContainerViewControlller.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PageContainerViewControlller.swift; sourceTree = "<group>"; };
 		6A8E89E12A2380690007B9BF /* PageViewTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PageViewTableViewCell.swift; sourceTree = "<group>"; };
 		6A9B56B42A10D41300FB28A3 /* ViewCommentTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewCommentTableViewController.swift; sourceTree = "<group>"; };
+		6AA6FFF22A2DEABF0062F8B4 /* CustomViewHobbyViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomViewHobbyViewController.swift; sourceTree = "<group>"; };
 		6AB99CE32A0FB02400544DD6 /* SocialNetTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SocialNetTableViewController.swift; sourceTree = "<group>"; };
 		6ABD73422A0E847700FBC5A1 /* Comment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Comment.swift; sourceTree = "<group>"; };
 		6ABD73442A0E84B700FBC5A1 /* Post.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Post.swift; sourceTree = "<group>"; };
@@ -187,6 +189,7 @@
 				6A8E89E12A2380690007B9BF /* PageViewTableViewCell.swift */,
 				6A7639942A2484A40050742A /* DailyRecordViewController.swift */,
 				6A768A822A25046100D3E944 /* RecordImageViewController.swift */,
+				6AA6FFF22A2DEABF0062F8B4 /* CustomViewHobbyViewController.swift */,
 			);
 			path = Hobby;
 			sourceTree = "<group>";
@@ -322,6 +325,7 @@
 				6A48A38B29F8017D00F9BC55 /* Hobby.swift in Sources */,
 				6A48A39129F8089A00F9BC55 /* Notes.swift in Sources */,
 				6A778B272A1626D300EBF602 /* Event.swift in Sources */,
+				6AA6FFF32A2DEABF0062F8B4 /* CustomViewHobbyViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -19,18 +19,6 @@ class RecordImageViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-//        self.pageControl.numberOfPages = self.pageControlTotalPage
-//        self.pageControl.currentPage = self.pageControlIndex
-//        self.pageControl.tintColor = UIColor.systemBlue
-//        self.pageControl.pageIndicatorTintColor = UIColor.lightGray
-//        self.pageControl.currentPageIndicatorTintColor = UIColor.darkGray
-
-        // Do any additional setup after loading the view.
-
-        
-        
-        
     }
     
     init(path: String, pageControlIndex: Int, pageControlTotalPage: Int) {
@@ -79,56 +67,11 @@ class RecordImageViewController: UIViewController {
                                 self.pageControl.centerXAnchor.constraint(equalTo: self.view.centerXAnchor)
                             ])
                         }
-
-
-
                     }
                 }
-
-
-
             }
         }
         
-        
-        
-//        let storageRef = Storage.storage().reference(forURL: path)
-//        storageRef.getData(maxSize: 10*1024*1024){ data,error in
-//            if let error = error{
-//                print(error.localizedDescription)
-//            } else{
-//                let image = UIImage(data: data!)
-//                print("download hahahah")
-//                self.picView.image = image
-//
-//                DispatchQueue.main.async {
-//                    self.view.addSubview(self.labelText)
-//                    self.labelText.translatesAutoresizingMaskIntoConstraints = false
-//                    self.view.addSubview(self.picView)
-//                    self.picView.translatesAutoresizingMaskIntoConstraints = false
-//                    self.view.addSubview(self.pageControl)
-//                    self.pageControl.translatesAutoresizingMaskIntoConstraints = false
-//
-//                    NSLayoutConstraint.activate([
-//                        self.picView.topAnchor.constraint(equalTo: self.view.topAnchor),
-//                        self.picView.leadingAnchor.constraint(equalTo: self.view.leadingAnchor),
-//                        self.picView.trailingAnchor.constraint(equalTo: self.view.trailingAnchor),
-//
-//                        self.labelText.topAnchor.constraint(equalTo: self.picView.bottomAnchor, constant: 20),
-//                        self.labelText.leadingAnchor.constraint(equalTo: self.view.leadingAnchor),
-//                        self.labelText.trailingAnchor.constraint(equalTo: self.view.trailingAnchor),
-//                        self.labelText.bottomAnchor.constraint(equalTo: self.pageControl.topAnchor, constant: -20),
-//
-//
-//                        self.pageControl.bottomAnchor.constraint(equalTo: self.view.bottomAnchor, constant: -20),
-//                        self.pageControl.centerXAnchor.constraint(equalTo: self.view.centerXAnchor)
-//                    ])
-//                }
-//
-//
-//
-//            }
-//        }
     }
     
     required init?(coder: NSCoder) {
