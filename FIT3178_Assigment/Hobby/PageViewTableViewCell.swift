@@ -8,7 +8,7 @@
 import UIKit
 
 class PageViewTableViewCell: UITableViewCell{
-
+    var downloadTask: URLSessionDataTask?
     var containerView: UIView!
     var pageViewControlObj: PageContainerViewController!
     var imageViewContainer = UIView()
@@ -21,6 +21,10 @@ class PageViewTableViewCell: UITableViewCell{
     
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
+    }
+    
+    override func prepareForReuse() {
+        print("cell reused")
     }
 
 }

@@ -29,11 +29,12 @@ class RecordImageViewController: UIViewController {
                     if let error = error{
                         print(error.localizedDescription)
                     } else{
-                        let image = UIImage(data: data!)
-                        print("download hahahah")
-                        self.picView.image = image
-
                         DispatchQueue.main.async {
+                            let image = UIImage(data: data!)
+                            print("download hahahah")
+                            self.picView.image = image
+
+                        
                             self.view.addSubview(self.labelText)
                             self.labelText.translatesAutoresizingMaskIntoConstraints = false
                             self.view.addSubview(self.picView)

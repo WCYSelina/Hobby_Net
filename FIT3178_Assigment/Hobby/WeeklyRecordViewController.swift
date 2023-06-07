@@ -46,7 +46,7 @@ class WeeklyRecordViewController: UIViewController,DatabaseListener,UITableViewD
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        var cell = tableView.dequeueReusableCell(withIdentifier: "viewRecord", for: indexPath) as! PageViewTableViewCell
+        let cell = tableView.dequeueReusableCell(withIdentifier: "viewRecord", for: indexPath) as! PageViewTableViewCell
         
         // Configure the cell
         var notesText: [(String,String?)] = []
@@ -60,22 +60,14 @@ class WeeklyRecordViewController: UIViewController,DatabaseListener,UITableViewD
                 }
             }
         }
+        print("halooooo")
         let containerViewController = PageContainerViewController()
         cell.pageViewControlObj = containerViewController
         cell.pageViewControlObj.notesText = notesText
-        containerSetupPage(cell: cell, containerViewController: containerViewController){ returnCell in
-            cell = returnCell
-        }
+        cell.contentView.addSubview(containerViewController.view)
+        containerViewController.view.frame = cell.contentView.bounds
+        print("outoutoutout")
         return cell
-    }
-    
-    func containerSetupPage(cell:PageViewTableViewCell,containerViewController:PageContainerViewController,completion: @escaping (PageViewTableViewCell) -> Void){
-        cell.pageViewControlObj.setUpPage(){ () in
-            print("done weekly")
-            cell.contentView.addSubview(containerViewController.view)
-            containerViewController.view.frame = cell.contentView.bounds
-            completion(cell)
-        }
     }
     
     
@@ -114,15 +106,9 @@ class WeeklyRecordViewController: UIViewController,DatabaseListener,UITableViewD
         40
     }
     
-    override func viewDidLayoutSubviews() { //adjusting the contraints of subviews
-        super.viewDidLayoutSubviews()
-        let weekPickerHeight: CGFloat = 50
-        weekPickerstackView.frame = CGRect(x: 0, y: view.safeAreaInsets.top, width: view.bounds.width, height: weekPickerHeight)
-
-        // Set the frame for the tableView
-        tableView.frame = CGRect(x: 0, y: weekPickerstackView.frame.maxY, width: view.bounds.width, height: view.bounds.height - weekPickerHeight - view.safeAreaInsets.top)
-        tableView.frame = view.bounds
-    }
+//    override func viewDidLayoutSubviews() { //adjusting the contraints of subviews
+//        super.viewDidLayoutSubviews()
+//    }
     
     func onWeeklyRecordChange(change: DatabaseChange, records: [Records]) {
         self.records = records
@@ -141,6 +127,7 @@ class WeeklyRecordViewController: UIViewController,DatabaseListener,UITableViewD
     
     
     @IBOutlet weak var tableView: UITableView!
+    
     @IBOutlet weak var weekPickerstackView: UIStackView!
     weak var databaseController:DatabaseProtocol?
     var listenerType = ListenerType.record
@@ -157,12 +144,11 @@ class WeeklyRecordViewController: UIViewController,DatabaseListener,UITableViewD
     override func viewDidLoad() {
         super.viewDidLoad()
         view.addSubview(tableView)
-        tableView.contentInset = UIEdgeInsets(top: 30, left: 0, bottom: 0, right: 0) // so that the table view is below the week picker and does not overlay
-//        tableView.register(VerticalTableViewCell.self, forCellReuseIdentifier: VerticalTableViewCell.reuseIdentifier)
         tableView.register(PageViewTableViewCell.self, forCellReuseIdentifier: "viewRecord")
         tableView.dataSource = self
         tableView.delegate = self
         tableView.isEditing = false
+        
  
         let appDelegate = UIApplication.shared.delegate as? AppDelegate
         databaseController = appDelegate?.databaseController
