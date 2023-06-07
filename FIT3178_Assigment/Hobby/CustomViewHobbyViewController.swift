@@ -78,7 +78,8 @@ class CustomViewHobbyViewController: UIViewController,DatabaseListener,UITableVi
         let containerViewController = PageContainerViewController()
         cell.pageViewControlObj = containerViewController
         cell.pageViewControlObj.notesText = notesText
-        containerViewController.setUpPage()
+        containerViewController.setUpPage(){ () in
+        }
         cell.contentView.addSubview(containerViewController.view)
         containerViewController.view.frame = cell.contentView.bounds
         return cell

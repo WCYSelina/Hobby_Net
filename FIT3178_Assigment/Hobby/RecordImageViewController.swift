@@ -21,19 +21,8 @@ class RecordImageViewController: UIViewController {
         super.viewDidLoad()
     }
     
-    init(path: String, pageControlIndex: Int, pageControlTotalPage: Int) {
-        self.path = path
-        self.pageControlIndex = pageControlIndex
-        self.pageControlTotalPage = pageControlTotalPage
-        self.pageControl.numberOfPages = self.pageControlTotalPage
-        self.pageControl.currentPage = self.pageControlIndex
-        self.pageControl.tintColor = UIColor.systemBlue
-        self.pageControl.pageIndicatorTintColor = UIColor.lightGray
-        self.pageControl.currentPageIndicatorTintColor = UIColor.darkGray
-        
-        super.init(nibName: nil, bundle: nil)
-        
-        Task{
+    func downloadImage(completion: @escaping () -> Void){
+//        Task{
             do{
                 let storageRef = Storage.storage().reference(forURL: path)
                 storageRef.getData(maxSize: 10*1024*1024){ data,error in
@@ -67,11 +56,25 @@ class RecordImageViewController: UIViewController {
                                 self.pageControl.centerXAnchor.constraint(equalTo: self.view.centerXAnchor)
                             ])
                         }
-                    }
+//                    }
+                        completion()
                 }
             }
         }
+    }
+    
+    init(path: String, pageControlIndex: Int, pageControlTotalPage: Int) {
+        self.path = path
+        self.pageControlIndex = pageControlIndex
+        self.pageControlTotalPage = pageControlTotalPage
+        self.pageControl.numberOfPages = self.pageControlTotalPage
+        self.pageControl.currentPage = self.pageControlIndex
+        self.pageControl.tintColor = UIColor.systemBlue
+        self.pageControl.pageIndicatorTintColor = UIColor.lightGray
+        self.pageControl.currentPageIndicatorTintColor = UIColor.darkGray
         
+        super.init(nibName: nil, bundle: nil)
+    
     }
     
     required init?(coder: NSCoder) {

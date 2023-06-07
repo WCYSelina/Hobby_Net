@@ -46,7 +46,7 @@ class WeeklyRecordViewController: UIViewController,DatabaseListener,UITableViewD
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "viewRecord", for: indexPath) as! PageViewTableViewCell
+        var cell = tableView.dequeueReusableCell(withIdentifier: "viewRecord", for: indexPath) as! PageViewTableViewCell
         
         // Configure the cell
         var notesText: [(String,String?)] = []
@@ -63,10 +63,19 @@ class WeeklyRecordViewController: UIViewController,DatabaseListener,UITableViewD
         let containerViewController = PageContainerViewController()
         cell.pageViewControlObj = containerViewController
         cell.pageViewControlObj.notesText = notesText
-        containerViewController.setUpPage()
-        cell.contentView.addSubview(containerViewController.view)
-        containerViewController.view.frame = cell.contentView.bounds
+        containerSetupPage(cell: cell, containerViewController: containerViewController){ returnCell in
+            cell = returnCell
+        }
         return cell
+    }
+    
+    func containerSetupPage(cell:PageViewTableViewCell,containerViewController:PageContainerViewController,completion: @escaping (PageViewTableViewCell) -> Void){
+        cell.pageViewControlObj.setUpPage(){ () in
+            print("done weekly")
+            cell.contentView.addSubview(containerViewController.view)
+            containerViewController.view.frame = cell.contentView.bounds
+            completion(cell)
+        }
     }
     
     

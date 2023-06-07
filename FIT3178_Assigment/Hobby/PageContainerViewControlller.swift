@@ -17,11 +17,18 @@ class PageContainerViewController: UIPageViewController, UIPageViewControllerDat
         super.init(transitionStyle: .scroll, navigationOrientation: .horizontal, options: nil)
     }
     
-    func setUpPage(){
+    func setUpPage(completion: @escaping () -> Void) {
         var current = 0
         for noteText in notesText{
-            pages.append(RecordImageViewController(path: noteText.1!, pageControlIndex: current, pageControlTotalPage: notesText.count))
-            current += 1
+            var recordImageObj = RecordImageViewController(path: noteText.1!, pageControlIndex: current, pageControlTotalPage: notesText.count)
+            recordImageObj.downloadImage(){ () in
+                print("add")
+                self.pages.append(recordImageObj)
+                current += 1
+                if current == self.notesText.count{
+                    completion()
+                }
+            }
         }
     }
     
@@ -33,7 +40,6 @@ class PageContainerViewController: UIPageViewController, UIPageViewControllerDat
         self.didMove(toParent: self)
         
         self.view.isUserInteractionEnabled = true
-        setUpPage()
         if pages.count == 0{
             if let initialNoRecord = blankViewController(){
                 self.setViewControllers([initialNoRecord], direction: .forward, animated: false)

@@ -16,7 +16,7 @@ class AddRecordViewController: UIViewController {
     
     @IBAction func datePickedAddRecord(_ sender: UIDatePicker) {
         let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "dd MMMM yyyy"
+        dateFormatter.dateFormat = "dd MMM yyyy"
         selectedDate = dateFormatter.string(from: sender.date)
         performSegue(withIdentifier: "addRecordNavigate", sender: nil)
 //        sheetPresentationControler.hobbyDelegate = self

@@ -21,7 +21,7 @@ class DailyRecordViewController: UIViewController,DatabaseListener,UITableViewDa
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "dailyRecordCell", for: indexPath) as! PageViewTableViewCell
+        var cell = tableView.dequeueReusableCell(withIdentifier: "dailyRecordCell", for: indexPath) as! PageViewTableViewCell
         // Configure the cell
         var notesText: [(String,String?)] = []
         if record != nil{
@@ -37,12 +37,19 @@ class DailyRecordViewController: UIViewController,DatabaseListener,UITableViewDa
         let containerViewController = PageContainerViewController()
         cell.pageViewControlObj = containerViewController
         cell.pageViewControlObj.notesText = notesText
-        print(record)
-        cell.pageViewControlObj.setUpPage()
-        cell.contentView.addSubview(containerViewController.view)
-        containerViewController.view.frame = cell.contentView.bounds
-//        containerViewController.didMove(toParent: self)
+        containerSetupPage(cell: cell, containerViewController: containerViewController){ returnCell in
+            cell = returnCell
+        }
         return cell
+    }
+    
+    func containerSetupPage(cell:PageViewTableViewCell,containerViewController:PageContainerViewController,completion: @escaping (PageViewTableViewCell) -> Void){
+        cell.pageViewControlObj.setUpPage(){ () in
+            print("done")
+            cell.contentView.addSubview(containerViewController.view)
+            containerViewController.view.frame = cell.contentView.bounds
+            completion(cell)
+        }
     }
     
     func onRecordChange(change: DatabaseChange, record: Records?) {
