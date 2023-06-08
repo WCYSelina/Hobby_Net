@@ -13,6 +13,6 @@ class Post: NSObject,Codable{
     var comment:[Comment] = []
     var likeNum:Int?
     var postDetail:String?
-    var publisher:DocumentReference?
+    var publisher:String?
     var publisherName:String?
 }

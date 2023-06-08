@@ -21,20 +21,30 @@ class RecordImageViewController: UIViewController {
         super.viewDidLoad()
     }
     
-    func downloadImage(completion: @escaping () -> Void){
-//        Task{
+    init(path: String, pageControlIndex: Int, pageControlTotalPage: Int) {
+        self.path = path
+        self.pageControlIndex = pageControlIndex
+        self.pageControlTotalPage = pageControlTotalPage
+        self.pageControl.numberOfPages = self.pageControlTotalPage
+        self.pageControl.currentPage = self.pageControlIndex
+        self.pageControl.tintColor = UIColor.systemBlue
+        self.pageControl.pageIndicatorTintColor = UIColor.lightGray
+        self.pageControl.currentPageIndicatorTintColor = UIColor.darkGray
+        
+        super.init(nibName: nil, bundle: nil)
+        
+        Task{
             do{
                 let storageRef = Storage.storage().reference(forURL: path)
                 storageRef.getData(maxSize: 10*1024*1024){ data,error in
                     if let error = error{
                         print(error.localizedDescription)
                     } else{
-                        DispatchQueue.main.async {
-                            let image = UIImage(data: data!)
-                            print("download hahahah")
-                            self.picView.image = image
+                        let image = UIImage(data: data!)
+                        print("download hahahah")
+                        self.picView.image = image
 
-                        
+                        DispatchQueue.main.async {
                             self.view.addSubview(self.labelText)
                             self.labelText.translatesAutoresizingMaskIntoConstraints = false
                             self.view.addSubview(self.picView)
@@ -57,25 +67,11 @@ class RecordImageViewController: UIViewController {
                                 self.pageControl.centerXAnchor.constraint(equalTo: self.view.centerXAnchor)
                             ])
                         }
-//                    }
-                        completion()
+                    }
                 }
             }
         }
-    }
-    
-    init(path: String, pageControlIndex: Int, pageControlTotalPage: Int) {
-        self.path = path
-        self.pageControlIndex = pageControlIndex
-        self.pageControlTotalPage = pageControlTotalPage
-        self.pageControl.numberOfPages = self.pageControlTotalPage
-        self.pageControl.currentPage = self.pageControlIndex
-        self.pageControl.tintColor = UIColor.systemBlue
-        self.pageControl.pageIndicatorTintColor = UIColor.lightGray
-        self.pageControl.currentPageIndicatorTintColor = UIColor.darkGray
         
-        super.init(nibName: nil, bundle: nil)
-    
     }
     
     required init?(coder: NSCoder) {

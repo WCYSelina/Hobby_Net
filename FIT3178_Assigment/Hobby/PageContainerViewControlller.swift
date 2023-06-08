@@ -7,7 +7,7 @@ class PageContainerViewController: UIPageViewController, UIPageViewControllerDat
     var pageControl = UIPageControl()
     var currentViewController: UIViewController!
     var notesText: [(String,String?)] = []
-    
+    var uniqueURL:String?
     override init(transitionStyle style: UIPageViewController.TransitionStyle, navigationOrientation: UIPageViewController.NavigationOrientation, options: [UIPageViewController.OptionsKey : Any]? = nil) {
         super.init(transitionStyle: .scroll, navigationOrientation: .horizontal, options: nil)
     }
@@ -20,7 +20,6 @@ class PageContainerViewController: UIPageViewController, UIPageViewControllerDat
         super.viewDidLoad()
         self.dataSource = self
         self.delegate = self
-        
         // Set the initial view controller
         if let initialViewController = viewController(at: 0) {
             self.setViewControllers([initialViewController], direction: .forward, animated: false, completion: nil)
@@ -62,11 +61,11 @@ class PageContainerViewController: UIPageViewController, UIPageViewControllerDat
         guard index >= 0 && index < notesText.count else {
             return nil
         }
-        
+        print("oooo\(index)")
         let viewController = UIViewController()
         viewController.view.backgroundColor = UIColor.systemBackground
-        
-        viewController.title = notesText[index].0 // Set the title for the view controller
+        uniqueURL = notesText[index].1
+//        viewController.title = notesText[index].0 // Set the title for the view controller
         print(notesText[index].0)
         
         let label = UILabel()
@@ -74,6 +73,12 @@ class PageContainerViewController: UIPageViewController, UIPageViewControllerDat
         label.text = self.notesText[index].0
         label.translatesAutoresizingMaskIntoConstraints = false
         viewController.view.addSubview(label)
+        
+        let deleteButton = UIButton(type:.system)
+        deleteButton.setImage(UIImage(named: "ellipsis"), for: .normal)
+        deleteButton.addTarget(self, action: #selector(buttonTapped), for: .touchUpInside)
+        deleteButton.translatesAutoresizingMaskIntoConstraints = false
+        viewController.view.addSubview(deleteButton)
         
         let containerView = UIView()
         containerView.translatesAutoresizingMaskIntoConstraints = false
@@ -84,15 +89,6 @@ class PageContainerViewController: UIPageViewController, UIPageViewControllerDat
         let image = notesText[index].1
         if image != ""{
             let storageRef = Storage.storage().reference(forURL: image!)
-//            storageRef.getData(maxSize: 10*1024*1024){ data,error in
-//                if let error = error{
-//                    print(error.localizedDescription)
-//                } else{
-//                    let image = UIImage(data: data!)
-//                    print("download hahahah")
-//                    imageView.image = image
-//                }
-//            }
             print("iiiiiiiii")
 //            DispatchQueue.main.async {
                 storageRef.getData(maxSize: 100*1024*1024){ data,error in
@@ -122,7 +118,11 @@ class PageContainerViewController: UIPageViewController, UIPageViewControllerDat
                         containerView.trailingAnchor.constraint(equalTo: viewController.view.trailingAnchor, constant: -20),
                         containerView.bottomAnchor.constraint(equalTo: viewController.view.bottomAnchor),
                         
-                        imageView.topAnchor.constraint(equalTo: containerView.topAnchor),
+                        deleteButton.topAnchor.constraint(equalTo: containerView.topAnchor),
+                        deleteButton.leadingAnchor.constraint(equalTo: containerView.leadingAnchor),
+                        deleteButton.bottomAnchor.constraint(equalTo: label.topAnchor),
+                        
+                        imageView.topAnchor.constraint(equalTo: deleteButton.bottomAnchor),
                         imageView.leadingAnchor.constraint(equalTo: containerView.leadingAnchor),
                         imageView.trailingAnchor.constraint(equalTo: containerView.trailingAnchor),
                         
@@ -138,37 +138,23 @@ class PageContainerViewController: UIPageViewController, UIPageViewControllerDat
                 }
             }
         }
-//        NSLayoutConstraint.activate([
-//            containerView.topAnchor.constraint(equalTo: viewController.view.topAnchor, constant: 8),
-//            containerView.leadingAnchor.constraint(equalTo: viewController.view.leadingAnchor, constant: 20),
-//            containerView.trailingAnchor.constraint(equalTo: viewController.view.trailingAnchor, constant: -20),
-//            containerView.bottomAnchor.constraint(equalTo: viewController.view.bottomAnchor),
-//
-//            imageView.topAnchor.constraint(equalTo: containerView.topAnchor),
-//            imageView.leadingAnchor.constraint(equalTo: containerView.leadingAnchor),
-//            imageView.trailingAnchor.constraint(equalTo: containerView.trailingAnchor),
-//
-//            label.topAnchor.constraint(equalTo: imageView.bottomAnchor, constant: 20),
-//            label.leadingAnchor.constraint(equalTo: containerView.leadingAnchor),
-//            label.trailingAnchor.constraint(equalTo: containerView.trailingAnchor),
-//            label.bottomAnchor.constraint(equalTo: pageControl.topAnchor, constant: -20),
-//
-//
-//            pageControl.bottomAnchor.constraint(equalTo: viewController.view.bottomAnchor, constant: -20),
-//            pageControl.centerXAnchor.constraint(equalTo: viewController.view.centerXAnchor)
-//        ])
         self.currentViewController = viewController
         
         return viewController
     }
     
+    @objc func buttonTapped() {
+        // Handle button tap event
+        
+    }
+    
     // MARK: - UIPageViewControllerDataSource
     
     func pageViewController(_ pageViewController: UIPageViewController, viewControllerBefore viewController: UIViewController) -> UIViewController? {
-        let currentIndex = viewControllerIndex(viewController), currentIndex > 0 else {
+        guard let currentIndex = viewControllerIndex(viewController), currentIndex > 0 else {
             return nil
         }
-        print(currentIndex - 1)
+        print("ssss\(currentIndex - 1)")
         return self.viewController(at: currentIndex - 1)
     }
     
@@ -176,14 +162,16 @@ class PageContainerViewController: UIPageViewController, UIPageViewControllerDat
         guard let currentIndex = viewControllerIndex(viewController), currentIndex < notesText.count - 1 else {
             return nil
         }
-        print(currentIndex + 1)
+        print("dddd\(currentIndex + 1)")
         return self.viewController(at: currentIndex + 1)
     }
     
     func viewControllerIndex(_ viewController: UIViewController) -> Int? {
-        guard let title = viewController.title else {
+        guard let uniqueURL = self.uniqueURL else {
             return nil
         }
-        return notesText.firstIndex(where:{ $0.0 == title})
+        let index = notesText.firstIndex(where:{ $0.1 == uniqueURL})
+        print("eeee\(index)")
+        return index
     }
 }

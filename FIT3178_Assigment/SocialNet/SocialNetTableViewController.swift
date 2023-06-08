@@ -185,15 +185,33 @@ class SocialNetTableViewController: UITableViewController,DatabaseListener,UITex
     // Override to support conditional editing of the table view.
     override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
         // Return false if you do not want the specified item to be editable.
-        return true
-    }
-    // Override to support editing the table view.
-    override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
-        if editingStyle == .delete {
-            // Delete the row from the data source
-//            self.databaseController?.deleteHobby(hobby: allHobbies[indexPath.row])
+        if postList[indexPath.section].publisher == defaultUser?.id{
+            return true
         }
+        return false
     }
+
+    override func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
+        let deleteAction = UIContextualAction(style: .destructive, title: "Delete") { (action, view, completionHandler) in
+            self.databaseController?.deletePost(post: self.postList[indexPath.section])
+            tableView.reloadData()
+            completionHandler(true)
+        }
+        let editAction = UIContextualAction(style: .normal, title: "Edit") { (action, view, completionHandler) in
+            // Perform the editing logic
+            // ...
+            completionHandler(true)
+        }
+        
+        deleteAction.backgroundColor = .red // Customize the delete action background color
+        editAction.backgroundColor = .blue // Customize the edit action background color
+        
+        let configuration = UISwipeActionsConfiguration(actions: [deleteAction, editAction])
+        configuration.performsFirstActionWithFullSwipe = false // Allow partial swipe to reveal actions
+        
+        return configuration
+    }
+    
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "viewCommentIdentifier", let destinationVC = segue.destination as? ViewCommentViewController{
             if let post = sender as? Post{

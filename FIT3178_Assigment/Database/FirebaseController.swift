@@ -206,6 +206,45 @@ class FirebaseController: NSObject,DatabaseProtocol{
         }
         return hobby
     }
+    func deletePost(post:Post){
+        if let postID = post.id{
+            let postRef = self.database.collection("post").document(postID)
+            postRef.getDocument{ (document,error) in
+                let onePostComment = document!.data()!["comments"] as? [DocumentReference]
+                if let onePostComment = onePostComment, !onePostComment.isEmpty{
+                    self.parseSpecificComment(commentRefArray: onePostComment){ allComments in
+                        let comments = allComments
+                        self.postRef?.document(postID).delete(){ delete in
+                            self.userRef?.document(self.defaultUser.id!).updateData(["posts" : FieldValue.arrayRemove([postRef])])
+                            self.postList.removeAll(where: {$0.id == postID})
+                            self.filterLikes(user: self.defaultUser)
+                            for comment in comments {
+                                    self.deleteComment(comment: comment)
+                                }
+                                self.listeners.invoke{ listener in
+                                    if listener.listenerType == ListenerType.post || listener.listenerType == ListenerType.all {
+                                        listener.onPostChange(change: .update, posts: self.postList, defaultUser: self.defaultUser)
+                                    }
+                                }
+                            }
+                        }
+                    }
+                else{
+                    self.postRef?.document(postID).delete { delete in
+                        self.userRef?.document(self.defaultUser.id!).updateData(["posts" : FieldValue.arrayRemove([postRef])])
+                        self.postList.removeAll(where: { $0.id == postID })
+                        self.filterLikes(user: self.defaultUser)
+                        self.listeners.invoke{ listener in
+                            if listener.listenerType == ListenerType.post || listener.listenerType == ListenerType.all {
+                                listener.onPostChange(change: .update, posts: self.postList, defaultUser: self.defaultUser)
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
     func deleteHobby(hobby: Hobby) {
         if let hobbyID = hobby.id {
             let recordRef = self.database.collection("hobby").document(hobbyID)
@@ -215,6 +254,7 @@ class FirebaseController: NSObject,DatabaseProtocol{
                     self.parseSpecificRecord(recordRefArray: oneHobbyRecords){ allRecords in
                         let records = allRecords
                         self.hobbyRef?.document(hobbyID).delete(){ delete in
+                            self.userRef?.document(self.defaultUser.id!).updateData(["hobbies" : FieldValue.arrayRemove([recordRef])])
                             self.hobbyList.removeAll(where: {$0.id == hobbyID})
                             for record in records {
                                 let docRef = self.database.collection("records").document((record.id)!)
@@ -239,6 +279,7 @@ class FirebaseController: NSObject,DatabaseProtocol{
                 }
                 else{
                     self.hobbyRef?.document(hobbyID).delete { delete in
+                        self.userRef?.document(self.defaultUser.id!).updateData(["hobbies" : FieldValue.arrayRemove([recordRef])])
                         self.hobbyList.removeAll(where: { $0.id == hobbyID })
                         self.listeners.invoke { listener in
                             if listener.listenerType == ListenerType.hobby || listener.listenerType == ListenerType.all {
@@ -248,6 +289,11 @@ class FirebaseController: NSObject,DatabaseProtocol{
                     }
                 }
             }
+        }
+    }
+    func deleteComment(comment:Comment){
+        if let commentID = comment.id{
+            commentRef?.document(commentID).delete()
         }
     }
     func deleteRecord(record:Records){
@@ -369,7 +415,8 @@ class FirebaseController: NSObject,DatabaseProtocol{
         post.comment = []
         post.likeNum = 0
         post.postDetail = postDetail
-        post.publisher = database.collection("user").document(currentUser!.uid)
+//        post.publisher = database.collection("user").document(currentUser!.uid)
+        post.publisher = currentUser?.uid
         
         do{
             if let postRef = try postRef?.addDocument(from: post) {
@@ -636,8 +683,16 @@ class FirebaseController: NSObject,DatabaseProtocol{
                 print("Failed to fetch documents with error: \(String(describing: error))")
                 return
             }
-            self.parseUserSnapshot(snapshot: querySnapshot){ user in
+            self.parseUserSnapshot(snapshot: querySnapshot){ (user,filteredList) in
+                if !filteredList.isEmpty{
+                    print("wwww")
+                    filteredList.forEach{ filteredLikeRef in
+                        self.userRef?.document(user.id!).updateData(["likes" : FieldValue.arrayRemove([filteredLikeRef])])
+                    }
+                    print("qqqq")
+                }
                 self.listeners.invoke { (listener) in
+                    print("kkkk")
                     if listener.listenerType == ListenerType.hobby || listener.listenerType == ListenerType.all {
                         listener.onHobbyChange(change: .update, hobbies: user.hobbies)
                     }
@@ -674,10 +729,12 @@ class FirebaseController: NSObject,DatabaseProtocol{
     }
     
      
-    func parseUserSnapshot(snapshot: QuerySnapshot, completion: @escaping (User) -> Void){
+    func parseUserSnapshot(snapshot: QuerySnapshot, completion: @escaping (User,[DocumentReference]) -> Void){
         print("hhhh")
+        var filterList:[DocumentReference] = []
         var counter = 0
         let userFieldCount = 5
+        var hasFilter = false
         snapshot.documentChanges.forEach{ (change) in
             var parsedUser = User()
             if change.document.exists{
@@ -692,7 +749,7 @@ class FirebaseController: NSObject,DatabaseProtocol{
                         counter += 1
                         if counter == userFieldCount{
                             self.addToUserList(change: change, parsedUser: parsedUser){
-                                completion(parsedUser)
+                                completion(parsedUser,filterList)
                             }
                         }
                     }
@@ -702,7 +759,7 @@ class FirebaseController: NSObject,DatabaseProtocol{
                             counter += 1
                             if counter == userFieldCount{
                                 self.addToUserList(change: change, parsedUser: parsedUser){
-                                    completion(parsedUser)
+                                    completion(parsedUser,filterList)
                                 }
                             }
                         }
@@ -714,17 +771,17 @@ class FirebaseController: NSObject,DatabaseProtocol{
                         counter += 1
                         if counter == userFieldCount{
                             self.addToUserList(change: change, parsedUser: parsedUser){
-                                completion(parsedUser)
+                                completion(parsedUser,filterList)
                             }
                         }
                     }
                     else{
-                        self.parseSpecificPost(postRefArray: postRef!){ resultPosts in
+                        self.parseSpecificPost(postRefArray: postRef!){ (resultPosts,hasFiltered) in
                             parsedUser.posts = resultPosts
                             counter += 1
                             if counter == userFieldCount{
                                 self.addToUserList(change: change, parsedUser: parsedUser){
-                                    completion(parsedUser)
+                                    completion(parsedUser,filterList)
                                 }
                             }
                         }
@@ -737,19 +794,21 @@ class FirebaseController: NSObject,DatabaseProtocol{
                         counter += 1
                         if counter == userFieldCount{
                             self.addToUserList(change: change, parsedUser: parsedUser){
-                                completion(parsedUser)
+                                completion(parsedUser,filterList)
                             }
                         }
                     }
                     else{
-                        self.parseSpecificPost(postRefArray: likePostRef!){ resultLikePosts in
+                        self.parseSpecificPost(postRefArray: likePostRef!){ (resultLikePosts,filteredList) in
+                            filterList = filteredList
                             parsedUser.likes = resultLikePosts
                             counter += 1
                             if counter == userFieldCount{
                                 self.addToUserList(change: change, parsedUser: parsedUser){
-                                    completion(parsedUser)
+                                    completion(parsedUser,filterList)
                                 }
                             }
+//                            self.filterLikes()
                         }
                     }
                     //decode user's events
@@ -759,7 +818,8 @@ class FirebaseController: NSObject,DatabaseProtocol{
                         counter += 1
                         if counter == userFieldCount{
                             self.addToUserList(change: change, parsedUser: parsedUser){
-                                completion(parsedUser)
+                                self.decodeLike(change: change, parsedUser: parsedUser)
+                                completion(parsedUser,filterList)
                             }
                         }
                     }
@@ -769,7 +829,7 @@ class FirebaseController: NSObject,DatabaseProtocol{
                             counter += 1
                             if counter == userFieldCount{
                                 self.addToUserList(change: change, parsedUser: parsedUser){
-                                    completion(parsedUser)
+                                    completion(parsedUser,filterList)
                                 }
                             }
                         }
@@ -781,18 +841,19 @@ class FirebaseController: NSObject,DatabaseProtocol{
                         counter += 1
                         if counter == userFieldCount{
                             self.addToUserList(change: change, parsedUser: parsedUser){
-                                completion(parsedUser)
+                                self.decodeLike(change: change, parsedUser: parsedUser)
+                                completion(parsedUser,filterList)
                             }
                         }
                     }
                     else{
-                        
                         self.parseSpecificEvent(eventRefArray: eventJoinedRef!){ resultEventsJoined in
                             parsedUser.eventJoined = resultEventsJoined
                             counter += 1
                             if counter == userFieldCount{
                                 self.addToUserList(change: change, parsedUser: parsedUser){
-                                    completion(parsedUser)
+                                    self.decodeLike(change: change, parsedUser: parsedUser)
+                                    completion(parsedUser,filterList)
                                 }
                             }
                         }
@@ -801,6 +862,22 @@ class FirebaseController: NSObject,DatabaseProtocol{
             }
         }
     }
+    
+    func decodeLike(change:DocumentChange, parsedUser:User){
+        let likePostRef = change.document.data()["likes"] as? [DocumentReference]
+        if likePostRef == nil{
+            var user = findUserById(id: parsedUser.id!)
+            user?.likes = []
+        }
+        else{
+            self.parseSpecificPost(postRefArray: likePostRef!){ (resultLikePosts,hasFiltered) in
+                var user = self.findUserById(id: parsedUser.id!)
+                print(resultLikePosts)
+                self.filterLikes(user: user!)
+            }
+        }
+    }
+    
     
     func addToUserList(change:DocumentChange,parsedUser:User, completion: @escaping () -> Void){
         let docRef = database.collection("user").document(parsedUser.id!)
@@ -1009,6 +1086,29 @@ class FirebaseController: NSObject,DatabaseProtocol{
             completion() //return, finished executing
         }
     }
+    func removeLikeFromUserFirebase(like:Post){
+        if let likeID = like.id{
+            let likeRef = self.database.collection("post").document(likeID)
+            self.userRef?.document(self.defaultUser.id!).updateData(["likes" : FieldValue.arrayRemove([likeRef])])
+        }
+        
+    }
+    func filterLikes(user:User) -> Int{
+        var count = 0
+        for like in user.likes{
+            var likeExist = false
+            for post in postList{
+                if like.id == post.id{
+                    likeExist = true
+                }
+            }
+            if !likeExist{
+                count += 1
+                removeLikeFromUserFirebase(like: like)
+            }
+        }
+        return count
+    }
 
     
     func parseSpecificEvent(eventRefArray:[DocumentReference], completion: @escaping ([Event]) -> Void){
@@ -1082,11 +1182,14 @@ class FirebaseController: NSObject,DatabaseProtocol{
         }
     }
     
-    func parseSpecificPost(postRefArray:[DocumentReference], completion: @escaping ([Post]) -> Void){
+    func parseSpecificPost(postRefArray:[DocumentReference], completion: @escaping ([Post],[DocumentReference]) -> Void){
         if postRefArray.count == 0{
-            completion([])
+            completion([],[])
         }
+        var filteredList:[DocumentReference] = []
+        var filterCount = postRefArray.count
         var counter = 0
+        var hasFiltered = false
         var resultPostList:[Post] = []
         postRefArray.forEach{ onePostRef in
             onePostRef.getDocument{ (onePostDoc,error) in
@@ -1096,14 +1199,28 @@ class FirebaseController: NSObject,DatabaseProtocol{
                     onePostObj.likeNum = document.data()!["likeNum"] as? Int
                     onePostObj.postDetail = document.data()!["postDetail"] as? String
                     onePostObj.publisherName = document.data()!["publisherName"] as? String
-                    onePostObj.publisher = document.data()!["publisher"] as? DocumentReference
+                    onePostObj.publisher = document.data()!["publisher"] as? String
                     self.parseSpecificComment(commentRefArray: onePostDoc?.data()!["comments"] as? [DocumentReference] ?? []){ allComments in
                         onePostObj.comment = allComments
                         resultPostList.append(onePostObj)
                         counter += 1
-                        if counter == postRefArray.count{
-                            completion(resultPostList)
+                        if counter == filterCount{
+                            if filterCount < postRefArray.count{
+                                hasFiltered = true
+                            }
+                            completion(resultPostList,filteredList)
                         }
+                    }
+                }
+                else{
+                    filterCount -= 1
+                    filteredList.append(onePostRef)
+                    if counter == filterCount{
+                        print("aaaa")
+                        if filterCount < postRefArray.count{
+                            hasFiltered = true
+                        }
+                        completion(resultPostList,filteredList)
                     }
                 }
             }
@@ -1115,7 +1232,7 @@ class FirebaseController: NSObject,DatabaseProtocol{
             var parsedPost = Post()
             if change.document.exists{
                 parsedPost.id = change.document.documentID
-                parsedPost.publisher = change.document.data()["publisher"] as? DocumentReference
+                parsedPost.publisher = change.document.data()["publisher"] as? String
                 parsedPost.likeNum = change.document.data()["likeNum"] as? Int
                 parsedPost.postDetail = change.document.data()["postDetail"] as? String
                 parsedPost.publisherName = change.document.data()["publisherName"] as? String
@@ -1273,7 +1390,9 @@ class FirebaseController: NSObject,DatabaseProtocol{
                         guard let self = self else { return }
                         self.listeners.invoke { (listener) in
                             if listener.listenerType == ListenerType.hobby || listener.listenerType == ListenerType.all {
-                                self.defaultUser = self.findUserById(id: self.currentUser!.uid)!
+                                if let user = self.findUserById(id: self.currentUser!.uid){
+                                    self.defaultUser = user
+                                }
                                 listener.onHobbyChange(change: .update, hobbies: self.defaultUser.hobbies)
                             }
                         }
@@ -1286,7 +1405,9 @@ class FirebaseController: NSObject,DatabaseProtocol{
                             guard let self = self else { return }
                             self.listeners.invoke { (listener) in
                                 if listener.listenerType == ListenerType.hobby || listener.listenerType == ListenerType.all {
-                                    self.defaultUser = self.findUserById(id: self.currentUser!.uid)!
+                                    if let user = self.findUserById(id: self.currentUser!.uid){
+                                        self.defaultUser = user
+                                    }
                                     listener.onHobbyChange(change: .update, hobbies: self.defaultUser.hobbies)
                                 }
                             }
