@@ -114,9 +114,9 @@ class SheetAddPostViewController: UIViewController,UITextViewDelegate{
     
     func displayImage(images:[UIImage]?){
         self.images = images
+        var counter = 0
         images?.forEach{ image in
             print("view")
-            
             let separatorView = UIView()
             separatorView.translatesAutoresizingMaskIntoConstraints = false
             separatorView.backgroundColor = .systemGray
@@ -128,22 +128,16 @@ class SheetAddPostViewController: UIViewController,UITextViewDelegate{
             let imageView = UIImageView(image: image)
             imageView.contentMode = .scaleAspectFit
             imageView.translatesAutoresizingMaskIntoConstraints = false
-//            stackView.addArrangedSubview(imageView)
             containerView.addSubview(imageView)
-
-//            let crossButton = UIButton(type: .custom)
-//            crossButton.translatesAutoresizingMaskIntoConstraints = false
-//            crossButton.setTitle("X", for: .normal) // or set a cross image
-//            crossButton.setTitleColor(.red, for: .normal)
-//            crossButton.addTarget(self, action: #selector(deleteImage), for: .touchUpInside)
-//            containerView.addSubview(crossButton)
             
             let crossButton = UIButton(type: .custom)
             crossButton.translatesAutoresizingMaskIntoConstraints = false
             crossButton.setTitle("X", for: .normal)
             crossButton.setTitleColor(.white, for: .normal)
             crossButton.backgroundColor = .red
-            crossButton.layer.cornerRadius = 15 
+            crossButton.layer.cornerRadius = 15
+            crossButton.tag = counter
+            counter += 1
             crossButton.addTarget(self, action: #selector(deleteImage), for: .touchUpInside)
             containerView.addSubview(crossButton)
             
@@ -188,6 +182,12 @@ class SheetAddPostViewController: UIViewController,UITextViewDelegate{
     
         @objc func deleteImage(sender: UIButton) {
             // Implement the functionality to delete the image
+            self.images?.remove(at: sender.tag)
+            for view in stackView.arrangedSubviews {
+                stackView.removeArrangedSubview(view)
+                view.removeFromSuperview()
+            }
+            self.displayImage(images: self.images)
         }
 
 }
