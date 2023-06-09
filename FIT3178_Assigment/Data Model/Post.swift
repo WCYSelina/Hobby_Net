@@ -12,6 +12,7 @@ class Post: NSObject,Codable{
     @DocumentID var id:String?
     var comment:[Comment] = []
     var likeNum:Int?
+    var images:[String]?
     var postDetail:String?
     var publisher:String?
     var publisherName:String?

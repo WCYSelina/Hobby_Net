@@ -7,17 +7,29 @@
 
 import UIKit
 
-class SheetAddRecordViewController: UIViewController {
+class SheetAddRecordViewController: UIViewController,UIImagePickerControllerDelegate,UINavigationControllerDelegate{
     weak var databaseController:DatabaseProtocol?
     @IBOutlet weak var notesRecord: UITextField!
     var hobby:Hobby?
     var choosenDate:String?
+    var image:UIImage?
     
     
     @IBAction func uploadImage(_ sender: Any) {
-        let viewController = SelectPhotosViewController()
-        present(viewController, animated: true){ () in
+//        let viewController = SelectPhotosViewController()
+//        present(viewController, animated: true){ () in
+//        }
+        let imagePicker = UIImagePickerController()
+        imagePicker.delegate = self
+        present(imagePicker, animated: true, completion: nil)
+    }
+    
+    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
+        if let selectedImage = info[.originalImage] as? UIImage {
+            image = selectedImage
         }
+        
+        dismiss(animated: true, completion: nil)
     }
     
     @IBAction func addRecord(_ sender: Any) {
@@ -27,7 +39,7 @@ class SheetAddRecordViewController: UIViewController {
         Task{
             do{
                 let folderPath = "images/"
-                let image = databaseController?.selectedImage
+//                let image = databaseController?.selectedImage
                 if let image = image{
                     databaseController?.uploadImageToStorage(folderPath: folderPath, image: image){ imageString in
                         self.addNote(noteDetails: note,imageString: imageString)

@@ -13,10 +13,9 @@ import SwiftUI
 import FirebaseStorage
 
 class FirebaseController: NSObject,DatabaseProtocol{
-
     var defaultEvent: Event?
     var email: String?
-    var selectedImage: UIImage?
+    var selectedImage: [UIImage]?
     var startWeek: Date?
     var endWeek: Date?
     var hasLogin: Bool? = nil
@@ -410,14 +409,15 @@ class FirebaseController: NSObject,DatabaseProtocol{
         return true
     }
     
-    func addPost(postDetail:String) -> Post{
+    func addPost(postDetail:String,imagesString:[String]) -> Post{
         var post = Post()
         post.comment = []
         post.likeNum = 0
         post.postDetail = postDetail
+        post.images = imagesString
 //        post.publisher = database.collection("user").document(currentUser!.uid)
         post.publisher = currentUser?.uid
-        
+        print(imagesString)
         do{
             if let postRef = try postRef?.addDocument(from: post) {
                 post.id = postRef.documentID
@@ -1200,6 +1200,7 @@ class FirebaseController: NSObject,DatabaseProtocol{
                     onePostObj.postDetail = document.data()!["postDetail"] as? String
                     onePostObj.publisherName = document.data()!["publisherName"] as? String
                     onePostObj.publisher = document.data()!["publisher"] as? String
+                    onePostObj.images = document.data()!["images"] as? [String]
                     self.parseSpecificComment(commentRefArray: onePostDoc?.data()!["comments"] as? [DocumentReference] ?? []){ allComments in
                         onePostObj.comment = allComments
                         resultPostList.append(onePostObj)
@@ -1236,6 +1237,7 @@ class FirebaseController: NSObject,DatabaseProtocol{
                 parsedPost.likeNum = change.document.data()["likeNum"] as? Int
                 parsedPost.postDetail = change.document.data()["postDetail"] as? String
                 parsedPost.publisherName = change.document.data()["publisherName"] as? String
+                parsedPost.images = change.document.data()["images"] as? [String]
                 let commentRef = change.document.data()["comments"] as? [DocumentReference]
                 if commentRef == nil{
                     parsedPost.comment = []

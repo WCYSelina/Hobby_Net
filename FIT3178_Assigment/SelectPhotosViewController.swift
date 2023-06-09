@@ -5,6 +5,8 @@ import FirebaseStorage
 
 class SelectPhotosViewController: UIViewController, PHPickerViewControllerDelegate {
     weak var databaseController:DatabaseProtocol?
+    var addPostController:SheetAddPostViewController?
+    var selectedImages:[UIImage] = []
     override func viewDidLoad() {
         super.viewDidLoad()
         let appDelegate = UIApplication.shared.delegate as? AppDelegate
@@ -30,19 +32,28 @@ class SelectPhotosViewController: UIViewController, PHPickerViewControllerDelega
         }
         
         if results.isEmpty{
+            print("hello")
             databaseController?.selectedImage = nil
         }
-        
+        var counter = 0
         for result in results {
             result.itemProvider.loadObject(ofClass: UIImage.self) { [weak self] (object, error) in
                 if let image = object as? UIImage {
                     DispatchQueue.main.async {
-                        self?.databaseController?.selectedImage = image
+                        print("added")
+                        counter += 1
+                        self?.selectedImages.append(image)
+                        print(image)
+                        if counter == results.count{
+                            self?.addPostController!.displayImage(images: self?.selectedImages)
+                        }
                     }
                 } else {
                     print("Failed to load image: \(String(describing: error))")
                 }
+
             }
         }
+
     }
 }

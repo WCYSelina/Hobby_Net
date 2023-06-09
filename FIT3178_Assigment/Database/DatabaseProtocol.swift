@@ -62,7 +62,7 @@ protocol DatabaseProtocol: AnyObject {
     var startWeek:Date?{get set}
     var endWeek:Date?{get set}
     func findCurrentUser() -> User
-    var selectedImage: UIImage? {get set}
+    var selectedImage: [UIImage]? {get set}
     var defaultEvent:Event? {get set}
     func onWeeklyChange(records:[Records])
     func addLikeToUser(like:Post) -> Bool
@@ -84,6 +84,6 @@ protocol DatabaseProtocol: AnyObject {
     func removeNoteFromRecord(note: Notes, record: Records)
     func createAccount(email:String,password:String) async
     func loginAccount(email:String,password:String) async
-    func addPost(postDetail:String) -> Post
+    func addPost(postDetail:String, imagesString:[String]) -> Post
     func deletePost(post:Post)
 }
