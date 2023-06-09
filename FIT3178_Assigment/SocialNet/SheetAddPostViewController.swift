@@ -18,6 +18,10 @@ class SheetAddPostViewController: UIViewController,UITextViewDelegate{
     @IBOutlet weak var scrollView: UIScrollView!
     @IBOutlet weak var stackView: UIStackView!
     
+    @IBOutlet weak var squareBox: UIView!
+    
+    
+    
     @IBAction func createPost(_ sender: Any) {
         Task{
             do{
@@ -62,41 +66,15 @@ class SheetAddPostViewController: UIViewController,UITextViewDelegate{
         postDetails.contentInset = UIEdgeInsets.zero
         postDetails.delegate = self
         
+        stackView.widthAnchor.constraint(equalTo: self.view.widthAnchor).isActive = true
+        stackView.axis = .horizontal
+        stackView.distribution = .fillProportionally
         // Add the square box view
-        let squareBoxView = UIView()
-        squareBoxView.backgroundColor = .lightGray
-        squareBoxView.translatesAutoresizingMaskIntoConstraints = false
-        
-        // Add the plus sign
-        let plusSignLabel = UILabel()
-        plusSignLabel.text = "+"
-        plusSignLabel.font = UIFont.systemFont(ofSize: 30.0)
-        plusSignLabel.translatesAutoresizingMaskIntoConstraints = false
-        squareBoxView.addSubview(plusSignLabel)
         
         // Add tap gesture recognizer to handle image selection
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(selectImage))
-        squareBoxView.addGestureRecognizer(tapGesture)
-        
-        // Add square box view to the stack view
-        stackView.addArrangedSubview(squareBoxView)
+        squareBox.addGestureRecognizer(tapGesture)
 
-        NSLayoutConstraint.activate([
-////            squareBoxView.topAnchor.constraint(equalTo: stackView.topAnchor),
-////            squareBoxView.leadingAnchor.constraint(equalTo: stackView.leadingAnchor),
-////            squareBoxView.bottomAnchor.constraint(equalTo: stackView.bottomAnchor),
-////            squareBoxView.widthAnchor.constraint(equalToConstant: 100),
-////
-////            // Plus sign label constraints
-////            plusSignLabel.centerXAnchor.constraint(equalTo: squareBoxView.centerXAnchor),
-////            plusSignLabel.centerYAnchor.constraint(equalTo: squareBoxView.centerYAnchor)
-            squareBoxView.widthAnchor.constraint(equalToConstant: 100),
-//
-//            // Plus sign label constraints
-            plusSignLabel.centerXAnchor.constraint(equalTo: squareBoxView.centerXAnchor),
-            plusSignLabel.centerYAnchor.constraint(equalTo: squareBoxView.centerYAnchor)
-        ])
-////        ])
     }
         
     @objc func selectImage() {
@@ -110,7 +88,10 @@ class SheetAddPostViewController: UIViewController,UITextViewDelegate{
         images?.forEach{ image in
             print("view")
             let imageView = UIImageView(image: image)
+            imageView.translatesAutoresizingMaskIntoConstraints = false
             imageView.contentMode = .scaleAspectFit
+            let aspectRatio = image.size.width / image.size.height
+            imageView.widthAnchor.constraint(equalTo: imageView.heightAnchor, multiplier: aspectRatio).isActive = true
             stackView.addArrangedSubview(imageView)
         }
         for subview in stackView.arrangedSubviews {
