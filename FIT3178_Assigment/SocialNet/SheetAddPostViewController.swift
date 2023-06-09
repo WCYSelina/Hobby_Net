@@ -21,6 +21,7 @@ class SheetAddPostViewController: UIViewController,UITextViewDelegate{
     @IBOutlet weak var squareBox: UIView!
     
     
+    @IBOutlet weak var yourPostLabel: UILabel!
     
     @IBAction func createPost(_ sender: Any) {
         Task{
@@ -78,9 +79,9 @@ class SheetAddPostViewController: UIViewController,UITextViewDelegate{
 
         // Set the constraints for the UIScrollView
         NSLayoutConstraint.activate([
-            scrollView.topAnchor.constraint(equalTo: squareBox.topAnchor),
-            scrollView.bottomAnchor.constraint(equalTo: squareBox.bottomAnchor),
-            scrollView.leadingAnchor.constraint(equalTo: squareBox.leadingAnchor, constant: 138),
+            scrollView.topAnchor.constraint(equalTo: yourPostLabel.bottomAnchor),
+            scrollView.bottomAnchor.constraint(equalTo: squareBox.topAnchor, constant: -20),
+            scrollView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
             scrollView.trailingAnchor.constraint(equalTo: view.trailingAnchor,constant: -20),
         ])
 
