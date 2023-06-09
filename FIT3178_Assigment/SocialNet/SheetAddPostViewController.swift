@@ -122,33 +122,53 @@ class SheetAddPostViewController: UIViewController,UITextViewDelegate{
             separatorView.backgroundColor = .systemGray
             stackView.addArrangedSubview(separatorView)
             
+            let containerView = UIView()
+            containerView.translatesAutoresizingMaskIntoConstraints = false
+            
             let imageView = UIImageView(image: image)
             imageView.contentMode = .scaleAspectFit
             imageView.translatesAutoresizingMaskIntoConstraints = false
-            stackView.addArrangedSubview(imageView)
+//            stackView.addArrangedSubview(imageView)
+            containerView.addSubview(imageView)
 
+//            let crossButton = UIButton(type: .custom)
+//            crossButton.translatesAutoresizingMaskIntoConstraints = false
+//            crossButton.setTitle("X", for: .normal) // or set a cross image
+//            crossButton.setTitleColor(.red, for: .normal)
+//            crossButton.addTarget(self, action: #selector(deleteImage), for: .touchUpInside)
+//            containerView.addSubview(crossButton)
+            
+            let crossButton = UIButton(type: .custom)
+            crossButton.translatesAutoresizingMaskIntoConstraints = false
+            crossButton.setTitle("X", for: .normal)
+            crossButton.setTitleColor(.white, for: .normal)
+            crossButton.backgroundColor = .red
+            crossButton.layer.cornerRadius = 15 
+            crossButton.addTarget(self, action: #selector(deleteImage), for: .touchUpInside)
+            containerView.addSubview(crossButton)
+            
+            stackView.addArrangedSubview(containerView)
+            
             let aspectRatio = image.size.width / image.size.height
             NSLayoutConstraint.activate([
+                separatorView.widthAnchor.constraint(equalToConstant: 10),
+                
+                containerView.widthAnchor.constraint(equalTo: imageView.heightAnchor, multiplier: aspectRatio),
+                containerView.topAnchor.constraint(equalTo: scrollView.topAnchor),
+                containerView.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor),
+                
                 imageView.widthAnchor.constraint(equalTo: imageView.heightAnchor, multiplier: aspectRatio),
-                separatorView.widthAnchor.constraint(equalToConstant: 10)
-            ])  
+                imageView.heightAnchor.constraint(equalTo: stackView.heightAnchor),
+                imageView.centerXAnchor.constraint(equalTo: containerView.centerXAnchor),
+                imageView.centerYAnchor.constraint(equalTo: containerView.centerYAnchor),
+                
+                crossButton.topAnchor.constraint(equalTo: containerView.topAnchor, constant: 5),
+                crossButton.trailingAnchor.constraint(equalTo: containerView.trailingAnchor, constant: -5),
+                crossButton.widthAnchor.constraint(equalToConstant: 30),// setting width of button
+                crossButton.heightAnchor.constraint(equalToConstant: 30) // setting height of
+            ])
         }
     }
-    
-    
-        
-//    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
-//        if let selectedImage = info[.originalImage] as? UIImage {
-//            // Create UIImageView and set the selected image
-//            imageView = UIImageView(image: selectedImage)
-//            imageView.contentMode = .scaleAspectFit
-//
-//            // Add the image view to the stack view
-//            stackView.addArrangedSubview(imageView)
-//        }
-//
-//        dismiss(animated: true, completion: nil)
-//    }
     
     // UITextViewDelegate method called when text view begins editing
        func textViewDidBeginEditing(_ textView: UITextView) {
@@ -166,16 +186,8 @@ class SheetAddPostViewController: UIViewController,UITextViewDelegate{
            }
        }
     
-    
-
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destination.
-        // Pass the selected object to the new view controller.
-    }
-    */
+        @objc func deleteImage(sender: UIButton) {
+            // Implement the functionality to delete the image
+        }
 
 }
