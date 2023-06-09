@@ -24,18 +24,19 @@ class SheetAddPostViewController: UIViewController,UITextViewDelegate{
     @IBOutlet weak var yourPostLabel: UILabel!
     
     @IBAction func createPost(_ sender: Any) {
+        print("heiheihei")
         Task{
             do{
                 var counter = 0
                 let folderPath = "images/"
 //                let image = databaseController?.selectedImage
-                if let images = images{
+                if !images.isEmpty{
                     images.forEach{ image in
                         databaseController?.uploadImageToStorage(folderPath: folderPath, image: image){ imageString in
                             self.imagesString.append(imageString)
                             print(imageString)
                             counter += 1
-                            if counter == images.count{
+                            if counter == self.images.count{
                                 self.databaseController?.addPost(postDetail: self.postDetails.text,imagesString: self.imagesString)
                             }
                         }
@@ -49,7 +50,7 @@ class SheetAddPostViewController: UIViewController,UITextViewDelegate{
         navigationController?.popViewController(animated: true)
     }
     var imagesString:[String] = []
-    var images:[UIImage]?
+    var images:[UIImage] = []
     let squareBoxSize: CGFloat = 100.0
     let plusSignSize: CGFloat = 40.0
     var scrollView:UIScrollView = UIScrollView()
@@ -112,11 +113,23 @@ class SheetAddPostViewController: UIViewController,UITextViewDelegate{
         present(imagePicker, animated: true, completion: nil)
     }
     
-    func displayImage(images:[UIImage]?){
+    func addImage(images:[UIImage]){
+        if !images.isEmpty{
+            self.images.append(contentsOf: images)
+        }
+        print("alola")
+        print(self.images.count)
+        for view in stackView.arrangedSubviews {
+            stackView.removeArrangedSubview(view)
+            view.removeFromSuperview()
+        }
+        displayImage(images: self.images)
+    }
+    
+    func displayImage(images:[UIImage]){
         self.images = images
         var counter = 0
-        images?.forEach{ image in
-            print("view")
+        images.forEach{ image in
             let separatorView = UIView()
             separatorView.translatesAutoresizingMaskIntoConstraints = false
             separatorView.backgroundColor = .systemGray
@@ -182,12 +195,11 @@ class SheetAddPostViewController: UIViewController,UITextViewDelegate{
     
         @objc func deleteImage(sender: UIButton) {
             // Implement the functionality to delete the image
-            self.images?.remove(at: sender.tag)
+            self.images.remove(at: sender.tag)
             for view in stackView.arrangedSubviews {
                 stackView.removeArrangedSubview(view)
                 view.removeFromSuperview()
             }
             self.displayImage(images: self.images)
         }
-
 }

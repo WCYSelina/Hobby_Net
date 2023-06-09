@@ -15,7 +15,10 @@ class SelectPhotosViewController: UIViewController, PHPickerViewControllerDelega
         // Do any additional setup after loading the view.
     }
 
-    
+    override func viewWillDisappear(_ animated: Bool) {
+        print("di")
+        selectedImages = []
+    }
     private func showPhotoPicker() {
         var configuration = PHPickerConfiguration()
         configuration.selectionLimit = 0 // Set to 0 for no limit, or any other number for a specific limit.
@@ -40,20 +43,16 @@ class SelectPhotosViewController: UIViewController, PHPickerViewControllerDelega
             result.itemProvider.loadObject(ofClass: UIImage.self) { [weak self] (object, error) in
                 if let image = object as? UIImage {
                     DispatchQueue.main.async {
-                        print("added")
                         counter += 1
                         self?.selectedImages.append(image)
-                        print(image)
                         if counter == results.count{
-                            self?.addPostController!.displayImage(images: self?.selectedImages)
+                            self?.addPostController!.addImage(images: self!.selectedImages)
                         }
                     }
                 } else {
                     print("Failed to load image: \(String(describing: error))")
                 }
-
             }
         }
-
     }
 }
