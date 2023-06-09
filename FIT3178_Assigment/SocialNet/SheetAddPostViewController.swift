@@ -15,8 +15,8 @@ class SheetAddPostViewController: UIViewController,UITextViewDelegate{
     @IBOutlet weak var postDetails: UITextView!
     
     
-    @IBOutlet weak var scrollView: UIScrollView!
-    @IBOutlet weak var stackView: UIStackView!
+//    @IBOutlet weak var scrollView: UIScrollView!
+//    @IBOutlet weak var stackView: UIStackView!
     
     @IBOutlet weak var squareBox: UIView!
     
@@ -51,8 +51,9 @@ class SheetAddPostViewController: UIViewController,UITextViewDelegate{
     var images:[UIImage]?
     let squareBoxSize: CGFloat = 100.0
     let plusSignSize: CGFloat = 40.0
+    var scrollView:UIScrollView = UIScrollView()
+    var stackView:UIStackView = UIStackView()
     
-
     override func viewDidLoad() {
         super.viewDidLoad()
         let appDelegate = UIApplication.shared.delegate as? AppDelegate
@@ -66,9 +67,36 @@ class SheetAddPostViewController: UIViewController,UITextViewDelegate{
         postDetails.contentInset = UIEdgeInsets.zero
         postDetails.delegate = self
         
-        stackView.widthAnchor.constraint(equalTo: self.view.widthAnchor).isActive = true
+        // Create a UIScrollView and add it to your view
+        scrollView.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(scrollView)
+
+        // Create the UIStackView and add it to the UIScrollView
+        stackView.translatesAutoresizingMaskIntoConstraints = false
         stackView.axis = .horizontal
-        stackView.distribution = .fillProportionally
+        scrollView.addSubview(stackView)
+
+        // Set the constraints for the UIScrollView
+        NSLayoutConstraint.activate([
+            scrollView.topAnchor.constraint(equalTo: squareBox.topAnchor),
+            scrollView.bottomAnchor.constraint(equalTo: squareBox.bottomAnchor),
+            scrollView.leadingAnchor.constraint(equalTo: squareBox.leadingAnchor, constant: 138),
+            scrollView.trailingAnchor.constraint(equalTo: view.trailingAnchor,constant: -20),
+        ])
+
+        // Set the constraints for the UIStackView
+        NSLayoutConstraint.activate([
+            stackView.topAnchor.constraint(equalTo: scrollView.topAnchor),
+            stackView.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor),
+            stackView.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor),
+            stackView.trailingAnchor.constraint(equalTo: scrollView.trailingAnchor),
+            stackView.heightAnchor.constraint(equalTo: scrollView.heightAnchor)
+        ])
+
+        
+//        stackView.widthAnchor.constraint(equalTo: self.view.widthAnchor).isActive = true
+        stackView.axis = .horizontal
+        stackView.distribution = .fill
         // Add the square box view
         
         // Add tap gesture recognizer to handle image selection
@@ -87,15 +115,22 @@ class SheetAddPostViewController: UIViewController,UITextViewDelegate{
         self.images = images
         images?.forEach{ image in
             print("view")
+            
+            let separatorView = UIView()
+            separatorView.translatesAutoresizingMaskIntoConstraints = false
+            separatorView.backgroundColor = .systemGray
+            stackView.addArrangedSubview(separatorView)
+            
             let imageView = UIImageView(image: image)
-            imageView.translatesAutoresizingMaskIntoConstraints = false
             imageView.contentMode = .scaleAspectFit
-            let aspectRatio = image.size.width / image.size.height
-            imageView.widthAnchor.constraint(equalTo: imageView.heightAnchor, multiplier: aspectRatio).isActive = true
+            imageView.translatesAutoresizingMaskIntoConstraints = false
             stackView.addArrangedSubview(imageView)
-        }
-        for subview in stackView.arrangedSubviews {
-            print(subview)
+
+            let aspectRatio = image.size.width / image.size.height
+            NSLayoutConstraint.activate([
+                imageView.widthAnchor.constraint(equalTo: imageView.heightAnchor, multiplier: aspectRatio),
+                separatorView.widthAnchor.constraint(equalToConstant: 10)
+            ])  
         }
     }
     
