@@ -127,6 +127,19 @@ class UserProfileViewController: UIViewController,DatabaseListener,UITableViewDa
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let postCell = tableView.dequeueReusableCell(withIdentifier: CELL_POST, for: indexPath) as! CardTableViewCell
         let post = postList[indexPath.section]
+        
+        postCell.tableView = self.tableView
+        postCell.section = indexPath.section
+        postCell.post = post
+        if !post.images.isEmpty{
+            postCell.downloadImages(){ () in
+            }
+        }
+        else{
+            postCell.setupPostNoImage { () in
+            }
+        }
+        
         postCell.descriptionLabel.text = post.postDetail
         
         postCell.sendButton.cell = postCell
@@ -161,6 +174,9 @@ class UserProfileViewController: UIViewController,DatabaseListener,UITableViewDa
         postCell.likesLabel.text = "\(post.likeNum!) likes"
         postCell.commentLabel.text = "View comments"
         postCell.userName.text = post.publisherName
+        
+
+        print("return")
         return postCell
     }
     

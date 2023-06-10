@@ -105,8 +105,14 @@ class SocialNetTableViewController: UITableViewController,DatabaseListener,UITex
         postCell.tableView = self.tableView
         postCell.section = indexPath.section
         postCell.post = post
-        postCell.downloadImages(){ () in
-            
+        if !post.images.isEmpty{
+            print(post.images)
+            postCell.downloadImages(){ () in
+            }
+        }
+        else{
+            postCell.setupPostNoImage { () in
+            }
         }
         
         postCell.descriptionLabel.text = post.postDetail
@@ -394,6 +400,132 @@ class CardTableViewCell: UITableViewCell {
         separatorViewBottom.translatesAutoresizingMaskIntoConstraints = false
         contentView.addSubview(separatorViewBottom)
         
+    // Set up constraints
+        NSLayoutConstraint.activate([
+            
+            self.userName.topAnchor.constraint(equalTo: self.contentView.topAnchor, constant: 8),
+            self.userName.leadingAnchor.constraint(equalTo: self.contentView.leadingAnchor, constant: 8),
+          
+            self.scrollView.topAnchor.constraint(equalTo: self.userName.bottomAnchor),
+            self.scrollView.bottomAnchor.constraint(equalTo: self.descriptionLabel.topAnchor, constant: -8),
+            self.scrollView.leadingAnchor.constraint(equalTo: self.contentView.leadingAnchor, constant: 8),
+            self.scrollView.trailingAnchor.constraint(equalTo: self.contentView.trailingAnchor,constant: -8),
+            self.scrollView.heightAnchor.constraint(equalToConstant: 300),
+         
+            self.stackView.topAnchor.constraint(equalTo: self.scrollView.topAnchor),
+            self.stackView.bottomAnchor.constraint(equalTo: self.scrollView.bottomAnchor),
+            self.stackView.leadingAnchor.constraint(equalTo: self.scrollView.leadingAnchor),
+            self.stackView.trailingAnchor.constraint(equalTo: self.scrollView.trailingAnchor),
+           
+            self.descriptionLabel.leadingAnchor.constraint(equalTo: self.contentView.leadingAnchor, constant: 8),
+            self.descriptionLabel.trailingAnchor.constraint(equalTo: self.contentView.trailingAnchor, constant: -8),
+         
+            self.separatorViewTop.topAnchor.constraint(equalTo: self.descriptionLabel.bottomAnchor, constant: 8),
+            self.separatorViewTop.leadingAnchor.constraint(equalTo: self.contentView.leadingAnchor, constant: 8),
+            self.separatorViewTop.trailingAnchor.constraint(equalTo: self.contentView.trailingAnchor, constant: -8),
+            self.separatorViewTop.heightAnchor.constraint(equalToConstant: 1),
+          
+            self.likesLabel.topAnchor.constraint(equalTo: self.separatorViewTop.bottomAnchor, constant: 4),
+            self.likesLabel.leadingAnchor.constraint(equalTo: self.contentView.leadingAnchor, constant: 8),
+         
+            self.commentLabel.topAnchor.constraint(equalTo: self.separatorViewTop.bottomAnchor, constant: 4),
+            self.commentLabel.trailingAnchor.constraint(equalTo: self.contentView.trailingAnchor, constant: -8),
+         
+            self.separatorViewBottom.topAnchor.constraint(equalTo: self.likesLabel.bottomAnchor, constant: 4),
+            self.separatorViewBottom.leadingAnchor.constraint(equalTo: self.contentView.leadingAnchor, constant: 8),
+            self.separatorViewBottom.trailingAnchor.constraint(equalTo: self.contentView.trailingAnchor, constant: -8),
+            self.separatorViewBottom.heightAnchor.constraint(equalToConstant: 1),
+       
+            self.thumbsUpButton.topAnchor.constraint(equalTo: self.separatorViewBottom.bottomAnchor, constant: 8),
+            self.thumbsUpButton.leadingAnchor.constraint(equalTo: self.contentView.leadingAnchor, constant: 8),
+            self.thumbsUpButton.bottomAnchor.constraint(equalTo: self.contentView.bottomAnchor, constant: -8),
+            self.thumbsUpButton.widthAnchor.constraint(equalToConstant: 24),
+            self.thumbsUpButton.heightAnchor.constraint(equalToConstant: 24),
+            
+            self.commentTextField.topAnchor.constraint(equalTo: self.separatorViewBottom.bottomAnchor, constant: 8),
+            self.commentTextField.leadingAnchor.constraint(equalTo: self.thumbsUpButton.trailingAnchor, constant: 8),
+            self.commentTextField.trailingAnchor.constraint(equalTo: self.sendButton.leadingAnchor, constant: -8),
+            self.commentTextField.bottomAnchor.constraint(equalTo: self.contentView.bottomAnchor, constant: -8),
+            
+            self.sendButton.trailingAnchor.constraint(equalTo: self.contentView.trailingAnchor, constant: -8),
+            self.sendButton.centerYAnchor.constraint(equalTo: self.commentTextField.centerYAnchor),
+            self.sendButton.widthAnchor.constraint(equalToConstant: 24),
+            self.sendButton.heightAnchor.constraint(equalToConstant: 24),
+            
+        ])
+        print("done")
+        print(self.downloadFinished)
+        print(self.post?.images.count)
+        if self.isFirstReload == true, self.downloadFinished == true{
+            let indexSet = IndexSet(integer: self.section!)
+            print(indexSet)
+            self.tableView!.reloadSections(indexSet, with: .automatic)
+            self.downloadFinished = false
+            self.isFirstReload = false
+        }
+        completion()
+    }
+    
+    func setupPostNoImage(completion: @escaping () -> Void){
+        // Customize cell layout
+        contentView.backgroundColor = .systemBackground
+        contentView.layer.cornerRadius = 8.0
+        contentView.layer.masksToBounds = true
+        contentView.layer.borderWidth = 1.0
+        contentView.layer.borderColor = UIColor.lightGray.cgColor
+        
+        userName.font = UIFont.boldSystemFont(ofSize: userName.font.pointSize)
+        userName.translatesAutoresizingMaskIntoConstraints = false
+        contentView.addSubview(userName)
+        
+        // Configure description label
+        descriptionLabel.font = UIFont.systemFont(ofSize: 16)
+        descriptionLabel.tintColor = .systemBackground
+        descriptionLabel.numberOfLines = 0
+        descriptionLabel.translatesAutoresizingMaskIntoConstraints = false
+        contentView.addSubview(descriptionLabel)
+        
+        
+        // Configure thumbs-up button
+//        thumbsUpButton.setImage(UIImage(systemName: "hand.thumbsup"), for: .normal)
+//        thumbsUpButton.tintColor = .gray
+        thumbsUpButton.translatesAutoresizingMaskIntoConstraints = false
+        contentView.addSubview(thumbsUpButton)
+        
+        // Configure comment text field
+        commentTextField.placeholder = "Add a comment"
+        commentTextField.borderStyle = .roundedRect
+        commentTextField.translatesAutoresizingMaskIntoConstraints = false
+        contentView.addSubview(commentTextField)
+        
+        // Configure send button
+        sendButton.setImage(UIImage(systemName: "arrow.up.circle"), for: .normal)
+        sendButton.tintColor = .systemBlue
+        sendButton.translatesAutoresizingMaskIntoConstraints = false
+        contentView.addSubview(sendButton)
+        
+        // Configure likes label
+        likesLabel.textColor = .systemGray
+        likesLabel.font = UIFont.systemFont(ofSize: 12) // Adjust the font size as desired
+        likesLabel.translatesAutoresizingMaskIntoConstraints = false
+        contentView.addSubview(likesLabel)
+        
+        // Configure likes label
+        commentLabel.isUserInteractionEnabled = true
+        commentLabel.textColor = .systemBlue
+        commentLabel.font = UIFont.systemFont(ofSize: 12) // Adjust the font size as desired
+        commentLabel.translatesAutoresizingMaskIntoConstraints = false
+        contentView.addSubview(commentLabel)
+        
+        // Configure separator views
+        separatorViewTop.backgroundColor = .lightGray
+        separatorViewTop.translatesAutoresizingMaskIntoConstraints = false
+        contentView.addSubview(separatorViewTop)
+        
+        separatorViewBottom.backgroundColor = .lightGray
+        separatorViewBottom.translatesAutoresizingMaskIntoConstraints = false
+        contentView.addSubview(separatorViewBottom)
+        
         // Set up constraints
         DispatchQueue.main.async {
             NSLayoutConstraint.activate([
@@ -401,17 +533,7 @@ class CardTableViewCell: UITableViewCell {
                 self.userName.topAnchor.constraint(equalTo: self.contentView.topAnchor, constant: 8),
                 self.userName.leadingAnchor.constraint(equalTo: self.contentView.leadingAnchor, constant: 8),
               
-                self.scrollView.topAnchor.constraint(equalTo: self.userName.bottomAnchor),
-                self.scrollView.bottomAnchor.constraint(equalTo: self.descriptionLabel.topAnchor, constant: -8),
-                self.scrollView.leadingAnchor.constraint(equalTo: self.contentView.leadingAnchor, constant: 8),
-                self.scrollView.trailingAnchor.constraint(equalTo: self.contentView.trailingAnchor,constant: -8),
-                self.scrollView.heightAnchor.constraint(equalToConstant: 300),
-             
-                self.stackView.topAnchor.constraint(equalTo: self.scrollView.topAnchor),
-                self.stackView.bottomAnchor.constraint(equalTo: self.scrollView.bottomAnchor),
-                self.stackView.leadingAnchor.constraint(equalTo: self.scrollView.leadingAnchor),
-                self.stackView.trailingAnchor.constraint(equalTo: self.scrollView.trailingAnchor),
-               
+                self.descriptionLabel.topAnchor.constraint(equalTo: self.userName.bottomAnchor, constant: 8),
                 self.descriptionLabel.leadingAnchor.constraint(equalTo: self.contentView.leadingAnchor, constant: 8),
                 self.descriptionLabel.trailingAnchor.constraint(equalTo: self.contentView.trailingAnchor, constant: -8),
              
@@ -451,16 +573,13 @@ class CardTableViewCell: UITableViewCell {
             print("done")
             print(self.downloadFinished)
             print(self.post?.images.count)
-            if self.isFirstReload == true, self.downloadFinished == true{
+            if self.isFirstReload == true{
                 let indexSet = IndexSet(integer: self.section!)
                 print(indexSet)
                 self.tableView!.reloadSections(indexSet, with: .automatic)
-                self.downloadFinished = false
                 self.isFirstReload = false
             }
-            
             completion()
-            
         }
     }
     
