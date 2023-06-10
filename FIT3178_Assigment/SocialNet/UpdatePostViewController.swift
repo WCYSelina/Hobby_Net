@@ -1,50 +1,58 @@
 //
-//  SheetAddPostViewController.swift
+//  UpdatePostViewController.swift
 //  FIT3178_Assignment
 //
-//  Created by Ching Yee Selina Wong on 13/5/2023.
+//  Created by Ching Yee Selina Wong on 9/6/2023.
 //
 
 import UIKit
+import FirebaseStorage
 
-class SheetAddPostViewController: UIViewController,UITextViewDelegate{
-    weak var databaseController:DatabaseProtocol?
-    let placeholderText = "Enter text here..."
-    
-    
-    @IBOutlet weak var postDetails: UITextView!
-    @IBOutlet weak var squareBox: UIView!
+class UpdatePostViewController: UIViewController, UITextViewDelegate{
     @IBOutlet weak var yourPostLabel: UILabel!
-    @IBAction func createPost(_ sender: Any) {
+    @IBOutlet weak var squareBox: UIView!
+    @IBOutlet weak var postDetails: UITextView!
+    
+    @IBAction func updatePost(_ sender: Any) {
         print("heiheihei")
         Task{
             do{
+                tagRemoved.forEach{ tag in
+                    self.removedImage.append((post?.images![tag])!)
+                }
                 var counter = 0
                 let folderPath = "images/"
 //                let image = databaseController?.selectedImage
-                if !images.isEmpty{
-                    images.forEach{ image in
+                if !self.newAddedImage.isEmpty{
+                    self.newAddedImage.forEach{ image in
                         databaseController?.uploadImageToStorage(folderPath: folderPath, image: image){ imageString in
                             self.imagesString.append(imageString)
-                            print(imageString)
+                            
                             counter += 1
-                            if counter == self.images.count{
-                                self.databaseController?.addPost(postDetail: self.postDetails.text,imagesString: self.imagesString)
+                            if counter == self.newAddedImage.count{
+                                self.databaseController?.updatePost(post: self.post!, postDetail: self.postDetails.text, addedImageString: self.imagesString, removedImageString: self.removedImage)
                             }
                         }
                     }
                     
                 }else{
-                    self.databaseController?.addPost(postDetail: postDetails.text,imagesString: [])
+                    self.databaseController?.updatePost(post: self.post!, postDetail: self.postDetails.text, addedImageString: [], removedImageString: self.removedImage)
                 }
             }
         }
         navigationController?.popViewController(animated: true)
     }
+    let placeholderText = "Enter text here..."
+    var post:Post?
+    weak var databaseController:DatabaseProtocol?
     var imagesString:[String] = []
     var images:[UIImage] = []
     var scrollView:UIScrollView = UIScrollView()
     var stackView:UIStackView = UIStackView()
+    var tagRemoved:[Int] = []
+    var removedImage:[String] = []
+    var newAddedImage:[UIImage] = []
+    var oldImage:[UIImage] = []
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -52,8 +60,7 @@ class SheetAddPostViewController: UIViewController,UITextViewDelegate{
         databaseController = appDelegate?.databaseController
         
         // Set placeholder text initially
-        postDetails.text = placeholderText
-        postDetails.textColor = UIColor.lightGray
+        postDetails.text = post?.postDetail
         
         // Adjust text view properties
         postDetails.contentInset = UIEdgeInsets.zero
@@ -94,21 +101,42 @@ class SheetAddPostViewController: UIViewController,UITextViewDelegate{
         // Add tap gesture recognizer to handle image selection
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(selectImage))
         squareBox.addGestureRecognizer(tapGesture)
-
     }
+    
+    func setupPageImage(){
+        post?.images?.forEach{ image in
+            if image != ""{
+                let storageRef = Storage.storage().reference(forURL: image)
+                storageRef.getData(maxSize: 10*1024*1024){ data,error in
+                    if let error = error{
+                        print(error.localizedDescription)
+                    } else{
+                        let image = UIImage(data: data!)
+                        print("download hahahah")
+                        self.images.append(image!)
+                        self.oldImage.append(image!)
+                        if self.images.count == self.post?.images?.count{
+                            self.displayImage(images: self.images)
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
+    
         
     @objc func selectImage() {
         let imagePicker = SelectPhotosViewController()
-        imagePicker.addPostController = self
+        imagePicker.updatePostController = self
         present(imagePicker, animated: true, completion: nil)
     }
     
     func addImage(images:[UIImage]){
         if !images.isEmpty{
             self.images.append(contentsOf: images)
+            self.newAddedImage.append(contentsOf: images)
         }
-        print("alola")
-        print(self.images.count)
         for view in stackView.arrangedSubviews {
             stackView.removeArrangedSubview(view)
             view.removeFromSuperview()
@@ -167,29 +195,40 @@ class SheetAddPostViewController: UIViewController,UITextViewDelegate{
         }
     }
     
-    // UITextViewDelegate method called when text view begins editing
-       func textViewDidBeginEditing(_ textView: UITextView) {
-           if postDetails.text == placeholderText {
-               postDetails.text = ""
-               postDetails.textColor = UIColor.black
-           }
+// UITextViewDelegate method called when text view begins editing
+   func textViewDidBeginEditing(_ textView: UITextView) {
+       if postDetails.text == placeholderText {
+           postDetails.text = ""
+//           postDetails.textColor = .bla
        }
-       
-       // UITextViewDelegate method called when text view ends editing
-       func textViewDidEndEditing(_ textView: UITextView) {
-           if postDetails.text!.isEmpty {
-               postDetails.text = placeholderText
-               postDetails.textColor = UIColor.lightGray
-           }
+   }
+   
+   // UITextViewDelegate method called when text view ends editing
+   func textViewDidEndEditing(_ textView: UITextView) {
+       if postDetails.text!.isEmpty {
+           postDetails.text = placeholderText
+           postDetails.textColor = .systemGray3
        }
-    
-        @objc func deleteImage(sender: UIButton) {
-            // Implement the functionality to delete the image
-            self.images.remove(at: sender.tag)
-            for view in stackView.arrangedSubviews {
-                stackView.removeArrangedSubview(view)
-                view.removeFromSuperview()
+   }
+
+    @objc func deleteImage(sender: UIButton) {
+        // Implement the functionality to delete the image
+        let image = self.images[sender.tag]
+        if sender.tag < oldImage.count{
+            if image == oldImage[sender.tag]{
+                tagRemoved.append(sender.tag)
             }
-            self.displayImage(images: self.images)
         }
+        if sender.tag < newAddedImage.count{
+            if image == newAddedImage[sender.tag]{
+                self.newAddedImage.remove(at: sender.tag)
+            }
+        }
+        self.images.remove(at: sender.tag)
+        for view in stackView.arrangedSubviews {
+            stackView.removeArrangedSubview(view)
+            view.removeFromSuperview()
+        }
+        self.displayImage(images: self.images)
+    }
 }

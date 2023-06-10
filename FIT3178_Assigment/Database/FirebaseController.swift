@@ -409,6 +409,19 @@ class FirebaseController: NSObject,DatabaseProtocol{
         return true
     }
     
+    func updatePost(post:Post,postDetail:String,addedImageString:[String],removedImageString:[String]){
+        print(addedImageString)
+        print("aaaaaaaaaaa")
+        print(removedImageString)
+        if !removedImageString.isEmpty{
+            self.postRef?.document(post.id!).updateData(["images" : FieldValue.arrayRemove(removedImageString)])
+        }
+        if !addedImageString.isEmpty{
+            self.postRef?.document(post.id!).updateData(["images" : FieldValue.arrayUnion(addedImageString)])
+        }
+        self.postRef?.document(post.id!).updateData(["postDetail" : postDetail])
+    }
+    
     func addPost(postDetail:String,imagesString:[String]) -> Post{
         var post = Post()
         post.comment = []

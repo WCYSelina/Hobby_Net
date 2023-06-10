@@ -8,6 +8,7 @@ class PageContainerViewController: UIPageViewController, UIPageViewControllerDat
     var currentViewController: UIViewController!
     var notesText: [(String,String?)] = []
     var uniqueURL:String?
+    var swipedFirstTime = false
     override init(transitionStyle style: UIPageViewController.TransitionStyle, navigationOrientation: UIPageViewController.NavigationOrientation, options: [UIPageViewController.OptionsKey : Any]? = nil) {
         super.init(transitionStyle: .scroll, navigationOrientation: .horizontal, options: nil)
     }
@@ -26,14 +27,16 @@ class PageContainerViewController: UIPageViewController, UIPageViewControllerDat
         }
         else{
             if let initialViewControllerBlank = blankViewController(){
+                print("nooooo")
                 self.setViewControllers([initialViewControllerBlank], direction: .forward, animated: false)
             }
-    
+
         }
         
         // Additional configuration of the page view controller
         configurePageControl()
      }
+    
     func configurePageControl() {
         pageControl.numberOfPages = notesText.count
         pageControl.currentPage = 0
@@ -46,8 +49,10 @@ class PageContainerViewController: UIPageViewController, UIPageViewControllerDat
     }
     
     func pageViewController(_ pageViewController: UIPageViewController, didFinishAnimating finished: Bool, previousViewControllers: [UIViewController], transitionCompleted completed: Bool) {
+        print("aaaaaaaa")
         if completed, let visibleViewController = pageViewController.viewControllers?.first,
            let index = viewControllerIndex(visibleViewController) {
+            print("index\(index)")
             pageControl.currentPage = index
         }
     }
@@ -59,6 +64,7 @@ class PageContainerViewController: UIPageViewController, UIPageViewControllerDat
     }
     func viewController(at index: Int) -> UIViewController? {
         guard index >= 0 && index < notesText.count else {
+            print("lllllll")
             return nil
         }
         print("oooo\(index)")
@@ -74,11 +80,14 @@ class PageContainerViewController: UIPageViewController, UIPageViewControllerDat
         label.translatesAutoresizingMaskIntoConstraints = false
         viewController.view.addSubview(label)
         
-        let deleteButton = UIButton(type:.system)
-        deleteButton.setImage(UIImage(named: "ellipsis"), for: .normal)
-        deleteButton.addTarget(self, action: #selector(buttonTapped), for: .touchUpInside)
-        deleteButton.translatesAutoresizingMaskIntoConstraints = false
-        viewController.view.addSubview(deleteButton)
+        let crossButton = UIButton(type: .custom)
+        crossButton.translatesAutoresizingMaskIntoConstraints = false
+        crossButton.setTitle("X", for: .normal)
+        crossButton.setTitleColor(.white, for: .normal)
+        crossButton.backgroundColor = .red
+        crossButton.layer.cornerRadius = 15
+        crossButton.addTarget(self, action: #selector(buttonTapped), for: .touchUpInside)
+        viewController.view.addSubview(crossButton)
         
         let containerView = UIView()
         containerView.translatesAutoresizingMaskIntoConstraints = false
@@ -89,9 +98,8 @@ class PageContainerViewController: UIPageViewController, UIPageViewControllerDat
         let image = notesText[index].1
         if image != ""{
             let storageRef = Storage.storage().reference(forURL: image!)
-            print("iiiiiiiii")
 //            DispatchQueue.main.async {
-                storageRef.getData(maxSize: 100*1024*1024){ data,error in
+                storageRef.getData(maxSize: 10*1024*1024){ data,error in
                     if let error = error{
                         print(error.localizedDescription)
                     } else{
@@ -118,11 +126,10 @@ class PageContainerViewController: UIPageViewController, UIPageViewControllerDat
                         containerView.trailingAnchor.constraint(equalTo: viewController.view.trailingAnchor, constant: -20),
                         containerView.bottomAnchor.constraint(equalTo: viewController.view.bottomAnchor),
                         
-                        deleteButton.topAnchor.constraint(equalTo: containerView.topAnchor),
-                        deleteButton.leadingAnchor.constraint(equalTo: containerView.leadingAnchor),
-                        deleteButton.bottomAnchor.constraint(equalTo: label.topAnchor),
+                        crossButton.topAnchor.constraint(equalTo: containerView.topAnchor),
+                        crossButton.trailingAnchor.constraint(equalTo: containerView.trailingAnchor),
                         
-                        imageView.topAnchor.constraint(equalTo: deleteButton.bottomAnchor),
+                        imageView.topAnchor.constraint(equalTo: crossButton.bottomAnchor),
                         imageView.leadingAnchor.constraint(equalTo: containerView.leadingAnchor),
                         imageView.trailingAnchor.constraint(equalTo: containerView.trailingAnchor),
                         
@@ -139,7 +146,7 @@ class PageContainerViewController: UIPageViewController, UIPageViewControllerDat
             }
         }
         self.currentViewController = viewController
-        
+        print(viewController)
         return viewController
     }
     
@@ -151,7 +158,14 @@ class PageContainerViewController: UIPageViewController, UIPageViewControllerDat
     // MARK: - UIPageViewControllerDataSource
     
     func pageViewController(_ pageViewController: UIPageViewController, viewControllerBefore viewController: UIViewController) -> UIViewController? {
+        print("turnRight")
         guard let currentIndex = viewControllerIndex(viewController), currentIndex > 0 else {
+            if !swipedFirstTime{
+                swipedFirstTime = true
+                if 1 < notesText.count{
+                    return self.viewController(at: 1)
+                }
+            }
             return nil
         }
         print("ssss\(currentIndex - 1)")
@@ -159,6 +173,7 @@ class PageContainerViewController: UIPageViewController, UIPageViewControllerDat
     }
     
     func pageViewController(_ pageViewController: UIPageViewController, viewControllerAfter viewController: UIViewController) -> UIViewController? {
+        print("turnLeft")
         guard let currentIndex = viewControllerIndex(viewController), currentIndex < notesText.count - 1 else {
             return nil
         }
@@ -171,7 +186,6 @@ class PageContainerViewController: UIPageViewController, UIPageViewControllerDat
             return nil
         }
         let index = notesText.firstIndex(where:{ $0.1 == uniqueURL})
-        print("eeee\(index)")
         return index
     }
 }

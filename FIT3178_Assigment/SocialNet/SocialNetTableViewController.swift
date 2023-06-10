@@ -198,8 +198,8 @@ class SocialNetTableViewController: UITableViewController,DatabaseListener,UITex
             completionHandler(true)
         }
         let editAction = UIContextualAction(style: .normal, title: "Edit") { (action, view, completionHandler) in
-            // Perform the editing logic
-            // ...
+            
+            self.performSegue(withIdentifier: "updatePost", sender: self.postList[indexPath.section])
             completionHandler(true)
         }
         
@@ -216,6 +216,12 @@ class SocialNetTableViewController: UITableViewController,DatabaseListener,UITex
         if segue.identifier == "viewCommentIdentifier", let destinationVC = segue.destination as? ViewCommentViewController{
             if let post = sender as? Post{
                 destinationVC.commentList = post.comment
+            }
+        }
+        if segue.identifier == "updatePost", let destinationVC = segue.destination as? UpdatePostViewController{
+            if let post = sender as? Post{
+                destinationVC.post = post
+                destinationVC.setupPageImage()
             }
         }
             

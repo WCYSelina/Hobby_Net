@@ -451,6 +451,7 @@
                     </navigationItem>
                     <connections>
                         <segue destination="1lv-Js-Hxh" kind="showDetail" identifier="viewCommentIdentifier" id="jJ6-3L-NUQ"/>
+                        <segue destination="HXv-4C-VxW" kind="show" identifier="updatePost" id="sXC-1E-yib"/>
                     </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="rC1-gn-ONB" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
@@ -1336,6 +1337,82 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Ra9-uH-RmP" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="5814.5038167938928" y="1654.9295774647887"/>
+        </scene>
+        <!--Update Post-->
+        <scene sceneID="YR3-eV-Je6">
+            <objects>
+                <viewController id="HXv-4C-VxW" customClass="UpdatePostViewController" customModule="FIT3178_Assignment" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="X8y-FC-KvD">
+                        <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" verticalCompressionResistancePriority="751" text="Your Posts:" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="1i1-ic-yHg">
+                                <rect key="frame" x="20" y="123" width="353" height="20"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" textAlignment="natural" translatesAutoresizingMaskIntoConstraints="NO" id="3Nr-TF-bEj">
+                                <rect key="frame" x="20" y="464.66666666666674" width="353" height="225"/>
+                                <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="225" id="4Ub-wu-HAN"/>
+                                    <constraint firstAttribute="width" constant="353" id="rGM-Jd-FsT"/>
+                                </constraints>
+                                <color key="textColor" systemColor="labelColor"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
+                            </textView>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="lpV-7D-VZh">
+                                <rect key="frame" x="293" y="694.66666666666663" width="80" height="35"/>
+                                <state key="normal" title="Button"/>
+                                <buttonConfiguration key="configuration" style="filled" title="Update"/>
+                                <connections>
+                                    <action selector="updatePost:" destination="HXv-4C-VxW" eventType="touchUpInside" id="LZ4-QR-5CR"/>
+                                </connections>
+                            </button>
+                            <view contentMode="scaleToFill" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="44V-Tg-017">
+                                <rect key="frame" x="24" y="408" width="353" height="37"/>
+                                <subviews>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Add Image" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Gav-aQ-dht">
+                                        <rect key="frame" x="121" y="3" width="110" height="26"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        <fontDescription key="fontDescription" style="UICTFontTextStyleTitle2"/>
+                                        <nil key="textColor"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                </subviews>
+                                <color key="backgroundColor" systemColor="systemGreenColor"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="37" id="pfh-e9-vLG"/>
+                                </constraints>
+                            </view>
+                        </subviews>
+                        <viewLayoutGuide key="safeArea" id="rBD-ZD-986"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                        <constraints>
+                            <constraint firstItem="3Nr-TF-bEj" firstAttribute="leading" secondItem="rBD-ZD-986" secondAttribute="leading" constant="20" id="1Ri-8u-9wq"/>
+                            <constraint firstItem="rBD-ZD-986" firstAttribute="trailing" secondItem="lpV-7D-VZh" secondAttribute="trailing" constant="20" id="2Cb-F8-odQ"/>
+                            <constraint firstItem="44V-Tg-017" firstAttribute="leading" secondItem="rBD-ZD-986" secondAttribute="leading" constant="20" id="8nv-bp-jza"/>
+                            <constraint firstItem="44V-Tg-017" firstAttribute="centerY" secondItem="X8y-FC-KvD" secondAttribute="centerY" id="BXM-ha-q5w"/>
+                            <constraint firstItem="rBD-ZD-986" firstAttribute="trailing" secondItem="44V-Tg-017" secondAttribute="trailing" constant="20" id="bTk-ve-koQ"/>
+                            <constraint firstItem="1i1-ic-yHg" firstAttribute="leading" secondItem="rBD-ZD-986" secondAttribute="leading" constant="20" id="jQf-jH-VmU"/>
+                            <constraint firstItem="1i1-ic-yHg" firstAttribute="top" secondItem="rBD-ZD-986" secondAttribute="top" constant="20" id="l4u-ai-ZrC"/>
+                            <constraint firstItem="lpV-7D-VZh" firstAttribute="top" secondItem="3Nr-TF-bEj" secondAttribute="bottom" constant="5" id="uOv-u4-vWE"/>
+                            <constraint firstItem="3Nr-TF-bEj" firstAttribute="top" secondItem="44V-Tg-017" secondAttribute="bottom" constant="20" id="vXH-9P-ZJd"/>
+                            <constraint firstItem="rBD-ZD-986" firstAttribute="trailing" secondItem="1i1-ic-yHg" secondAttribute="trailing" constant="20" id="yW1-iH-6eI"/>
+                        </constraints>
+                    </view>
+                    <navigationItem key="navigationItem" title="Update Post" id="5PZ-x6-3mf"/>
+                    <connections>
+                        <outlet property="postDetails" destination="3Nr-TF-bEj" id="AwO-Co-Jms"/>
+                        <outlet property="squareBox" destination="44V-Tg-017" id="Y41-wq-0PI"/>
+                        <outlet property="yourPostLabel" destination="1i1-ic-yHg" id="HZC-fA-jTe"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="Pdt-9E-bVU" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="10304.580152671755" y="942.95774647887333"/>
         </scene>
     </scenes>
     <inferredMetricsTieBreakers>

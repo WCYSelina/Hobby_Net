@@ -86,4 +86,5 @@ protocol DatabaseProtocol: AnyObject {
     func loginAccount(email:String,password:String) async
     func addPost(postDetail:String, imagesString:[String]) -> Post
     func deletePost(post:Post)
+    func updatePost(post:Post,postDetail:String,addedImageString:[String],removedImageString:[String])
 }
