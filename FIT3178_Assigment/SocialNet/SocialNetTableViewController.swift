@@ -7,7 +7,7 @@
 
 import UIKit
 import FirebaseAuth
-
+import FirebaseStorage
 class SocialNetTableViewController: UITableViewController,DatabaseListener,UITextFieldDelegate{
     
     func onUserPostsDetail(change: DatabaseChange, user: User?) {
@@ -95,10 +95,20 @@ class SocialNetTableViewController: UITableViewController,DatabaseListener,UITex
     override func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
         return 5
     }
+    
+    
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let postCell = tableView.dequeueReusableCell(withIdentifier: "postCell", for: indexPath) as! CardTableViewCell
         let post = postList[indexPath.section]
+        
+        postCell.tableView = self.tableView
+        postCell.section = indexPath.section
+        postCell.post = post
+        postCell.downloadImages(){ () in
+            
+        }
+        
         postCell.descriptionLabel.text = post.postDetail
         
         postCell.sendButton.cell = postCell
@@ -133,6 +143,9 @@ class SocialNetTableViewController: UITableViewController,DatabaseListener,UITex
         postCell.likesLabel.text = "\(post.likeNum!) likes"
         postCell.commentLabel.text = "View comments"
         postCell.userName.text = post.publisherName
+        
+
+        print("return")
         return postCell
     }
     
@@ -239,10 +252,79 @@ class CardTableViewCell: UITableViewCell {
     let separatorViewBottom = UIView()
     let likesLabel = UILabel()
     let commentLabel = UILabel()
-
+    var scrollView = UIScrollView()
+    var stackView = UIStackView()
+    var post:Post?
+    var images:[UIImage] = []
+    var tableView:UITableView?
+    var section:Int?
+    var downloadFinished = false
+    var isFirstReload = true
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
+    }
+    
+    func downloadImages(completion: @escaping () -> Void){
+        var counter = 0
+        self.images = []
+        post!.images.forEach{ image in
+            if image != ""{
+                let storageRef = Storage.storage().reference(forURL: image)
+                storageRef.getData(maxSize: 10*1024*1024){ data,error in
+                    if let error = error{
+                        print(error.localizedDescription)
+                    } else{
+                        let image = UIImage(data: data!)
+                        print("download hahahah")
+                        self.images.append(image!)
+                        counter += 1
+                        
+                        if counter == self.post?.images.count{
+                            if self.isFirstReload == true{
+                                self.downloadFinished = true
+                            }
+                            self.setupImages(){ () in
+                                completion()
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
+    func setupImages(completion: @escaping () -> Void){
+        for view in stackView.arrangedSubviews {
+            stackView.removeArrangedSubview(view)
+            view.removeFromSuperview()
+        }
+        self.images.forEach{ image in
+            let separatorView = UIView()
+            separatorView.translatesAutoresizingMaskIntoConstraints = false
+            separatorView.backgroundColor = .systemGray
+            stackView.addArrangedSubview(separatorView)
+            
+            NSLayoutConstraint.activate([
+                stackView.heightAnchor.constraint(equalToConstant: 300)
+            ])
+    
+            let imageView = UIImageView(image: image)
+            imageView.contentMode = .scaleAspectFit
+            imageView.translatesAutoresizingMaskIntoConstraints = false
+            stackView.addArrangedSubview(imageView)
+            let aspectRatio = image.size.width / image.size.height
+            NSLayoutConstraint.activate([
+                separatorView.widthAnchor.constraint(equalToConstant: 10),
+                imageView.widthAnchor.constraint(equalTo: imageView.heightAnchor, multiplier: aspectRatio),
+            ])
+        }
+        self.relax(){ () in
+            completion()
+        }
         
+    }
+    
+    func relax(completion: @escaping () -> Void){
         // Customize cell layout
         contentView.backgroundColor = .systemBackground
         contentView.layer.cornerRadius = 8.0
@@ -250,11 +332,19 @@ class CardTableViewCell: UITableViewCell {
         contentView.layer.borderWidth = 1.0
         contentView.layer.borderColor = UIColor.lightGray.cgColor
         
-        
         userName.font = UIFont.boldSystemFont(ofSize: userName.font.pointSize)
         userName.translatesAutoresizingMaskIntoConstraints = false
         contentView.addSubview(userName)
         
+        // Create a UIScrollView and add it to your view
+        scrollView.translatesAutoresizingMaskIntoConstraints = false
+        contentView.addSubview(scrollView)
+
+        // Create the UIStackView and add it to the UIScrollView
+        stackView.translatesAutoresizingMaskIntoConstraints = false
+        stackView.axis = .horizontal
+        stackView.distribution = .fill
+        scrollView.addSubview(stackView)
         
         // Configure description label
         descriptionLabel.font = UIFont.systemFont(ofSize: 16)
@@ -305,48 +395,73 @@ class CardTableViewCell: UITableViewCell {
         contentView.addSubview(separatorViewBottom)
         
         // Set up constraints
-        NSLayoutConstraint.activate([
+        DispatchQueue.main.async {
+            NSLayoutConstraint.activate([
+                
+                self.userName.topAnchor.constraint(equalTo: self.contentView.topAnchor, constant: 8),
+                self.userName.leadingAnchor.constraint(equalTo: self.contentView.leadingAnchor, constant: 8),
+              
+                self.scrollView.topAnchor.constraint(equalTo: self.userName.bottomAnchor),
+                self.scrollView.bottomAnchor.constraint(equalTo: self.descriptionLabel.topAnchor, constant: -8),
+                self.scrollView.leadingAnchor.constraint(equalTo: self.contentView.leadingAnchor, constant: 8),
+                self.scrollView.trailingAnchor.constraint(equalTo: self.contentView.trailingAnchor,constant: -8),
+                self.scrollView.heightAnchor.constraint(equalToConstant: 300),
+             
+                self.stackView.topAnchor.constraint(equalTo: self.scrollView.topAnchor),
+                self.stackView.bottomAnchor.constraint(equalTo: self.scrollView.bottomAnchor),
+                self.stackView.leadingAnchor.constraint(equalTo: self.scrollView.leadingAnchor),
+                self.stackView.trailingAnchor.constraint(equalTo: self.scrollView.trailingAnchor),
+               
+                self.descriptionLabel.leadingAnchor.constraint(equalTo: self.contentView.leadingAnchor, constant: 8),
+                self.descriptionLabel.trailingAnchor.constraint(equalTo: self.contentView.trailingAnchor, constant: -8),
+             
+                self.separatorViewTop.topAnchor.constraint(equalTo: self.descriptionLabel.bottomAnchor, constant: 8),
+                self.separatorViewTop.leadingAnchor.constraint(equalTo: self.contentView.leadingAnchor, constant: 8),
+                self.separatorViewTop.trailingAnchor.constraint(equalTo: self.contentView.trailingAnchor, constant: -8),
+                self.separatorViewTop.heightAnchor.constraint(equalToConstant: 1),
+              
+                self.likesLabel.topAnchor.constraint(equalTo: self.separatorViewTop.bottomAnchor, constant: 4),
+                self.likesLabel.leadingAnchor.constraint(equalTo: self.contentView.leadingAnchor, constant: 8),
+             
+                self.commentLabel.topAnchor.constraint(equalTo: self.separatorViewTop.bottomAnchor, constant: 4),
+                self.commentLabel.trailingAnchor.constraint(equalTo: self.contentView.trailingAnchor, constant: -8),
+             
+                self.separatorViewBottom.topAnchor.constraint(equalTo: self.likesLabel.bottomAnchor, constant: 4),
+                self.separatorViewBottom.leadingAnchor.constraint(equalTo: self.contentView.leadingAnchor, constant: 8),
+                self.separatorViewBottom.trailingAnchor.constraint(equalTo: self.contentView.trailingAnchor, constant: -8),
+                self.separatorViewBottom.heightAnchor.constraint(equalToConstant: 1),
+           
+                self.thumbsUpButton.topAnchor.constraint(equalTo: self.separatorViewBottom.bottomAnchor, constant: 8),
+                self.thumbsUpButton.leadingAnchor.constraint(equalTo: self.contentView.leadingAnchor, constant: 8),
+                self.thumbsUpButton.bottomAnchor.constraint(equalTo: self.contentView.bottomAnchor, constant: -8),
+                self.thumbsUpButton.widthAnchor.constraint(equalToConstant: 24),
+                self.thumbsUpButton.heightAnchor.constraint(equalToConstant: 24),
+                
+                self.commentTextField.topAnchor.constraint(equalTo: self.separatorViewBottom.bottomAnchor, constant: 8),
+                self.commentTextField.leadingAnchor.constraint(equalTo: self.thumbsUpButton.trailingAnchor, constant: 8),
+                self.commentTextField.trailingAnchor.constraint(equalTo: self.sendButton.leadingAnchor, constant: -8),
+                self.commentTextField.bottomAnchor.constraint(equalTo: self.contentView.bottomAnchor, constant: -8),
+                
+                self.sendButton.trailingAnchor.constraint(equalTo: self.contentView.trailingAnchor, constant: -8),
+                self.sendButton.centerYAnchor.constraint(equalTo: self.commentTextField.centerYAnchor),
+                self.sendButton.widthAnchor.constraint(equalToConstant: 24),
+                self.sendButton.heightAnchor.constraint(equalToConstant: 24),
+                
+            ])
+            print("done")
+            print(self.downloadFinished)
+            print(self.post?.images.count)
+            if self.isFirstReload == true, self.downloadFinished == true{
+                let indexSet = IndexSet(integer: self.section!)
+                print(indexSet)
+                self.tableView!.reloadSections(indexSet, with: .automatic)
+                self.downloadFinished = false
+                self.isFirstReload = false
+            }
             
-            userName.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 8),
-            userName.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 8),
+            completion()
             
-            descriptionLabel.topAnchor.constraint(equalTo: userName.bottomAnchor, constant: 8),
-            descriptionLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 8),
-            descriptionLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -8),
-            
-            separatorViewTop.topAnchor.constraint(equalTo: descriptionLabel.bottomAnchor, constant: 8),
-            separatorViewTop.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 8),
-            separatorViewTop.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -8),
-            separatorViewTop.heightAnchor.constraint(equalToConstant: 1),
-            
-            likesLabel.topAnchor.constraint(equalTo: separatorViewTop.bottomAnchor, constant: 4),
-            likesLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 8),
-            
-            commentLabel.topAnchor.constraint(equalTo: separatorViewTop.bottomAnchor, constant: 4),
-            commentLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -8),
-            
-            separatorViewBottom.topAnchor.constraint(equalTo: likesLabel.bottomAnchor, constant: 4),
-            separatorViewBottom.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 8),
-            separatorViewBottom.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -8),
-            separatorViewBottom.heightAnchor.constraint(equalToConstant: 1),
-            
-            thumbsUpButton.topAnchor.constraint(equalTo: separatorViewBottom.bottomAnchor, constant: 8),
-            thumbsUpButton.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 8),
-            thumbsUpButton.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -8),
-            thumbsUpButton.widthAnchor.constraint(equalToConstant: 24),
-            thumbsUpButton.heightAnchor.constraint(equalToConstant: 24),
-            
-            commentTextField.topAnchor.constraint(equalTo: separatorViewBottom.bottomAnchor, constant: 8),
-            commentTextField.leadingAnchor.constraint(equalTo: thumbsUpButton.trailingAnchor, constant: 8),
-            commentTextField.trailingAnchor.constraint(equalTo: sendButton.leadingAnchor, constant: -8),
-            commentTextField.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -8),
-            
-            sendButton.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -8),
-            sendButton.centerYAnchor.constraint(equalTo: commentTextField.centerYAnchor),
-            sendButton.widthAnchor.constraint(equalToConstant: 24),
-            sendButton.heightAnchor.constraint(equalToConstant: 24),
-            
-        ])
+        }
     }
     
     required init?(coder aDecoder: NSCoder) {

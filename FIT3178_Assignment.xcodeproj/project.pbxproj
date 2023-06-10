@@ -29,7 +29,6 @@
 		6A561DA229F4105000138ABE /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 6A561DA029F4105000138ABE /* Main.storyboard */; };
 		6A561DA429F4105100138ABE /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 6A561DA329F4105100138ABE /* Assets.xcassets */; };
 		6A561DA729F4105100138ABE /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 6A561DA529F4105100138ABE /* LaunchScreen.storyboard */; };
-		6A5DADEE2A3457E000FF0513 /* PageContainerPostViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A5DADED2A3457E000FF0513 /* PageContainerPostViewController.swift */; };
 		6A62E6992A173FA40070FF3B /* YourEventsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A62E6982A173FA40070FF3B /* YourEventsViewController.swift */; };
 		6A6CE0A329F80F5E00BD7150 /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = 6A6CE0A229F80F5E00BD7150 /* FirebaseAuth */; };
 		6A6CE0A529F80F5E00BD7150 /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = 6A6CE0A429F80F5E00BD7150 /* FirebaseFirestore */; };
@@ -74,7 +73,6 @@
 		6A561DA329F4105100138ABE /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		6A561DA629F4105100138ABE /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		6A561DA829F4105100138ABE /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		6A5DADED2A3457E000FF0513 /* PageContainerPostViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PageContainerPostViewController.swift; sourceTree = "<group>"; };
 		6A62E6982A173FA40070FF3B /* YourEventsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = YourEventsViewController.swift; sourceTree = "<group>"; };
 		6A7639942A2484A40050742A /* DailyRecordViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DailyRecordViewController.swift; sourceTree = "<group>"; };
 		6A768A822A25046100D3E944 /* RecordImageViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordImageViewController.swift; sourceTree = "<group>"; };
@@ -202,7 +200,6 @@
 				6AB99CE32A0FB02400544DD6 /* SocialNetTableViewController.swift */,
 				6A9B56B42A10D41300FB28A3 /* ViewCommentTableViewController.swift */,
 				6A82E11E2A335B7B00AB4D83 /* UpdatePostViewController.swift */,
-				6A5DADED2A3457E000FF0513 /* PageContainerPostViewController.swift */,
 			);
 			path = SocialNet;
 			sourceTree = "<group>";
@@ -326,7 +323,6 @@
 				6A4CF19B29F58EC3004F5BFD /* AddRecordViewController.swift in Sources */,
 				6A7A18BA2A0F686000C33B62 /* SheetAddPostViewController.swift in Sources */,
 				6A48A38B29F8017D00F9BC55 /* Hobby.swift in Sources */,
-				6A5DADEE2A3457E000FF0513 /* PageContainerPostViewController.swift in Sources */,
 				6A48A39129F8089A00F9BC55 /* Notes.swift in Sources */,
 				6A778B272A1626D300EBF602 /* Event.swift in Sources */,
 				6AA6FFF32A2DEABF0062F8B4 /* CustomViewHobbyViewController.swift in Sources */,
