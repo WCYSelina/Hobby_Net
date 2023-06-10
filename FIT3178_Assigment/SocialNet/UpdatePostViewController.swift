@@ -18,7 +18,7 @@ class UpdatePostViewController: UIViewController, UITextViewDelegate{
         Task{
             do{
                 tagRemoved.forEach{ tag in
-                    self.removedImage.append((post?.images![tag])!)
+                    self.removedImage.append(post!.images[tag])
                 }
                 var counter = 0
                 let folderPath = "images/"
@@ -104,7 +104,7 @@ class UpdatePostViewController: UIViewController, UITextViewDelegate{
     }
     
     func setupPageImage(){
-        post?.images?.forEach{ image in
+        post!.images.forEach{ image in
             if image != ""{
                 let storageRef = Storage.storage().reference(forURL: image)
                 storageRef.getData(maxSize: 10*1024*1024){ data,error in
@@ -115,7 +115,7 @@ class UpdatePostViewController: UIViewController, UITextViewDelegate{
                         print("download hahahah")
                         self.images.append(image!)
                         self.oldImage.append(image!)
-                        if self.images.count == self.post?.images?.count{
+                        if self.images.count == self.post!.images.count{
                             self.displayImage(images: self.images)
                         }
                     }

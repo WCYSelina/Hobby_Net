@@ -1213,7 +1213,9 @@ class FirebaseController: NSObject,DatabaseProtocol{
                     onePostObj.postDetail = document.data()!["postDetail"] as? String
                     onePostObj.publisherName = document.data()!["publisherName"] as? String
                     onePostObj.publisher = document.data()!["publisher"] as? String
-                    onePostObj.images = document.data()!["images"] as? [String]
+                    if let images = document.data()!["images"] as? [String]{
+                        onePostObj.images = images
+                    }
                     self.parseSpecificComment(commentRefArray: onePostDoc?.data()!["comments"] as? [DocumentReference] ?? []){ allComments in
                         onePostObj.comment = allComments
                         resultPostList.append(onePostObj)
@@ -1250,7 +1252,9 @@ class FirebaseController: NSObject,DatabaseProtocol{
                 parsedPost.likeNum = change.document.data()["likeNum"] as? Int
                 parsedPost.postDetail = change.document.data()["postDetail"] as? String
                 parsedPost.publisherName = change.document.data()["publisherName"] as? String
-                parsedPost.images = change.document.data()["images"] as? [String]
+                if let images = change.document.data()["images"] as? [String]{
+                    parsedPost.images = images
+                }
                 let commentRef = change.document.data()["comments"] as? [DocumentReference]
                 if commentRef == nil{
                     parsedPost.comment = []

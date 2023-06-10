@@ -29,13 +29,13 @@ class SheetAddPostViewController: UIViewController,UITextViewDelegate{
                             print(imageString)
                             counter += 1
                             if counter == self.images.count{
-                                self.databaseController?.addPost(postDetail: self.postDetails.text,imagesString: self.imagesString)
+                                let _ = self.databaseController?.addPost(postDetail: self.postDetails.text,imagesString: self.imagesString)
                             }
                         }
                     }
                     
                 }else{
-                    self.databaseController?.addPost(postDetail: postDetails.text,imagesString: [])
+                    let _ = self.databaseController?.addPost(postDetail: postDetails.text,imagesString: [])
                 }
             }
         }
