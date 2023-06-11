@@ -1674,6 +1674,12 @@ class FirebaseController: NSObject,DatabaseProtocol{
         if hasLogin == nil{
             hasLogin = true
         }
+        
+        let defaults = UserDefaults.standard
+        defaults.set(true, forKey: "hasLogin")
+        defaults.set(email, forKey: "email")
+        defaults.set(password, forKey: "password")
+        
         self.setupUserListener(){ () in
             self.setupHobbyListener()
             self.setupRecordListener()

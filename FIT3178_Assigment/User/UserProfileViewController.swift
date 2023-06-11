@@ -42,7 +42,15 @@ class UserProfileViewController: UIViewController,DatabaseListener,UITableViewDa
     
     @IBAction func removeListener(_ sender: Any) {
         databaseController?.removeListener(listener: self)
-        performSegue(withIdentifier: "userLogOut", sender: nil)
+        let defaults = UserDefaults.standard
+        defaults.set(false, forKey: "hasLogin")
+        
+        let storyboard = UIStoryboard(name: "Main", bundle: nil)
+        if let navigationController = storyboard.instantiateViewController(withIdentifier: "UserProfileController") as? UINavigationController{
+            if let sceneDelegate = self.view.window?.windowScene?.delegate as? SceneDelegate{
+                sceneDelegate.window?.rootViewController = navigationController
+            }
+        }
     }
     
     

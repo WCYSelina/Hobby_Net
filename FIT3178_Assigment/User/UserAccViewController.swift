@@ -81,7 +81,7 @@ class UserAccViewController: UIViewController,DatabaseListener{
     func onCommentChange(change: DatabaseChange, comments: [Comment]) {
     }
     
-    
+    let indictor =  UIActivityIndicatorView(style: .large)
     var loginHasCalledBefore = false
     var signUpHasCalledBefore = false
     
@@ -122,7 +122,27 @@ class UserAccViewController: UIViewController,DatabaseListener{
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        indictor.startAnimating()
         databaseController?.addListener(listener: self)
+        let userDefaults = UserDefaults.standard
+        var hasLogin = userDefaults.bool(forKey: "hasLogin")
+        
+        print(hasLogin)
+        if hasLogin{
+            if !loginHasCalledBefore{
+                loginHasCalledBefore = true
+            }
+            let email = userDefaults.string(forKey: "email")
+            let password = userDefaults.string(forKey: "password")
+            if let email = email, let password = password{
+                Task{
+                    await databaseController?.loginAccount(email: email, password: password)
+                }
+            }
+        }
+        else{
+            self.indictor.stopAnimating()
+        }
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -136,6 +156,11 @@ class UserAccViewController: UIViewController,DatabaseListener{
         navigationItem.setHidesBackButton(true, animated: false)
         let appDelegate = UIApplication.shared.delegate as? AppDelegate
         databaseController = appDelegate?.databaseController
+        
+        indictor.color = .systemGray
+        indictor.center = view.center
+        indictor.hidesWhenStopped = true
+        view.addSubview(indictor)
 //
 //        let isUserSignedIn = UserDefaults.standard.bool(forKey: "isUserSignedIn")
 //        if isUserSignedIn{

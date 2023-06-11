@@ -13,22 +13,22 @@
             <objects>
                 <viewController id="6LT-Qa-AXL" customClass="UserAccViewController" customModule="FIT3178_Assignment" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="oPT-f5-8bG">
-                        <rect key="frame" x="0.0" y="0.0" width="393" height="783"/>
+                        <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Email:" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="BC7-kw-Xi1">
-                                <rect key="frame" x="20" y="309" width="46" height="21"/>
+                                <rect key="frame" x="20" y="353" width="46" height="21"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
                             <textField opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="248" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="J9T-hD-oBj">
-                                <rect key="frame" x="118" y="350" width="255" height="34"/>
+                                <rect key="frame" x="118" y="394" width="255" height="34"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                 <textInputTraits key="textInputTraits"/>
                             </textField>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="KMD-aM-h3z">
-                                <rect key="frame" x="302" y="404" width="71" height="35"/>
+                                <rect key="frame" x="302" y="448" width="71" height="35"/>
                                 <state key="normal" title="Button"/>
                                 <buttonConfiguration key="configuration" style="filled" title="Log In"/>
                                 <connections>
@@ -36,13 +36,13 @@
                                 </connections>
                             </button>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Password:" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Eqk-WH-8H0">
-                                <rect key="frame" x="20" y="350" width="78" height="21"/>
+                                <rect key="frame" x="20" y="394" width="78" height="21"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="CEF-m8-a63">
-                                <rect key="frame" x="198" y="404" width="84" height="35"/>
+                                <rect key="frame" x="198" y="448" width="84" height="35"/>
                                 <state key="normal" title="Button"/>
                                 <buttonConfiguration key="configuration" style="plain" title="Sign Up"/>
                                 <connections>
@@ -50,7 +50,7 @@
                                 </connections>
                             </button>
                             <textField opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="248" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="7ds-EM-AiO">
-                                <rect key="frame" x="118" y="309" width="255" height="34"/>
+                                <rect key="frame" x="118" y="353" width="255" height="34"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                 <textInputTraits key="textInputTraits"/>
                             </textField>
@@ -385,7 +385,7 @@
         <!--Navigation Controller-->
         <scene sceneID="rov-ev-3Cg">
             <objects>
-                <navigationController automaticallyAdjustsScrollViewInsets="NO" id="hsh-4X-m3u" sceneMemberID="viewController">
+                <navigationController storyboardIdentifier="UserProfileController" automaticallyAdjustsScrollViewInsets="NO" id="hsh-4X-m3u" sceneMemberID="viewController">
                     <toolbarItems/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" id="lP4-67-WM6">
                         <rect key="frame" x="0.0" y="59" width="393" height="44"/>
@@ -1418,7 +1418,7 @@
     <inferredMetricsTieBreakers>
         <segue reference="VV8-Vd-IQq"/>
         <segue reference="kcS-xc-7kA"/>
-        <segue reference="CIY-or-Qm6"/>
+        <segue reference="DPh-64-XuF"/>
     </inferredMetricsTieBreakers>
     <resources>
         <image name="arrow.up.circle" catalog="system" width="128" height="123"/>
