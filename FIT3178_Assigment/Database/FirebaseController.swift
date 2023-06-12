@@ -78,15 +78,6 @@ class FirebaseController: NSObject,DatabaseProtocol{
         }
         if listener.listenerType == .record || listener.listenerType == .all {
             let records = defaultHobby.records
-//            let record = records.first(where: {$0.date == currentDate})
-//            if record != nil {
-//                self.notes.append(contentsOf:record!.notes)
-//                currentRecNotesList = self.notes
-//            }
-//            else{
-//                currentRecNotesList = []
-//            }
-            
             let dateFormatter = DateFormatter()
             dateFormatter.dateFormat = "dd MMM yyyy"
             
@@ -149,17 +140,6 @@ class FirebaseController: NSObject,DatabaseProtocol{
             guard let imageData = image.jpegData(compressionQuality: 1) else{
                 return
             }
-//            //upload image
-//            let uploadTask = storageRef.putData(imageData)
-//            uploadTask.observe(.progress){ storageTaskSnapshot in
-//                let progress = storageTaskSnapshot.progress
-//                let percentComplete = 100 * Double(progress!.completedUnitCount) / Double (progress!.totalUnitCount)
-//                print("percent: \(percentComplete)")
-//                if percentComplete == 100.0{
-//                    //check and get storage location
-//                    completion(storageTaskSnapshot.reference.fullPath)
-//                }
-//            }
             // Upload image
             let uploadTask = storageRef.putData(imageData, metadata: nil) { metaData, error in
                 if let error = error {
@@ -178,7 +158,7 @@ class FirebaseController: NSObject,DatabaseProtocol{
                                 return
                             }
                             if let _ = metadata {
-                                let fullPath = "gs://fit3178assignment-ed2ba.appspot.com/" + (metaData?.path)!
+                                let fullPath = "gs://fit3178-ass.appspot.com//" + (metaData?.path)!
                                 completion(fullPath)
                             }
                         }
@@ -410,9 +390,8 @@ class FirebaseController: NSObject,DatabaseProtocol{
     }
     
     func updatePost(post:Post,postDetail:String,addedImageString:[String],removedImageString:[String]){
-        print(addedImageString)
-        print("aaaaaaaaaaa")
-        print(removedImageString)
+        print("added\(addedImageString)")
+        print("removed\(removedImageString)")
         if !removedImageString.isEmpty{
             self.postRef?.document(post.id!).updateData(["images" : FieldValue.arrayRemove(removedImageString)])
         }
@@ -430,7 +409,6 @@ class FirebaseController: NSObject,DatabaseProtocol{
         post.images = imagesString
 //        post.publisher = database.collection("user").document(currentUser!.uid)
         post.publisher = currentUser?.uid
-        print(imagesString)
         do{
             if let postRef = try postRef?.addDocument(from: post) {
                 post.id = postRef.documentID
@@ -826,7 +804,7 @@ class FirebaseController: NSObject,DatabaseProtocol{
                     }
                     //decode user's events
                     let eventRef = change.document.data()["events"] as? [DocumentReference]
-                    if eventRef == []{
+                    if eventRef == nil{
                         parsedUser.events = []
                         counter += 1
                         if counter == userFieldCount{
@@ -1183,6 +1161,12 @@ class FirebaseController: NSObject,DatabaseProtocol{
                     if let index = self.postList.firstIndex(where: { $0.id == parsedPost.id }) {
                         // If the parsedHobby exists in the list, update it
                         self.postList[index] = parsedPost
+                        print("update")
+                        self.listeners.invoke{ listener in
+                            if listener.listenerType == ListenerType.post || listener.listenerType == ListenerType.all {
+                                listener.onPostChange(change: .update, posts: self.postList, defaultUser: self.defaultUser)
+                            }
+                        }
                     }
                 } else if change.type == .removed {
                     if let index = self.postList.firstIndex(where: { $0.id == parsedPost.id }) {

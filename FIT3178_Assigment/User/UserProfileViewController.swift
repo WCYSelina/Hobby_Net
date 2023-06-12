@@ -140,12 +140,10 @@ class UserProfileViewController: UIViewController,DatabaseListener,UITableViewDa
         postCell.section = indexPath.section
         postCell.post = post
         if !post.images.isEmpty{
-            postCell.downloadImages(){ () in
-            }
+            postCell.downloadImages()
         }
         else{
-            postCell.setupPostNoImage { () in
-            }
+            postCell.setupPostNoImage()
         }
         
         postCell.descriptionLabel.text = post.postDetail

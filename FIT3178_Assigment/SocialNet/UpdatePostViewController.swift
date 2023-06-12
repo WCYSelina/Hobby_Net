@@ -14,7 +14,6 @@ class UpdatePostViewController: UIViewController, UITextViewDelegate{
     @IBOutlet weak var postDetails: UITextView!
     
     @IBAction func updatePost(_ sender: Any) {
-        print("heiheihei")
         Task{
             do{
                 tagRemoved.forEach{ tag in
@@ -22,7 +21,6 @@ class UpdatePostViewController: UIViewController, UITextViewDelegate{
                 }
                 var counter = 0
                 let folderPath = "images/"
-//                let image = databaseController?.selectedImage
                 if !self.newAddedImage.isEmpty{
                     self.newAddedImage.forEach{ image in
                         databaseController?.uploadImageToStorage(folderPath: folderPath, image: image){ imageString in
@@ -169,6 +167,7 @@ class UpdatePostViewController: UIViewController, UITextViewDelegate{
             crossButton.layer.cornerRadius = 15
             crossButton.tag = counter
             counter += 1
+            print("tag\(crossButton.tag)")
             crossButton.addTarget(self, action: #selector(deleteImage), for: .touchUpInside)
             containerView.addSubview(crossButton)
             
@@ -212,16 +211,17 @@ class UpdatePostViewController: UIViewController, UITextViewDelegate{
    }
 
     @objc func deleteImage(sender: UIButton) {
+        print("innnnn")
         // Implement the functionality to delete the image
         let image = self.images[sender.tag]
-        if sender.tag < oldImage.count{
-            if image == oldImage[sender.tag]{
-                tagRemoved.append(sender.tag)
+        for i in 0..<oldImage.count{
+            if oldImage[i] == image{
+                tagRemoved.append(i)
             }
         }
-        if sender.tag < newAddedImage.count{
-            if image == newAddedImage[sender.tag]{
-                self.newAddedImage.remove(at: sender.tag)
+        for i in 0..<newAddedImage.count{
+            if newAddedImage[i] == image{
+                newAddedImage.remove(at: i)
             }
         }
         self.images.remove(at: sender.tag)

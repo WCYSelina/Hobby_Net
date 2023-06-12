@@ -17,7 +17,6 @@ class SelectPhotosViewController: UIViewController, PHPickerViewControllerDelega
     }
 
     override func viewWillDisappear(_ animated: Bool) {
-        print("di")
         selectedImages = []
     }
     private func showPhotoPicker() {
@@ -36,7 +35,6 @@ class SelectPhotosViewController: UIViewController, PHPickerViewControllerDelega
         }
         
         if results.isEmpty{
-            print("hello")
             databaseController?.selectedImage = nil
         }
         var counter = 0

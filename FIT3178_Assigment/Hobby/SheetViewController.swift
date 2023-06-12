@@ -19,10 +19,6 @@ class SheetViewController: UIViewController,UISheetPresentationControllerDelegat
             return
         }
         let _ = databaseController?.addHobby(name: name)
-//        if createHobbyDel == false{
-//            displayMessage(title: "Failed", message: "Unable to create hobby")
-//            return
-//        }
         self.dismiss(animated: true)
     }
     
