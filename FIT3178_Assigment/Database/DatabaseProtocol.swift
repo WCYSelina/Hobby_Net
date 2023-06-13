@@ -61,6 +61,7 @@ protocol DatabaseProtocol: AnyObject {
     var currentDate:String?{get set}
     var startWeek:Date?{get set}
     var endWeek:Date?{get set}
+    func changeUserName(username:String)
     func findCurrentUser() -> User
     var selectedImage: [UIImage]? {get set}
     var defaultEvent:Event? {get set}

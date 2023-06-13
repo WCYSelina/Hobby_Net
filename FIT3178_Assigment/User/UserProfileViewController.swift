@@ -10,12 +10,21 @@ import FirebaseAuth
 class UserProfileViewController: UIViewController,DatabaseListener,UITableViewDataSource,UITableViewDelegate,UITextFieldDelegate,UITabBarControllerDelegate{
     func onUserPostsDetail(change: DatabaseChange, user: User?) {
         defaultUser = user
+        username.text = user?.name
     }
     
     
     @IBOutlet weak var tableView: UITableView!
     @IBOutlet weak var segmentedControl: UISegmentedControl!
     @IBOutlet weak var username: UILabel!
+    
+    
+    @IBAction func editUserName(_ sender: Any) {
+        performSegue(withIdentifier: "editUsername", sender: defaultUser)
+        
+    }
+    
+    
     weak var databaseController:DatabaseProtocol?
     let CELL_POST = "yourPostsLikes"
     var listenerType = ListenerType.post
@@ -25,7 +34,8 @@ class UserProfileViewController: UIViewController,DatabaseListener,UITableViewDa
         super.viewDidLoad()
         let appDelegate = UIApplication.shared.delegate as? AppDelegate
         databaseController = appDelegate?.databaseController
-        username.text = databaseController?.email
+        username.text = defaultUser?.name
+        print(defaultUser?.name)
         tabBarController?.delegate = self
         databaseController?.setupUserListener { () in
             self.tableView.delegate = self
@@ -70,16 +80,10 @@ class UserProfileViewController: UIViewController,DatabaseListener,UITableViewDa
     }
     
     
-    
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         databaseController?.addListener(listener: self)
     }
-//    override func viewWillDisappear(_ animated: Bool) {
-//        super.viewWillDisappear(animated)
-//        databaseController?.removeListener(listener: self)
-//    }
-    
     
     func onEventChange(change: DatabaseChange, events: [Event]) {
     }
@@ -132,6 +136,18 @@ class UserProfileViewController: UIViewController,DatabaseListener,UITableViewDa
         return 5
     }
     
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        if containImage{
+            containImage = false
+            return 400
+        }
+        else{
+            return 150
+        }
+    }
+    
+    var containImage = false
+
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let postCell = tableView.dequeueReusableCell(withIdentifier: CELL_POST, for: indexPath) as! CardTableViewCell
         let post = postList[indexPath.section]
@@ -140,6 +156,8 @@ class UserProfileViewController: UIViewController,DatabaseListener,UITableViewDa
         postCell.section = indexPath.section
         postCell.post = post
         if !post.images.isEmpty{
+//            tableView.rowHeight = 400
+            containImage = true
             postCell.downloadImages()
         }
         else{
@@ -180,9 +198,7 @@ class UserProfileViewController: UIViewController,DatabaseListener,UITableViewDa
         postCell.likesLabel.text = "\(post.likeNum!) likes"
         postCell.commentLabel.text = "View comments"
         postCell.userName.text = post.publisherName
-        
 
-        print("return")
         return postCell
     }
     
@@ -250,7 +266,40 @@ class UserProfileViewController: UIViewController,DatabaseListener,UITableViewDa
                 destinationVC.commentList = post.comment
             }
         }
+        if segue.identifier == "changeUsername", let destinationVC = segue.destination as? editUserNameViewController{
+            if let user = sender as? User{
+                destinationVC.defaultUser = user
+            }
+        }
             
     }
 
+}
+
+class editUserNameViewController: UIViewController,UISheetPresentationControllerDelegate{
+    
+    
+    weak var databaseController:DatabaseProtocol?
+    @IBOutlet weak var username: UITextField!
+    var defaultUser:User?
+    
+    @IBAction func changeUserName(_ sender: Any) {
+        databaseController?.changeUserName(username: username.text ?? defaultUser!.name!)
+        navigationController?.popViewController(animated: true)
+    }
+    
+    override var sheetPresentationController: UISheetPresentationController?{
+        presentationController as? UISheetPresentationController
+    }
+
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        let appDelegate = UIApplication.shared.delegate as? AppDelegate
+        databaseController = appDelegate?.databaseController
+        sheetPresentationController?.detents = [.custom{
+            _ in return 100
+        }]
+        sheetPresentationController?.prefersGrabberVisible = true //show the line on top of the bottom sheet
+        sheetPresentationController?.preferredCornerRadius = 24
+    }
 }

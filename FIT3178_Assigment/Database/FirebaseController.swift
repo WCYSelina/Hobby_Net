@@ -158,7 +158,7 @@ class FirebaseController: NSObject,DatabaseProtocol{
                                 return
                             }
                             if let _ = metadata {
-                                let fullPath = "gs://fit3178-ass.appspot.com//" + (metaData?.path)!
+                                let fullPath = "gs://fit3178-ass-v2.appspot.com/" + (metaData?.path)!
                                 completion(fullPath)
                             }
                         }
@@ -309,6 +309,16 @@ class FirebaseController: NSObject,DatabaseProtocol{
             }
         }
     }
+    func changeUserName(username:String){
+        self.defaultUser.name = username
+        self.userRef?.document(self.defaultUser.id!).updateData(["name" : username])
+        self.listeners.invoke { listener in
+            if listener.listenerType == ListenerType.post || listener.listenerType == ListenerType.all {
+                listener.onUserPostsDetail(change: .update, user: self.defaultUser)
+            }
+        }
+        
+    }
     func addNoteToRecord(note:Notes,date:String,record:Records, completion: @escaping (Records) -> Void){
         guard let noteID = note.id, let recordID = record.id else {
             return
@@ -409,6 +419,7 @@ class FirebaseController: NSObject,DatabaseProtocol{
         post.images = imagesString
 //        post.publisher = database.collection("user").document(currentUser!.uid)
         post.publisher = currentUser?.uid
+        post.publisherName = self.defaultUser.name
         do{
             if let postRef = try postRef?.addDocument(from: post) {
                 post.id = postRef.documentID

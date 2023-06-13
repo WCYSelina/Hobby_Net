@@ -104,7 +104,7 @@ class SocialNetTableViewController: UITableViewController,DatabaseListener,UITex
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         if containImage{
             containImage = false
-            return 400
+            return 425
         }
         else{
             return 150
@@ -157,6 +157,10 @@ class SocialNetTableViewController: UITableViewController,DatabaseListener,UITex
         tapGesture.post = post
         postCell.commentLabel.addGestureRecognizer(tapGesture)
         
+        let tapGesture2 = CustomTapGesture(target: self, action: #selector(seeMoreTapped(_:)))
+        tapGesture2.post = post
+        postCell.detail.addGestureRecognizer(tapGesture2)
+        
         // Configure the comment text field
         postCell.commentTextField.placeholder = "Add a comment"
         postCell.commentTextField.delegate = self
@@ -184,6 +188,14 @@ class SocialNetTableViewController: UITableViewController,DatabaseListener,UITex
         if let post = sender.post{
             databaseController!.defaultPost = post
             performSegue(withIdentifier: "viewCommentIdentifier", sender: post)
+        }
+    }
+    
+    @objc func seeMoreTapped(_ sender: CustomTapGesture){
+        print("callllllllll")
+        if let post = sender.post{
+            databaseController!.defaultPost = post
+            performSegue(withIdentifier: "seeMoreIdentifier", sender: post)
         }
     }
     
@@ -254,6 +266,17 @@ class SocialNetTableViewController: UITableViewController,DatabaseListener,UITex
                 destinationVC.setupPageImage()
             }
         }
+        if segue.identifier == "seeMoreIdentifier", let destinationVC = segue.destination as?
+            SeeMoreViewController{
+            print("hahaha")
+            if let post = sender as? Post{
+                destinationVC.post = post
+                if !post.images.isEmpty{
+                    print("innn")
+                    destinationVC.downloadImages()
+                }
+            }
+        }
             
     }
 }
@@ -271,6 +294,7 @@ class CardTableViewCell: UITableViewCell {
     let commentLabel = UILabel()
     var scrollView = UIScrollView()
     var stackView = UIStackView()
+    let detail = UILabel()
     var post:Post?
     var images:[UIImage] = []
     var tableView:UITableView?
@@ -297,9 +321,6 @@ class CardTableViewCell: UITableViewCell {
                         counter += 1
                         
                         if counter == self.post?.images.count{
-//                            if self.isFirstReload == true{
-//                                self.downloadFinished = true
-//                            }
                             self.setupImages(){ () in
                                 
                             }
@@ -337,9 +358,6 @@ class CardTableViewCell: UITableViewCell {
             ])
             counter += 1
             if counter == self.images.count{
-                for subview in stackView.arrangedSubviews{
-                    print(subview)
-                }
                 self.relax(){ () in
                     completion()
                 }
@@ -351,10 +369,6 @@ class CardTableViewCell: UITableViewCell {
     }
     //completion:@escaping () -> Void
     func relax(completion:@escaping () -> Void){
-        print("relax")
-        for subview in stackView.arrangedSubviews{
-            print(subview)
-        }
         DispatchQueue.main.async {
             // Customize cell layout
             self.contentView.backgroundColor = .systemBackground
@@ -379,9 +393,15 @@ class CardTableViewCell: UITableViewCell {
             self.descriptionLabel.numberOfLines = 0
             self.descriptionLabel.translatesAutoresizingMaskIntoConstraints = false
             self.contentView.addSubview(self.descriptionLabel)
-            // Configure thumbs-up button
-            //        thumbsUpButton.setImage(UIImage(systemName: "hand.thumbsup"), for: .normal)
-            //        thumbsUpButton.tintColor = .gray
+            
+            self.detail.isUserInteractionEnabled = true
+            self.detail.text = "See More"
+            self.detail.textColor = .systemGray
+            self.detail.font = UIFont.systemFont(ofSize: 12)
+            self.detail.translatesAutoresizingMaskIntoConstraints = false
+            self.contentView.addSubview(self.detail)
+            
+
             self.thumbsUpButton.translatesAutoresizingMaskIntoConstraints = false
             self.contentView.addSubview(self.thumbsUpButton)
             // Configure comment text field
@@ -434,7 +454,11 @@ class CardTableViewCell: UITableViewCell {
                 self.descriptionLabel.leadingAnchor.constraint(equalTo: self.contentView.leadingAnchor, constant: 8),
                 self.descriptionLabel.trailingAnchor.constraint(equalTo: self.contentView.trailingAnchor, constant: -8),
                 
-                self.separatorViewTop.topAnchor.constraint(equalTo: self.descriptionLabel.bottomAnchor, constant: 8),
+                self.detail.topAnchor.constraint(equalTo: self.descriptionLabel.bottomAnchor,constant: 5),
+                self.detail.trailingAnchor.constraint(equalTo: self.contentView.trailingAnchor,constant: -8),
+                
+                
+                self.separatorViewTop.topAnchor.constraint(equalTo: self.detail.bottomAnchor, constant: 8),
                 self.separatorViewTop.leadingAnchor.constraint(equalTo: self.contentView.leadingAnchor, constant: 8),
                 self.separatorViewTop.trailingAnchor.constraint(equalTo: self.contentView.trailingAnchor, constant: -8),
                 self.separatorViewTop.heightAnchor.constraint(equalToConstant: 1),
@@ -467,30 +491,8 @@ class CardTableViewCell: UITableViewCell {
                 self.sendButton.heightAnchor.constraint(equalToConstant: 24),
                 
             ])
-            print("finish")
             completion()
         }
-        
-//        print(self.downloadFinished)
-//        print(isFirstReload)
-//        if self.downloadFinished{
-//            if isFirstReload{
-////                tableView?.reloadData()
-//                self.isFirstReload = false
-//                self.downloadFinished = false
-//            }
-//        }
-
-//        print("done")
-//        print(self.downloadFinished)
-//        print(isFirstReload)
-//        if self.isFirstReload, self.downloadFinished{
-////        if self.downloadFinished{
-//            let indexSet = IndexSet(integer: self.section!)
-//            self.tableView!.reloadSections(indexSet, with: .automatic)
-//            self.downloadFinished = false
-//            self.isFirstReload = false
-//        }
     }
     
     func setupPostNoImage(){
@@ -508,10 +510,16 @@ class CardTableViewCell: UITableViewCell {
         // Configure description label
         descriptionLabel.font = UIFont.systemFont(ofSize: 16)
         descriptionLabel.tintColor = .systemBackground
-        descriptionLabel.numberOfLines = 0
+        descriptionLabel.numberOfLines = 1
         descriptionLabel.translatesAutoresizingMaskIntoConstraints = false
         contentView.addSubview(descriptionLabel)
         
+        self.detail.isUserInteractionEnabled = true
+        self.detail.text = "See More"
+        self.detail.textColor = .systemGray
+        self.detail.font = UIFont.systemFont(ofSize: 12)
+        self.detail.translatesAutoresizingMaskIntoConstraints = false
+        self.contentView.addSubview(self.detail)
         
         // Configure thumbs-up button
 //        thumbsUpButton.setImage(UIImage(systemName: "hand.thumbsup"), for: .normal)
@@ -562,8 +570,11 @@ class CardTableViewCell: UITableViewCell {
                 self.descriptionLabel.topAnchor.constraint(equalTo: self.userName.bottomAnchor, constant: 8),
                 self.descriptionLabel.leadingAnchor.constraint(equalTo: self.contentView.leadingAnchor, constant: 8),
                 self.descriptionLabel.trailingAnchor.constraint(equalTo: self.contentView.trailingAnchor, constant: -8),
-             
-                self.separatorViewTop.topAnchor.constraint(equalTo: self.descriptionLabel.bottomAnchor, constant: 8),
+                
+                self.detail.topAnchor.constraint(equalTo: self.descriptionLabel.bottomAnchor,constant: 5),
+                self.detail.trailingAnchor.constraint(equalTo: self.contentView.trailingAnchor,constant: -8),
+                
+                self.separatorViewTop.topAnchor.constraint(equalTo: self.detail.bottomAnchor, constant: 8),
                 self.separatorViewTop.leadingAnchor.constraint(equalTo: self.contentView.leadingAnchor, constant: 8),
                 self.separatorViewTop.trailingAnchor.constraint(equalTo: self.contentView.trailingAnchor, constant: -8),
                 self.separatorViewTop.heightAnchor.constraint(equalToConstant: 1),

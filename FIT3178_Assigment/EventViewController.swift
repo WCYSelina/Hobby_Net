@@ -409,30 +409,32 @@ class MoreDetailPage:UIViewController{
                 do{
                     print("heyyyy")
                     let json = try JSONSerialization.jsonObject(with: data, options: .mutableContainers) as! [String:Any]
-                    let list = json["list"] as! [[String:Any]]
-                    DispatchQueue.main.async {
-                        let weather = list[components.day!]["weather"] as? [[String:Any]]
-                        if let weatherItem = weather?.first{
-                            self.weatherDes.text = weatherItem["description"] as? String
-                        }
-                    
-                        let temp = list[components.day!]["temp"] as? [String:Any]
-                        if let minTemp = temp!["min"] as? Double {
-                            self.minTemp.text = "\(minTemp) °C"
-                        }
-                        if let maxTemp = temp!["max"] as? Double {
-                            self.maxTemp.text = "\(maxTemp) °C"
-                        }
-                        let dateFormatter = DateFormatter()
-                        dateFormatter.dateFormat = "HH:mm"
-                        if let sunrise = list[components.day!]["sunrise"] as? Int{
-                            let sunriseDate = Date(timeIntervalSince1970: TimeInterval(sunrise))
-                            self.sunriseTime.text = dateFormatter.string(from: sunriseDate)
-                            print("\(sunriseDate)")
-                        }
-                        if let sunset = list[components.day!]["sunset"] as? Int {
-                            let sunsetDate = Date(timeIntervalSince1970: TimeInterval(sunset))
-                            self.sunsetTime.text = dateFormatter.string(from: sunsetDate)
+                    let list = json["list"] as? [[String:Any]]
+                    if let list = list{
+                        DispatchQueue.main.async {
+                            let weather = list[components.day!]["weather"] as? [[String:Any]]
+                            if let weatherItem = weather?.first{
+                                self.weatherDes.text = weatherItem["description"] as? String
+                            }
+                            
+                            let temp = list[components.day!]["temp"] as? [String:Any]
+                            if let minTemp = temp!["min"] as? Double {
+                                self.minTemp.text = "\(minTemp) °C"
+                            }
+                            if let maxTemp = temp!["max"] as? Double {
+                                self.maxTemp.text = "\(maxTemp) °C"
+                            }
+                            let dateFormatter = DateFormatter()
+                            dateFormatter.dateFormat = "HH:mm"
+                            if let sunrise = list[components.day!]["sunrise"] as? Int{
+                                let sunriseDate = Date(timeIntervalSince1970: TimeInterval(sunrise))
+                                self.sunriseTime.text = dateFormatter.string(from: sunriseDate)
+                                print("\(sunriseDate)")
+                            }
+                            if let sunset = list[components.day!]["sunset"] as? Int {
+                                let sunsetDate = Date(timeIntervalSince1970: TimeInterval(sunset))
+                                self.sunsetTime.text = dateFormatter.string(from: sunsetDate)
+                            }
                         }
                     }
                 } catch{

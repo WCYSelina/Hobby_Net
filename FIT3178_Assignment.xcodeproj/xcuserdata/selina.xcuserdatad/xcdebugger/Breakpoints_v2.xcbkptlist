@@ -174,8 +174,8 @@
             filePath = "FIT3178_Assigment/Database/FirebaseController.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "671"
-            endingLineNumber = "671"
+            startingLineNumber = "682"
+            endingLineNumber = "682"
             landmarkName = "setupUserListener(completion:)"
             landmarkType = "7">
          </BreakpointContent>

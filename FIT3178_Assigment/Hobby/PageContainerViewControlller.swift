@@ -80,15 +80,6 @@ class PageContainerViewController: UIPageViewController, UIPageViewControllerDat
         label.translatesAutoresizingMaskIntoConstraints = false
         viewController.view.addSubview(label)
         
-        let crossButton = UIButton(type: .custom)
-        crossButton.translatesAutoresizingMaskIntoConstraints = false
-        crossButton.setTitle("X", for: .normal)
-        crossButton.setTitleColor(.white, for: .normal)
-        crossButton.backgroundColor = .red
-        crossButton.layer.cornerRadius = 15
-        crossButton.addTarget(self, action: #selector(buttonTapped), for: .touchUpInside)
-        viewController.view.addSubview(crossButton)
-        
         let containerView = UIView()
         containerView.translatesAutoresizingMaskIntoConstraints = false
         viewController.view.addSubview(containerView)
@@ -126,10 +117,7 @@ class PageContainerViewController: UIPageViewController, UIPageViewControllerDat
                         containerView.trailingAnchor.constraint(equalTo: viewController.view.trailingAnchor, constant: -20),
                         containerView.bottomAnchor.constraint(equalTo: viewController.view.bottomAnchor),
                         
-                        crossButton.topAnchor.constraint(equalTo: containerView.topAnchor),
-                        crossButton.trailingAnchor.constraint(equalTo: containerView.trailingAnchor),
-                        
-                        imageView.topAnchor.constraint(equalTo: crossButton.bottomAnchor),
+                        imageView.topAnchor.constraint(equalTo: containerView.topAnchor),
                         imageView.leadingAnchor.constraint(equalTo: containerView.leadingAnchor),
                         imageView.trailingAnchor.constraint(equalTo: containerView.trailingAnchor),
                         

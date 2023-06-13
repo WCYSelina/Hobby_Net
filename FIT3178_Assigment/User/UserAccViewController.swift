@@ -86,7 +86,6 @@ class UserAccViewController: UIViewController,DatabaseListener{
     var signUpHasCalledBefore = false
     
     @IBOutlet weak var email: UITextField!
-    
     @IBOutlet weak var password: UITextField!
     
     
