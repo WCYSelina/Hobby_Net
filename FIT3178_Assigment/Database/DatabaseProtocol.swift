@@ -62,7 +62,6 @@ protocol DatabaseProtocol: AnyObject {
     var startWeek:Date?{get set}
     var endWeek:Date?{get set}
     func changeUserName(username:String)
-    func findCurrentUser() -> User
     var selectedImage: [UIImage]? {get set}
     var defaultEvent:Event? {get set}
     func onWeeklyChange(records:[Records])
@@ -76,7 +75,7 @@ protocol DatabaseProtocol: AnyObject {
     func checkIfSubscribed(event:Event) -> String?
     func removeSubscription(subscriptionId:String)
     func addSubcription(subscriptionId:String) -> Bool
-    func addEvent(eventDate:Timestamp, eventDescription:String, eventLocation:String,eventName:String, showWeather:Bool) -> Event
+    func addEvent(eventDate:Timestamp, eventDescription:String, eventLocation:String,eventName:String) -> Event
     func uploadImageToStorage(folderPath:String, image:UIImage, completion:@escaping (String) -> Void)
     func addRecordToHobby(record: Records, hobby: Hobby) -> Bool
     func showCorrespondingRecord(hobby:Hobby,date:String,completion: @escaping (Records?) -> Void)

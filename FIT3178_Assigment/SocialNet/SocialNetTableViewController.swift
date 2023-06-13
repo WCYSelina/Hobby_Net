@@ -10,6 +10,7 @@ import FirebaseAuth
 import FirebaseStorage
 class SocialNetTableViewController: UITableViewController,DatabaseListener,UITextFieldDelegate{
     
+
     func onUserPostsDetail(change: DatabaseChange, user: User?) {
     }
     
@@ -57,31 +58,37 @@ class SocialNetTableViewController: UITableViewController,DatabaseListener,UITex
     var firstLoad = true
     override func viewDidLoad() {
         super.viewDidLoad()
+        // init the database controller
         let appDelegate = UIApplication.shared.delegate as? AppDelegate
         databaseController = appDelegate?.databaseController
         
+        // customize the table view's separator style, color, and insets.
         tableView.separatorStyle = .singleLine
         tableView.separatorColor = UIColor.gray // Customize the separator color
         tableView.separatorInset = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 16) // Customize the separator insets
         
+        // register the custome table cell
         tableView.register(CardTableViewCell.self, forCellReuseIdentifier: "postCell")
         
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        // add listener into the database
         databaseController?.addListener(listener: self)
+        // set the load state
         firstLoad = true
         print("hiiiii")
     }
 
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
+        // remove listener from the database
         databaseController?.removeListener(listener: self)
     }
 
     // MARK: - Table view data source
-
+    // implements the UITableViewController
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return 1
     }
@@ -91,6 +98,7 @@ class SocialNetTableViewController: UITableViewController,DatabaseListener,UITex
     }
     
     override func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+        // customize each header for header in section
         let headerView = UIView()
         headerView.backgroundColor = UIColor.gray
         headerView.layer.cornerRadius = 5
@@ -113,13 +121,18 @@ class SocialNetTableViewController: UITableViewController,DatabaseListener,UITex
     
     var containImage = false
 
+    // this method is called to configure and return a cell for the specified index path in the table view
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        // create the cell
         let postCell = tableView.dequeueReusableCell(withIdentifier: "postCell", for: indexPath) as! CardTableViewCell
         let post = postList[indexPath.section]
         
+        // set the data on cell
         postCell.tableView = self.tableView
         postCell.section = indexPath.section
         postCell.post = post
+
+        // check if the post contains images
         if !post.images.isEmpty{
 //            tableView.rowHeight = 400
             containImage = true
@@ -131,6 +144,7 @@ class SocialNetTableViewController: UITableViewController,DatabaseListener,UITex
         
         postCell.descriptionLabel.text = post.postDetail
         
+        // configure the send button
         postCell.sendButton.cell = postCell
         postCell.sendButton.addTarget(self, action: #selector(sendButtonTapped(_:)), for: UIControl.Event.touchUpInside)
         postCell.sendButton.tag = indexPath.section
@@ -141,6 +155,7 @@ class SocialNetTableViewController: UITableViewController,DatabaseListener,UITex
         var isSet = false
         for likePost in defaultUser!.likes{
             if likePost.id == post.id{
+                // set the thumbsUpButton
                 postCell.thumbsUpButton.setImage(UIImage(systemName: "hand.thumbsup.fill"), for: .normal)
                 postCell.thumbsUpButton.tintColor = .systemBlue
                 isSet = true
@@ -152,11 +167,10 @@ class SocialNetTableViewController: UITableViewController,DatabaseListener,UITex
         }
         
         // Add tap gesture recognizer to the label
-        
         let tapGesture = CustomTapGesture(target: self, action: #selector(viewCommentTapped(_:)))
         tapGesture.post = post
         postCell.commentLabel.addGestureRecognizer(tapGesture)
-        
+
         let tapGesture2 = CustomTapGesture(target: self, action: #selector(seeMoreTapped(_:)))
         tapGesture2.post = post
         postCell.detail.addGestureRecognizer(tapGesture2)
@@ -171,6 +185,7 @@ class SocialNetTableViewController: UITableViewController,DatabaseListener,UITex
         return postCell
     }
     
+    // this method is called when the send button in a post cell is tapped
     @objc func sendButtonTapped(_ sender:CustomButton) {
         guard let postCell = sender.cell else{
             return
@@ -178,14 +193,17 @@ class SocialNetTableViewController: UITableViewController,DatabaseListener,UITex
         let section = sender.tag
         let post = postList[section]
         if postCell.commentTextField.text != ""{
+            // add a new comment to the post
             let comment = databaseController?.addComment(commentDetail: postCell.commentTextField.text!)
             postCell.commentTextField.text = ""
             databaseController?.addCommentToPost(comment: comment!,post: post)
         }
     }
     
+    // this method is called when the comment label in a post cell is tapped
     @objc func viewCommentTapped(_ sender: CustomTapGesture){
         if let post = sender.post{
+            // set the default post for the database controller and perform segue to view comments
             databaseController!.defaultPost = post
             performSegue(withIdentifier: "viewCommentIdentifier", sender: post)
         }
@@ -194,6 +212,7 @@ class SocialNetTableViewController: UITableViewController,DatabaseListener,UITex
     @objc func seeMoreTapped(_ sender: CustomTapGesture){
         print("callllllllll")
         if let post = sender.post{
+            // set the default post for the database controller and perform segue to see more details
             databaseController!.defaultPost = post
             performSegue(withIdentifier: "seeMoreIdentifier", sender: post)
         }
@@ -234,17 +253,21 @@ class SocialNetTableViewController: UITableViewController,DatabaseListener,UITex
         return false
     }
 
+    // this method is called when a trailing swipe gesture is performed on a specific row in the table view
     override func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
+         // create a delete action
         let deleteAction = UIContextualAction(style: .destructive, title: "Delete") { (action, view, completionHandler) in
+            // perform the delete action when tapped
             self.databaseController?.deletePost(post: self.postList[indexPath.section])
-            tableView.reloadData()
+            tableView.reloadData() // reload
             completionHandler(true)
         }
+        // create a edit action
         let editAction = UIContextualAction(style: .normal, title: "Edit") { (action, view, completionHandler) in
             self.performSegue(withIdentifier: "updatePost", sender: self.postList[indexPath.section])
             completionHandler(true)
         }
-        
+        // create a swipe actions configuration with delete and edit actions
         deleteAction.backgroundColor = .red // Customize the delete action background color
         editAction.backgroundColor = .blue // Customize the edit action background color
         
@@ -254,6 +277,7 @@ class SocialNetTableViewController: UITableViewController,DatabaseListener,UITex
         return configuration
     }
     
+    // transfer data to the view controller that is going to be navigated to
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "viewCommentIdentifier", let destinationVC = segue.destination as? ViewCommentViewController{
             if let post = sender as? Post{
@@ -268,11 +292,9 @@ class SocialNetTableViewController: UITableViewController,DatabaseListener,UITex
         }
         if segue.identifier == "seeMoreIdentifier", let destinationVC = segue.destination as?
             SeeMoreViewController{
-            print("hahaha")
             if let post = sender as? Post{
                 destinationVC.post = post
                 if !post.images.isEmpty{
-                    print("innn")
                     destinationVC.downloadImages()
                 }
             }
@@ -305,16 +327,21 @@ class CardTableViewCell: UITableViewCell {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
     }
     
+    // this method is used to download the images associated with the post
     func downloadImages(){
         var counter = 0
         self.images = []
+        // download all images
         post!.images.forEach{ image in
             if image != ""{
+                // connect the storage bucket
                 let storageRef = Storage.storage().reference(forURL: image)
+                // start the download task
                 storageRef.getData(maxSize: 10*1024*1024){ data,error in
                     if let error = error{
                         print(error.localizedDescription)
                     } else{
+                        // set the UIImage
                         let image = UIImage(data: data!)
                         print("download hahahah")
                         self.images.append(image!)
@@ -330,28 +357,35 @@ class CardTableViewCell: UITableViewCell {
             }
         }
     }
-    
+    // this method is used to setup the downloaded images in the cell's stack view
     func setupImages(completion:@escaping () -> Void){
         var counter = 0
+        // remove all child view from stack view
         for view in stackView.arrangedSubviews {
             stackView.removeArrangedSubview(view)
             view.removeFromSuperview()
         }
+        // traverse all images
         self.images.forEach{ image in
+            // set the blank view
             let separatorView = UIView()
             separatorView.translatesAutoresizingMaskIntoConstraints = false
             separatorView.backgroundColor = .systemGray
             stackView.addArrangedSubview(separatorView)
             
+            // adjust the constraint
             NSLayoutConstraint.activate([
                 stackView.heightAnchor.constraint(equalToConstant: 300)
             ])
     
+            // set the UIImageView
             let imageView = UIImageView(image: image)
             imageView.contentMode = .scaleAspectFit
             imageView.translatesAutoresizingMaskIntoConstraints = false
             stackView.addArrangedSubview(imageView)
             let aspectRatio = image.size.width / image.size.height
+
+            // adjust the constraint
             NSLayoutConstraint.activate([
                 separatorView.widthAnchor.constraint(equalToConstant: 10),
                 imageView.widthAnchor.constraint(equalTo: imageView.heightAnchor, multiplier: aspectRatio),
@@ -522,8 +556,6 @@ class CardTableViewCell: UITableViewCell {
         self.contentView.addSubview(self.detail)
         
         // Configure thumbs-up button
-//        thumbsUpButton.setImage(UIImage(systemName: "hand.thumbsup"), for: .normal)
-//        thumbsUpButton.tintColor = .gray
         thumbsUpButton.translatesAutoresizingMaskIntoConstraints = false
         contentView.addSubview(thumbsUpButton)
         

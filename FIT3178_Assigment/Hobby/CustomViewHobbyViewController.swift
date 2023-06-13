@@ -65,7 +65,7 @@ class CustomViewHobbyViewController: UIViewController,DatabaseListener,UITableVi
         
         // Configure the cell
         var notesText: [(String,String?)] = []
-        if records != nil{
+        if records != nil{ // if there is record, append the noteDetail and image as a tuple
             records![indexPath.section].notes.forEach{ note in
                 if let noteDetail = note.noteDetails, let image = note.image{
                     notesText.append((noteDetail,image))
@@ -75,11 +75,11 @@ class CustomViewHobbyViewController: UIViewController,DatabaseListener,UITableVi
                 }
             }
         }
+        // init the PageContainerViewController
         let containerViewController = PageContainerViewController()
         cell.pageViewControlObj = containerViewController
         cell.pageViewControlObj.notesText = notesText
-//        containerViewController.setUpPage(){ () in
-//        }
+        // add the view of the containerViewController into cell's content view
         cell.contentView.addSubview(containerViewController.view)
         containerViewController.view.frame = cell.contentView.bounds
         return cell
@@ -133,7 +133,9 @@ class CustomViewHobbyViewController: UIViewController,DatabaseListener,UITableVi
     
     
     @IBAction func updateView(_ sender: Any) {
-        if fromDate.date.compare(toDate.date) == .orderedAscending{
+        
+        // only proceed when the fromDate is earlier than or equal to toDate
+        if fromDate.date.compare(toDate.date) == .orderedAscending || fromDate.date == toDate.date{
             databaseController?.showRecordWeekly(hobby: hobby!, startWeek: fromDate.date, endWeek: toDate.date){ (records,dateInRange) in
                 self.records = []
                 for range in dateInRange {
@@ -158,11 +160,13 @@ class CustomViewHobbyViewController: UIViewController,DatabaseListener,UITableVi
         let appDelegate = UIApplication.shared.delegate as? AppDelegate
         databaseController = appDelegate?.databaseController
         
+        //register the custom cell to the table view
         tableView.register(PageViewTableViewCell.self, forCellReuseIdentifier: "viewRecordCell")
         tableView.dataSource = self
         tableView.delegate = self
         tableView.isEditing = false
         
+        //show record weekly
         databaseController?.showRecordWeekly(hobby: hobby!, startWeek: fromDate.date, endWeek: toDate.date){ (records,dateInRange) in
             self.records = []
             for range in dateInRange {
@@ -173,6 +177,7 @@ class CustomViewHobbyViewController: UIViewController,DatabaseListener,UITableVi
                     }
                 }
             }
+            // after we have the latest record updated, reload the table view
             self.tableView.reloadData()
         }
     }

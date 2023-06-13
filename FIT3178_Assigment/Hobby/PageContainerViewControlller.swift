@@ -11,6 +11,7 @@ class PageContainerViewController: UIPageViewController, UIPageViewControllerDat
     var swipedFirstTime = false
     override init(transitionStyle style: UIPageViewController.TransitionStyle, navigationOrientation: UIPageViewController.NavigationOrientation, options: [UIPageViewController.OptionsKey : Any]? = nil) {
         super.init(transitionStyle: .scroll, navigationOrientation: .horizontal, options: nil)
+        // set the transitionStyle to scroll
     }
 
     required init?(coder: NSCoder) {
@@ -26,18 +27,18 @@ class PageContainerViewController: UIPageViewController, UIPageViewControllerDat
             self.setViewControllers([initialViewController], direction: .forward, animated: false, completion: nil)
         }
         else{
+            // set the viewController to blank if there is no any data
             if let initialViewControllerBlank = blankViewController(){
-                print("nooooo")
                 self.setViewControllers([initialViewControllerBlank], direction: .forward, animated: false)
             }
-
         }
         
-        // Additional configuration of the page view controller
+        // configuration of the page view controller
         configurePageControl()
      }
     
     func configurePageControl() {
+        // configurePageControl
         pageControl.numberOfPages = notesText.count
         pageControl.currentPage = 0
         pageControl.tintColor = UIColor.systemBlue
@@ -49,30 +50,29 @@ class PageContainerViewController: UIPageViewController, UIPageViewControllerDat
     }
     
     func pageViewController(_ pageViewController: UIPageViewController, didFinishAnimating finished: Bool, previousViewControllers: [UIViewController], transitionCompleted completed: Bool) {
-        print("aaaaaaaa")
+        // called everytime when there is swipe action
+        // set the pageControl to that image
         if completed, let visibleViewController = pageViewController.viewControllers?.first,
            let index = viewControllerIndex(visibleViewController) {
-            print("index\(index)")
             pageControl.currentPage = index
         }
     }
     func blankViewController() -> UIViewController? {
+        // blank controller when there is no data
         let viewController = UIViewController()
         viewController.view.backgroundColor = UIColor.systemBackground
         self.currentViewController = viewController
         return viewController
     }
     func viewController(at index: Int) -> UIViewController? {
+        // this function set the view controller corresponding to the index and return it
         guard index >= 0 && index < notesText.count else {
-            print("lllllll")
             return nil
         }
-        print("oooo\(index)")
         let viewController = UIViewController()
         viewController.view.backgroundColor = UIColor.systemBackground
         uniqueURL = notesText[index].1
-//        viewController.title = notesText[index].0 // Set the title for the view controller
-        print(notesText[index].0)
+
         
         let label = UILabel()
         label.numberOfLines = 0
@@ -84,9 +84,10 @@ class PageContainerViewController: UIPageViewController, UIPageViewControllerDat
         containerView.translatesAutoresizingMaskIntoConstraints = false
         viewController.view.addSubview(containerView)
         
+        // download the image and set its contentMode to scaleAspectFit
         let imageView = UIImageView()
         imageView.contentMode = .scaleAspectFit
-        let image = notesText[index].1
+        let image = notesText[index].1 // the image path store in the second element of the tuple
         if image != ""{
             let storageRef = Storage.storage().reference(forURL: image!)
 //            DispatchQueue.main.async {
@@ -95,7 +96,6 @@ class PageContainerViewController: UIPageViewController, UIPageViewControllerDat
                         print(error.localizedDescription)
                     } else{
                         let image = UIImage(data: data!)
-                        print("download hahahah")
                         DispatchQueue.main.async {
                             imageView.image = image
                         }
@@ -108,6 +108,7 @@ class PageContainerViewController: UIPageViewController, UIPageViewControllerDat
         
         viewController.view.addSubview(pageControl)
         
+        //set the constraint
         Task{
             do{
                 DispatchQueue.main.async {
@@ -134,19 +135,13 @@ class PageContainerViewController: UIPageViewController, UIPageViewControllerDat
             }
         }
         self.currentViewController = viewController
-        print(viewController)
         return viewController
-    }
-    
-    @objc func buttonTapped() {
-        // Handle button tap event
-        
     }
     
     // MARK: - UIPageViewControllerDataSource
     
     func pageViewController(_ pageViewController: UIPageViewController, viewControllerBefore viewController: UIViewController) -> UIViewController? {
-        print("turnRight")
+        // this function will be called when the user swipe to the right,which will turn the page to the right
         guard let currentIndex = viewControllerIndex(viewController), currentIndex > 0 else {
             if !swipedFirstTime{
                 swipedFirstTime = true
@@ -156,20 +151,19 @@ class PageContainerViewController: UIPageViewController, UIPageViewControllerDat
             }
             return nil
         }
-        print("ssss\(currentIndex - 1)")
         return self.viewController(at: currentIndex - 1)
     }
     
     func pageViewController(_ pageViewController: UIPageViewController, viewControllerAfter viewController: UIViewController) -> UIViewController? {
-        print("turnLeft")
+        // this will be called when user swipe to the left, which will turn the page to the left
         guard let currentIndex = viewControllerIndex(viewController), currentIndex < notesText.count - 1 else {
             return nil
         }
-        print("dddd\(currentIndex + 1)")
         return self.viewController(at: currentIndex + 1)
     }
     
     func viewControllerIndex(_ viewController: UIViewController) -> Int? {
+        // find the controller index by comparing the uniqueURL
         guard let uniqueURL = self.uniqueURL else {
             return nil
         }

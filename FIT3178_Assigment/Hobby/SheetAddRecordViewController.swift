@@ -16,15 +16,14 @@ class SheetAddRecordViewController: UIViewController,UIImagePickerControllerDele
     
     
     @IBAction func uploadImage(_ sender: Any) {
-//        let viewController = SelectPhotosViewController()
-//        present(viewController, animated: true){ () in
-//        }
+        // show the image album for user to choose the image
         let imagePicker = UIImagePickerController()
         imagePicker.delegate = self
         present(imagePicker, animated: true, completion: nil)
     }
     
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
+        // set the image when the user has chose the image
         if let selectedImage = info[.originalImage] as? UIImage {
             image = selectedImage
         }
@@ -33,14 +32,15 @@ class SheetAddRecordViewController: UIViewController,UIImagePickerControllerDele
     }
     
     @IBAction func addRecord(_ sender: Any) {
+        // add record with those information
         guard let note = notesRecord.text else{
             return
         }
         Task{
             do{
                 let folderPath = "images/"
-//                let image = databaseController?.selectedImage
                 if let image = image{
+                    // upload the image to the firebase storage and get the path of the image
                     databaseController?.uploadImageToStorage(folderPath: folderPath, image: image){ imageString in
                         self.addNote(noteDetails: note,imageString: imageString)
                     }
@@ -62,8 +62,6 @@ class SheetAddRecordViewController: UIViewController,UIImagePickerControllerDele
             }
             self.databaseController?.showRecordWeekly(hobby: hobby, startWeek: startWeek!, endWeek: endWeek!){ (records,dateInRange) in
                 var finalRecords:[Records] = []
-                print(dateInRange)
-                print(records)
                 for range in dateInRange {
                     for record in records {
                         if record.date == range{

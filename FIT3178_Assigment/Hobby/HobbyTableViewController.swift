@@ -55,9 +55,9 @@ class HobbyTableViewController: UITableViewController,DatabaseListener{
     var listenerType = ListenerType.hobby
     var tabBar: UITabBar!
     @IBAction func addHobby(_ sender: Any) {
+        // navigate to the bottom sheet page to add the hobby
         let storyboard = UIStoryboard(name: "Main", bundle: nil)
         let sheetPresentationControler = storyboard.instantiateViewController(withIdentifier: "SheetViewController") as! SheetViewController
-//        sheetPresentationControler.hobbyDelegate = self
         present(sheetPresentationControler, animated: true, completion: nil)
     }
     
@@ -90,6 +90,7 @@ class HobbyTableViewController: UITableViewController,DatabaseListener{
     }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        // configure cell
         let hobbyCell = tableView.dequeueReusableCell(withIdentifier: CELL_HOBBY, for: indexPath)
         var content = hobbyCell.defaultContentConfiguration()
         let hobby = allHobbies[indexPath.row]
@@ -100,11 +101,11 @@ class HobbyTableViewController: UITableViewController,DatabaseListener{
     
     // Override to support conditional editing of the table view.
     override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
-        // Return false if you do not want the specified item to be editable.
         return true
     }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        // navigate to the view record when the row is select
         currentHobby = allHobbies[indexPath.row]
         databaseController?.defaultHobby = currentHobby!
         let dateFormatter = DateFormatter()
@@ -112,7 +113,6 @@ class HobbyTableViewController: UITableViewController,DatabaseListener{
         let date = dateFormatter.string(from: Date())
         databaseController?.currentDate = date
         databaseController?.showCorrespondingRecord(hobby: currentHobby!,date: date){ record in
-            //
         }
         let currentDate = Date()
         let calendar = Calendar.current
@@ -122,15 +122,15 @@ class HobbyTableViewController: UITableViewController,DatabaseListener{
     }
 
 
-    // Override to support editing the table view.
     override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
         if editingStyle == .delete {
             // Delete the row from the data source
-            print(allHobbies[indexPath.row])
             self.databaseController?.deleteHobby(hobby: allHobbies[indexPath.row])
         }
     }
     
+    
+    //pass data to the view controller
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "dailyRecord", let destinationVC = segue.destination as? DailyRecordViewController{
             if let hobby = sender as? Hobby{

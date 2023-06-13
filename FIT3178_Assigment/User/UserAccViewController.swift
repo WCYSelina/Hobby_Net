@@ -7,7 +7,9 @@
 
 import UIKit
 import FirebaseAuth
+// this class will control the user login page
 class UserAccViewController: UIViewController,DatabaseListener{
+    // implements the DatabaseListener protocol
     func onRecordChange(change: DatabaseChange, record: Records?) {
     }
     
@@ -21,10 +23,12 @@ class UserAccViewController: UIViewController,DatabaseListener{
     }
     
     func onAuthAccount(change: DatabaseChange, user: FirebaseAuth.User?) {
+        // check the loginHasCalledBefore status
         if !loginHasCalledBefore{
             return
         }
         else{
+            // check the hasLogin
             if let hasLogin = databaseController?.hasLogin{
                 if !hasLogin{
                     DispatchQueue.main.async {
@@ -33,6 +37,7 @@ class UserAccViewController: UIViewController,DatabaseListener{
                 }
                 else {
                     DispatchQueue.main.async {
+                        // when user login success, go to next page
                         self.databaseController?.email = self.email.text
                         self.performSegue(withIdentifier: "signUpIdentifier", sender: user)
                     }
@@ -43,10 +48,12 @@ class UserAccViewController: UIViewController,DatabaseListener{
     }
     
     func onCreateAccount(change: DatabaseChange, user:  FirebaseAuth.User?) {
+        // check the signUpHasCalledBefore status
         if !signUpHasCalledBefore{
             return
         }
         else{
+            // check the hasCreated
             if let hasCreated = databaseController?.hasCreated{
                 if !hasCreated{
                     DispatchQueue.main.async {
@@ -54,6 +61,7 @@ class UserAccViewController: UIViewController,DatabaseListener{
                         }
                     }
                     else{
+                        // when user create a new account, display the message
                         DispatchQueue.main.async {
                             self.displayMessage(title: "Successful", message: "Your account is successfully created")
                         }
@@ -96,11 +104,14 @@ class UserAccViewController: UIViewController,DatabaseListener{
     
     
     @IBAction func signUp(_ sender: Any) {
+        // using this function to signup
         if !signUpHasCalledBefore{
             signUpHasCalledBefore = true
         }
+        // check the email and password is valid
         if let email = email.text,let password = password.text{
             Task{
+                // using database to create a new account
                 await databaseController?.createAccount(email: email, password: password)
             }
             
@@ -108,11 +119,13 @@ class UserAccViewController: UIViewController,DatabaseListener{
     }
     
     @IBAction func logIn(_ sender: Any) {
+        // using this method to login
         if !loginHasCalledBefore{
             loginHasCalledBefore = true
         }
         if let email = email.text,let password = password.text{
             Task{
+                // using database to login
                 await databaseController?.loginAccount(email: email, password: password)
 //                UserDefaults.standard.set(true, forKey: "isUserSignedIn")
             }
@@ -121,6 +134,8 @@ class UserAccViewController: UIViewController,DatabaseListener{
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+
+        // check if automatic login is possible before the page is displayed
         indictor.startAnimating()
         databaseController?.addListener(listener: self)
         let userDefaults = UserDefaults.standard
@@ -131,10 +146,12 @@ class UserAccViewController: UIViewController,DatabaseListener{
             if !loginHasCalledBefore{
                 loginHasCalledBefore = true
             }
+            // get the email and password from the userDefaults
             let email = userDefaults.string(forKey: "email")
             let password = userDefaults.string(forKey: "password")
             if let email = email, let password = password{
                 Task{
+                    // automatic login
                     await databaseController?.loginAccount(email: email, password: password)
                 }
             }
@@ -160,15 +177,6 @@ class UserAccViewController: UIViewController,DatabaseListener{
         indictor.center = view.center
         indictor.hidesWhenStopped = true
         view.addSubview(indictor)
-//
-//        let isUserSignedIn = UserDefaults.standard.bool(forKey: "isUserSignedIn")
-//        if isUserSignedIn{
-//            self.databaseController?.email = self.email.text
-//            self.performSegue(withIdentifier: "signUpIdentifier", sender: user)
-//            print("hhhh")
-//        }
-
-        // Do any additional setup after loading the view.
     }
     func displayMessage(title:String,message:String){
         let alertController = UIAlertController(title: title, message: message,

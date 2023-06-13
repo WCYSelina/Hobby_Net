@@ -19,7 +19,6 @@ class AddRecordViewController: UIViewController {
         dateFormatter.dateFormat = "dd MMM yyyy"
         selectedDate = dateFormatter.string(from: sender.date)
         performSegue(withIdentifier: "addRecordNavigate", sender: nil)
-//        sheetPresentationControler.hobbyDelegate = self
         
     }
     
@@ -27,6 +26,7 @@ class AddRecordViewController: UIViewController {
         super.viewDidLoad()
     }
     
+    // transfer the data to the view controller that is going to navigate to
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "addRecordNavigate", let destinationVC = segue.destination as? SheetAddRecordViewController{
             destinationVC.hobby = currentHobby

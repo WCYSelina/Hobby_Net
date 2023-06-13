@@ -8,6 +8,7 @@
 import UIKit
 import FirebaseAuth
 class ViewCommentViewController: UIViewController,DatabaseListener,UITableViewDataSource,UITableViewDelegate{
+    // implements the DatabaseListener protocol
     func onUserPostsDetail(change: DatabaseChange, user: User?) {
     }
     
@@ -25,6 +26,7 @@ class ViewCommentViewController: UIViewController,DatabaseListener,UITableViewDa
     
     @IBAction func sendComment(_ sender: Any) {
         if self.comment.text != ""{
+            // adds a new comment to the post
             let comment = databaseController?.addComment(commentDetail: self.comment.text!)
             self.comment.text = ""
             databaseController?.addCommentToPost(comment: comment!,post: databaseController!.defaultPost)
@@ -62,6 +64,7 @@ class ViewCommentViewController: UIViewController,DatabaseListener,UITableViewDa
         tableView.reloadData()
     }
     
+    // init
     let CELL_COMMENT = "commentCell"
     weak var databaseController:DatabaseProtocol?
     var commentList:[Comment]?
@@ -72,6 +75,7 @@ class ViewCommentViewController: UIViewController,DatabaseListener,UITableViewDa
         tableView.delegate = self
         tableView.dataSource = self
         
+        // get the database controller
         let appDelegate = UIApplication.shared.delegate as? AppDelegate
         databaseController = appDelegate?.databaseController
         
@@ -95,15 +99,18 @@ class ViewCommentViewController: UIViewController,DatabaseListener,UITableViewDa
 
      func numberOfSections(in tableView: UITableView) -> Int {
         // #warning Incomplete implementation, return the number of sections
+        // return the number of sections in the table view
         return 1
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         print(self.commentList!.count)
+        // return the number of rows in the section
         return commentList!.count
     }
     
      func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        // configure and return a cell for the specified index path
          let commentCell = tableView.dequeueReusableCell(withIdentifier: CELL_COMMENT, for: indexPath) as! CardTableViewCellForComment
          let comment = commentList![indexPath.row]
          commentCell.descriptionLabel.text = comment.commentDetail
@@ -113,6 +120,7 @@ class ViewCommentViewController: UIViewController,DatabaseListener,UITableViewDa
     }
 }
 
+// custom table cell
 class CardTableViewCellForComment: UITableViewCell {
     let userName = UILabel()
     let descriptionLabel = UILabel()
@@ -127,7 +135,7 @@ class CardTableViewCellForComment: UITableViewCell {
         contentView.layer.borderWidth = 1.0
         contentView.layer.borderColor = UIColor.lightGray.cgColor
         
-        
+        // set the user name
         userName.font = UIFont.boldSystemFont(ofSize: userName.font.pointSize)
         userName.translatesAutoresizingMaskIntoConstraints = false
         contentView.addSubview(userName)

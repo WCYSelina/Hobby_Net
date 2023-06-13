@@ -24,7 +24,7 @@ class DailyRecordViewController: UIViewController,DatabaseListener,UITableViewDa
         let cell = tableView.dequeueReusableCell(withIdentifier: "dailyRecordCell", for: indexPath) as! PageViewTableViewCell
         // Configure the cell
         var notesText: [(String,String?)] = []
-        if record != nil{
+        if record != nil{// if there is record, append the noteDetail and image as a tuple
             record!.notes.forEach{ note in
                 if let noteDetail = note.noteDetails, let image = note.image{
                     notesText.append((noteDetail,image))
@@ -34,9 +34,11 @@ class DailyRecordViewController: UIViewController,DatabaseListener,UITableViewDa
                 }
             }
         }
+        // init the PageContainerViewController
         let containerViewController = PageContainerViewController()
         cell.pageViewControlObj = containerViewController
         cell.pageViewControlObj.notesText = notesText
+        // add the view of the containerViewController into cell's content view
         cell.contentView.addSubview(containerViewController.view)
         containerViewController.view.frame = cell.contentView.bounds
         return cell
@@ -85,6 +87,7 @@ class DailyRecordViewController: UIViewController,DatabaseListener,UITableViewDa
     
     
     @IBAction func segmentedControlValueChanged(_ sender: UISegmentedControl) {
+        // change the view record mode corresponding to the selectedSegmentIndex
         if sender.selectedSegmentIndex == 0 {
             performSegue(withIdentifier: "dailyRecord", sender: self.hobby)
         }else if sender.selectedSegmentIndex == 1{
@@ -94,11 +97,11 @@ class DailyRecordViewController: UIViewController,DatabaseListener,UITableViewDa
         }
     }
     @IBAction func datePickerValueChange(_ sender: UIDatePicker) {
+        // when user select a date, the view will be updated and display the record
         let selectedDate = sender.date
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "dd MMM yyyy"
         let formattedDate = dateFormatter.string(from: selectedDate)
-        print(formattedDate)
         dateRecord.text = formattedDate
         self.record = nil
         databaseController?.showCorrespondingRecord(hobby: self.hobby!, date: formattedDate){ record in
@@ -132,7 +135,7 @@ class DailyRecordViewController: UIViewController,DatabaseListener,UITableViewDa
         let formattedDate = dateFormatter.string(from: selectedDate)
         dateRecord.text = formattedDate
         
-
+        // show the corresponding record of that selected date
         databaseController?.showCorrespondingRecord(hobby: self.hobby!, date: formattedDate){ record in
         }
         tableView.reloadData()
@@ -149,6 +152,7 @@ class DailyRecordViewController: UIViewController,DatabaseListener,UITableViewDa
         databaseController?.removeListener(listener: self)
     }
     
+    // pass the relavant data to the view controller that is going to navigate to
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "dailyRecord", let destinationVC = segue.destination as? DailyRecordViewController{
             if let hobby = sender as? Hobby{

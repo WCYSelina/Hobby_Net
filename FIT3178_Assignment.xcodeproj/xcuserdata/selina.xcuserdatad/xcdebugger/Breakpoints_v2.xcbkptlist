@@ -174,74 +174,10 @@
             filePath = "FIT3178_Assigment/Database/FirebaseController.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "682"
-            endingLineNumber = "682"
+            startingLineNumber = "708"
+            endingLineNumber = "708"
             landmarkName = "setupUserListener(completion:)"
             landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "3602A95A-20D5-415A-AA56-EACAF504AD29"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "FIT3178_Assigment/SocialNet/SheetAddPostViewController.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "119"
-            endingLineNumber = "119"
-            landmarkName = "displayImage(images:)"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "57705AAE-8185-4F76-A67F-31280FDDCF66"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "FIT3178_Assigment/SocialNet/SheetAddPostViewController.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "122"
-            endingLineNumber = "122"
-            landmarkName = "displayImage(images:)"
-            landmarkType = "7">
-            <Locations>
-               <Location
-                  uuid = "57705AAE-8185-4F76-A67F-31280FDDCF66 - 60fd311aa2601c9e"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "FIT3178_Assignment.SheetAddPostViewController.displayImage(images: Swift.Optional&lt;Swift.Array&lt;__C.UIImage&gt;&gt;) -&gt; ()"
-                  moduleName = "FIT3178_Assignment"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/selina/Documents/Monash/Uni/Y2S2/FIT3178/FIT3178_Assigment%2019.41.16/FIT3178_Assigment/SocialNet/SheetAddPostViewController.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "87"
-                  endingLineNumber = "87"
-                  offsetFromSymbolStart = "52">
-               </Location>
-               <Location
-                  uuid = "57705AAE-8185-4F76-A67F-31280FDDCF66 - c64958c15105a298"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "closure #1 (__C.UIImage) -&gt; () in FIT3178_Assignment.SheetAddPostViewController.displayImage(images: Swift.Optional&lt;Swift.Array&lt;__C.UIImage&gt;&gt;) -&gt; ()"
-                  moduleName = "FIT3178_Assignment"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/selina/Documents/Monash/Uni/Y2S2/FIT3178/FIT3178_Assigment%2019.41.16/FIT3178_Assigment/SocialNet/SheetAddPostViewController.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "88"
-                  endingLineNumber = "88"
-                  offsetFromSymbolStart = "120">
-               </Location>
-            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>

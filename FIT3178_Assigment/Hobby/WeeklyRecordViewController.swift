@@ -46,9 +46,10 @@ class WeeklyRecordViewController: UIViewController,DatabaseListener,UITableViewD
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        //configure the cell
         let cell = tableView.dequeueReusableCell(withIdentifier: "viewRecord", for: indexPath) as! PageViewTableViewCell
         
-        // Configure the cell
+        // initialise the notesText that has noteDetail and image in a tuple
         var notesText: [(String,String?)] = []
         if records != nil{
             records![indexPath.section].notes.forEach{ note in
@@ -60,13 +61,13 @@ class WeeklyRecordViewController: UIViewController,DatabaseListener,UITableViewD
                 }
             }
         }
-        print("halooooo")
+        // init the PageContainerViewController
         let containerViewController = PageContainerViewController()
         cell.pageViewControlObj = containerViewController
         cell.pageViewControlObj.notesText = notesText
+        // add the view of the containerViewController into cell's content view
         cell.contentView.addSubview(containerViewController.view)
         containerViewController.view.frame = cell.contentView.bounds
-        print("outoutoutout")
         return cell
     }
     
@@ -77,11 +78,11 @@ class WeeklyRecordViewController: UIViewController,DatabaseListener,UITableViewD
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-//        return UIScreen.main.bounds.height * 0.5
         return 400
     }
     
     func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+        // customize the header
         let headerView = UIView()
         headerView.backgroundColor = .systemGray4
         
@@ -105,10 +106,6 @@ class WeeklyRecordViewController: UIViewController,DatabaseListener,UITableViewD
     func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
         40
     }
-    
-//    override func viewDidLayoutSubviews() { //adjusting the contraints of subviews
-//        super.viewDidLayoutSubviews()
-//    }
     
     func onWeeklyRecordChange(change: DatabaseChange, records: [Records]) {
         self.records = records
@@ -157,7 +154,7 @@ class WeeklyRecordViewController: UIViewController,DatabaseListener,UITableViewD
         let leftArrowButton = UIButton(type: .system)
         leftArrowButton.setTitle("<", for: .normal)
         leftArrowButton.translatesAutoresizingMaskIntoConstraints = false
-        leftArrowButton.addTarget(self, action: #selector(moveBackward), for: .touchUpInside)
+        leftArrowButton.addTarget(self, action: #selector(moveBackward), for: .touchUpInside) // add action for the button
         
         weekRange.numberOfLines = 0
         updateWeekLabel()
@@ -165,7 +162,7 @@ class WeeklyRecordViewController: UIViewController,DatabaseListener,UITableViewD
         // Create the right arrow button
         let rightArrowButton = UIButton(type: .system)
         rightArrowButton.setTitle(">", for: .normal)
-        rightArrowButton.addTarget(self, action: #selector(moveForward), for: .touchUpInside)
+        rightArrowButton.addTarget(self, action: #selector(moveForward), for: .touchUpInside) // add action for the button
         
         weekPickerstackView.addArrangedSubview(leftArrowButton)
         weekPickerstackView.addArrangedSubview(weekRange)
@@ -175,6 +172,7 @@ class WeeklyRecordViewController: UIViewController,DatabaseListener,UITableViewD
         databaseController?.endWeek = endWeek
         
         view.addSubview(weekPickerstackView)
+        // show record within the range of start and endweek
         databaseController?.showRecordWeekly(hobby: hobby!, startWeek: startWeek!, endWeek: endWeek!){ (records,dateInRange) in
             self.records = []
             for range in dateInRange {
@@ -198,11 +196,13 @@ class WeeklyRecordViewController: UIViewController,DatabaseListener,UITableViewD
     }
     
     @objc func moveForward() {
+        // update the weekPicker to the next week
         currentDate = Calendar.current.date(byAdding: .weekOfYear, value: 1, to: currentDate)!
         
     }
     
     @objc func moveBackward() {
+        // update the weekPicker to the previous week
         currentDate = Calendar.current.date(byAdding: .weekOfYear, value: -1, to: currentDate)!
     }
     
@@ -215,6 +215,7 @@ class WeeklyRecordViewController: UIViewController,DatabaseListener,UITableViewD
         let end = formatter.string(from: week.end)
         self.endWeek = week.end
         self.weekRange.text = "\(start) - \(end)"
+        // show record within the range of start and endweek
         databaseController?.showRecordWeekly(hobby: hobby!, startWeek: startWeek!, endWeek: endWeek!){(records,dateInRange) in
             self.records = []
             for range in dateInRange {

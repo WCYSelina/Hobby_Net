@@ -8,7 +8,6 @@
 import UIKit
 
 class PageViewTableViewCell: UITableViewCell{
-    var downloadTask: URLSessionDataTask?
     var containerView: UIView!
     var pageViewControlObj: PageContainerViewController!
     var imageViewContainer = UIView()

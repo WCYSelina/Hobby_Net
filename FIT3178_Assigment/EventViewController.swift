@@ -133,7 +133,6 @@ class EventViewController: UIViewController,DatabaseListener,UITableViewDataSour
             eventCell.eventTime.text = "Time: \(eventTimeString!)"
         }
         eventCell.eventLocation.text = "Location: \(event.eventLocation!)"
-        eventCell.weather.text = "Weather: \(event.showWeather!)"
         
         let tapGesture = CustomTapGesture(target: self, action: #selector(moreDetailTapped(_:)))
         tapGesture.event = event
@@ -360,7 +359,7 @@ class MoreDetailPage:UIViewController{
     @IBOutlet weak var sunriseTime: UILabel!
     @IBOutlet weak var sunsetTime: UILabel!
     @IBOutlet weak var weatherView: UIView!
-    let geocoder = CLGeocoder()
+    let geocoder = CLGeocoder() // a framework that used to convert suburb to latlong
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -384,12 +383,13 @@ class MoreDetailPage:UIViewController{
         }
         
         location.text = event?.eventLocation
+        // to get the CLLocation which contains latlong from the suburb name
         geocoder.geocodeAddressString((event?.eventLocation)!) { (placemarks, error) in
             if let error = error {
                 print("Error: \(error)")
             } else if let placemark = placemarks?.first {
                 let location = placemark.location
-                self.getWeather(location: location!, date: eventDate!)
+                self.getWeather(location: location!, date: eventDate!) // get the weather from API
             } else {
                 print("No location found")
             }
@@ -398,17 +398,22 @@ class MoreDetailPage:UIViewController{
     
     
     func getWeather(location: CLLocation,date:Date){
+        
+        // setup for the information to input into the url
         let lat = location.coordinate.latitude
         let long = location.coordinate.longitude
         let calendar = Calendar.current
         let components = calendar.dateComponents([.day], from: Date(),to: date)
-        print("\(lat) \(long)")
         let url =  URL(string:"https://api.openweathermap.org/data/2.5/forecast/daily?lat=\(lat)&lon=\(long)&cnt=\(components.day!+1)&appid=c5fee144acaea76473685a10dc4069b9&units=metric")
+        
+        // create a task and retrieve the content from the url
         let task = URLSession.shared.dataTask(with:url!) {(data,response,error) in
             if let data = data{
                 do{
-                    print("heyyyy")
+                    
+                    // deserializing data
                     let json = try JSONSerialization.jsonObject(with: data, options: .mutableContainers) as! [String:Any]
+                    //this list is an array extracted from the json, we can then get the weather data from here
                     let list = json["list"] as? [[String:Any]]
                     if let list = list{
                         DispatchQueue.main.async {
@@ -442,7 +447,7 @@ class MoreDetailPage:UIViewController{
                 }
             }
         }
-        task.resume()
+        task.resume() // resume the task if it is suspended
     }
 }
 

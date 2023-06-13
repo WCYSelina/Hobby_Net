@@ -8,11 +8,12 @@
 import UIKit
 import FirebaseAuth
 class UserProfileViewController: UIViewController,DatabaseListener,UITableViewDataSource,UITableViewDelegate,UITextFieldDelegate,UITabBarControllerDelegate{
+    // implements the DatabaseListener
+    // change the post detail
     func onUserPostsDetail(change: DatabaseChange, user: User?) {
         defaultUser = user
         username.text = user?.name
     }
-    
     
     @IBOutlet weak var tableView: UITableView!
     @IBOutlet weak var segmentedControl: UISegmentedControl!
@@ -20,11 +21,13 @@ class UserProfileViewController: UIViewController,DatabaseListener,UITableViewDa
     
     
     @IBAction func editUserName(_ sender: Any) {
+        // go to editUsername page
         performSegue(withIdentifier: "editUsername", sender: defaultUser)
         
     }
     
     
+    // init properties
     weak var databaseController:DatabaseProtocol?
     let CELL_POST = "yourPostsLikes"
     var listenerType = ListenerType.post
@@ -32,8 +35,11 @@ class UserProfileViewController: UIViewController,DatabaseListener,UITableViewDa
     var defaultUser:User?
     override func viewDidLoad() {
         super.viewDidLoad()
+        // get the database controller
         let appDelegate = UIApplication.shared.delegate as? AppDelegate
         databaseController = appDelegate?.databaseController
+
+        // set the username
         username.text = defaultUser?.name
         print(defaultUser?.name)
         tabBarController?.delegate = self
@@ -51,10 +57,12 @@ class UserProfileViewController: UIViewController,DatabaseListener,UITableViewDa
     
     
     @IBAction func removeListener(_ sender: Any) {
+        // remove listener
         databaseController?.removeListener(listener: self)
         let defaults = UserDefaults.standard
         defaults.set(false, forKey: "hasLogin")
         
+        // using storyboard to go to new page
         let storyboard = UIStoryboard(name: "Main", bundle: nil)
         if let navigationController = storyboard.instantiateViewController(withIdentifier: "UserProfileController") as? UINavigationController{
             if let sceneDelegate = self.view.window?.windowScene?.delegate as? SceneDelegate{
@@ -65,6 +73,8 @@ class UserProfileViewController: UIViewController,DatabaseListener,UITableViewDa
     
     
     @IBAction func segmentedControlValueChanged(_ sender: UISegmentedControl) {
+        // when segmented control changes
+        // reload corresponding detail
         if sender.selectedSegmentIndex == 0{
             if let posts = defaultUser?.posts{
                 postList = posts
@@ -119,24 +129,29 @@ class UserProfileViewController: UIViewController,DatabaseListener,UITableViewDa
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        // return the number of rows in the section
         return 1
     }
     
     func numberOfSections(in tableView: UITableView) -> Int {
+        // return the number of sections in the table view
         return postList.count
     }
     
     func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+        // return the view for the header of the specified section
         let headerView = UIView()
         headerView.backgroundColor = UIColor.clear
         return headerView
     }
     
     func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+        // return the height for the header of the specified section
         return 5
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        // return the height for the row at the specified index path
         if containImage{
             containImage = false
             return 400
@@ -149,9 +164,11 @@ class UserProfileViewController: UIViewController,DatabaseListener,UITableViewDa
     var containImage = false
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        // return the cell for the row at the specified index path
         let postCell = tableView.dequeueReusableCell(withIdentifier: CELL_POST, for: indexPath) as! CardTableViewCell
         let post = postList[indexPath.section]
         
+        // set the post cell
         postCell.tableView = self.tableView
         postCell.section = indexPath.section
         postCell.post = post
@@ -208,7 +225,9 @@ class UserProfileViewController: UIViewController,DatabaseListener,UITableViewDa
         }
         let section = sender.tag
         let post = postList[section]
+        // if comment text field is not empty
         if postCell.commentTextField.text != ""{
+            // add comment
             let comment = databaseController?.addComment(commentDetail: postCell.commentTextField.text!)
             postCell.commentTextField.text = ""
             databaseController?.addCommentToPost(comment: comment!,post: post)
@@ -261,6 +280,7 @@ class UserProfileViewController: UIViewController,DatabaseListener,UITableViewDa
         }
     }
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        // go to new page cooresponding the identifier
         if segue.identifier == "viewCommentIdentifier", let destinationVC = segue.destination as? ViewCommentViewController{
             if let post = sender as? Post{
                 destinationVC.commentList = post.comment
@@ -276,14 +296,16 @@ class UserProfileViewController: UIViewController,DatabaseListener,UITableViewDa
 
 }
 
+// change the user name controller
 class editUserNameViewController: UIViewController,UISheetPresentationControllerDelegate{
     
-    
+    // init
     weak var databaseController:DatabaseProtocol?
     @IBOutlet weak var username: UITextField!
     var defaultUser:User?
     
     @IBAction func changeUserName(_ sender: Any) {
+        // call the changeUserName method to change user name
         databaseController?.changeUserName(username: username.text ?? defaultUser!.name!)
         navigationController?.popViewController(animated: true)
     }
@@ -294,6 +316,7 @@ class editUserNameViewController: UIViewController,UISheetPresentationController
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        // get the databse controller
         let appDelegate = UIApplication.shared.delegate as? AppDelegate
         databaseController = appDelegate?.databaseController
         sheetPresentationController?.detents = [.custom{

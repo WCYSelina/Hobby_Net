@@ -55,10 +55,11 @@ class YourEventsViewController: UIViewController,UITableViewDataSource,UITableVi
         let appDelegate = UIApplication.shared.delegate as? AppDelegate
         databaseController = appDelegate?.databaseController
         databaseController?.setupUserListener { () in
-            self.tableView.delegate = self
+            self.tableView.delegate = self 
             self.tableView.dataSource = self
 
             self.tableView.separatorStyle = .none
+            // register the custome cell, since it is not in the storyBoard
             self.tableView.register(CardTableViewCellForEvent.self, forCellReuseIdentifier: "yourEventsIdentifier")
             if self.createJoinEvent.selectedSegmentIndex != 1{
                 self.createJoinEvent.selectedSegmentIndex = 0
@@ -70,6 +71,7 @@ class YourEventsViewController: UIViewController,UITableViewDataSource,UITableVi
     
     
     @IBAction func segmentedControlValueChanged(_ sender: UISegmentedControl) {
+        // show the corresponding events to the selectedSegmentIndex
         if sender.selectedSegmentIndex == 0{
             if let events = defaultUser?.events{
                 eventList = events
@@ -119,7 +121,7 @@ class YourEventsViewController: UIViewController,UITableViewDataSource,UITableVi
         
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "dd-MMM-yyyy"
-        let eventDate = event.eventDate?.dateValue()
+        let eventDate = event.eventDate?.dateValue() // get the date of the event
         if let date = eventDate{
             let dateString = dateFormatter.string(from:date)
             eventCell.eventDate.text = "Date: \(dateString)"
@@ -128,12 +130,14 @@ class YourEventsViewController: UIViewController,UITableViewDataSource,UITableVi
             eventCell.eventTime.text = "Time: \(timeString)"
         }
         eventCell.eventLocation.text = "Location: \(event.eventLocation!)"
-        eventCell.weather.text = "Weather: \(event.showWeather!)"
         
+        
+        // add gesture for the event
         let tapGesture = CustomTapGesture(target: self, action: #selector(moreDetailTapped(_:)))
         tapGesture.event = event
         eventCell.moreDetails.addGestureRecognizer(tapGesture)
         
+        // validate if the user has joined the event, shows the corresponding words for the button
         let userHasJoined = databaseController?.checkIfUserHasJoined(event: event)
         if userHasJoined!{
             eventCell.joinEventButton.setTitle("Unjoined Event", for:.normal)
@@ -141,20 +145,23 @@ class YourEventsViewController: UIViewController,UITableViewDataSource,UITableVi
         else{
             eventCell.joinEventButton.setTitle("Join Event", for:.normal)
         }
-        
+        // initialise the button action
         eventCell.joinEventButton.addTarget(self, action: #selector(joinEvent(_:)), for: .touchUpInside)
+        // give button a tag, this tag contains the information of which section has been clicked
         eventCell.joinEventButton.tag = indexPath.section
         
         return eventCell
     }
     
+    //this will be called when the moreDetails label been pressed
     @objc func moreDetailTapped(_ sender: CustomTapGesture){
         if let event = sender.event{
             databaseController?.defaultEvent = event
-            performSegue(withIdentifier: "moreDetailsIdentifier2", sender: event)
+            performSegue(withIdentifier: "moreDetailsIdentifier", sender: event)
         }
     }
     
+    // this will be called when the joinEventButton been pressed
     @objc func joinEvent(_ sender: UIButton){
         let section = sender.tag
         let event = eventList[section]

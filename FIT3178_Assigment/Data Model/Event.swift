@@ -15,7 +15,6 @@ class Event: NSObject, Codable{
     var eventName:String?
     var eventLocation:String?
     var eventDate:Timestamp?
-    var showWeather:Bool?
     var participants:[DocumentReference]? = []
     var publisher:DocumentReference?
     var publisherName:String?

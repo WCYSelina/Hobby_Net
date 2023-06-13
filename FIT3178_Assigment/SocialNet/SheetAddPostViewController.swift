@@ -7,7 +7,9 @@
 
 import UIKit
 
+// using this controller to add a new post
 class SheetAddPostViewController: UIViewController,UITextViewDelegate{
+    // init
     weak var databaseController:DatabaseProtocol?
     let placeholderText = "Enter text here..."
     
@@ -16,19 +18,20 @@ class SheetAddPostViewController: UIViewController,UITextViewDelegate{
     @IBOutlet weak var squareBox: UIView!
     @IBOutlet weak var yourPostLabel: UILabel!
     @IBAction func createPost(_ sender: Any) {
-        print("heiheihei")
+        // create a new post and upload images
         Task{
             do{
                 var counter = 0
                 let folderPath = "images/"
-//                let image = databaseController?.selectedImage
                 if !images.isEmpty{
+                    // for each images, using databse to upload to the storage bucket
                     images.forEach{ image in
                         databaseController?.uploadImageToStorage(folderPath: folderPath, image: image){ imageString in
                             self.imagesString.append(imageString)
                             print(imageString)
                             counter += 1
                             if counter == self.images.count{
+                                // add new post
                                 let _ = self.databaseController?.addPost(postDetail: self.postDetails.text,imagesString: self.imagesString)
                             }
                         }
@@ -41,6 +44,7 @@ class SheetAddPostViewController: UIViewController,UITextViewDelegate{
         }
         navigationController?.popViewController(animated: true)
     }
+    // init
     var imagesString:[String] = []
     var images:[UIImage] = []
     var scrollView:UIScrollView = UIScrollView()
@@ -48,6 +52,7 @@ class SheetAddPostViewController: UIViewController,UITextViewDelegate{
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        // get the databse controller
         let appDelegate = UIApplication.shared.delegate as? AppDelegate
         databaseController = appDelegate?.databaseController
         
@@ -86,7 +91,6 @@ class SheetAddPostViewController: UIViewController,UITextViewDelegate{
         ])
 
         
-//        stackView.widthAnchor.constraint(equalTo: self.view.widthAnchor).isActive = true
         stackView.axis = .horizontal
         stackView.distribution = .fill
         // Add the square box view
@@ -98,17 +102,19 @@ class SheetAddPostViewController: UIViewController,UITextViewDelegate{
     }
         
     @objc func selectImage() {
+        // presents the image picker for image selection
         let imagePicker = SelectPhotosViewController()
         imagePicker.addPostController = self
         present(imagePicker, animated: true, completion: nil)
     }
-    
+    // add the selected images to the images array and displays them in the stack view
     func addImage(images:[UIImage]){
+        // add image to the array
         if !images.isEmpty{
             self.images.append(contentsOf: images)
         }
-        print("alola")
         print(self.images.count)
+        // remove all child subview for stackview
         for view in stackView.arrangedSubviews {
             stackView.removeArrangedSubview(view)
             view.removeFromSuperview()
@@ -117,22 +123,27 @@ class SheetAddPostViewController: UIViewController,UITextViewDelegate{
     }
     
     func displayImage(images:[UIImage]){
+        // creates a separator view, image view, and delete button for each image, and adds them to the stack view
         self.images = images
         var counter = 0
         images.forEach{ image in
+            // init the blank view
             let separatorView = UIView()
             separatorView.translatesAutoresizingMaskIntoConstraints = false
             separatorView.backgroundColor = .systemGray
             stackView.addArrangedSubview(separatorView)
             
+            // init the container UI view
             let containerView = UIView()
             containerView.translatesAutoresizingMaskIntoConstraints = false
             
+            // init the UIImageView
             let imageView = UIImageView(image: image)
             imageView.contentMode = .scaleAspectFit
             imageView.translatesAutoresizingMaskIntoConstraints = false
             containerView.addSubview(imageView)
             
+            // init the UIButton
             let crossButton = UIButton(type: .custom)
             crossButton.translatesAutoresizingMaskIntoConstraints = false
             crossButton.setTitle("X", for: .normal)
@@ -146,6 +157,7 @@ class SheetAddPostViewController: UIViewController,UITextViewDelegate{
             
             stackView.addArrangedSubview(containerView)
             
+            // set their constraints
             let aspectRatio = image.size.width / image.size.height
             NSLayoutConstraint.activate([
                 separatorView.widthAnchor.constraint(equalToConstant: 10),

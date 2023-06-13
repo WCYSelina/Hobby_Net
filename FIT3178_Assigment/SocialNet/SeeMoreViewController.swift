@@ -24,7 +24,6 @@ class SeeMoreViewController: UIViewController {
         descriptiopn.text = post?.postDetail
         if let post = post{
             if post.images.isEmpty{
-                //            tableView.rowHeight = 400
                 downloadImages()
             }
         }
@@ -35,18 +34,17 @@ class SeeMoreViewController: UIViewController {
         var counter = 0
         self.images = []
         post!.images.forEach{ image in
-            if image != ""{
-                let storageRef = Storage.storage().reference(forURL: image)
-                storageRef.getData(maxSize: 10*1024*1024){ data,error in
+            if image != ""{ //only download if it not empty
+                let storageRef = Storage.storage().reference(forURL: image) // get the storage ref of the image
+                storageRef.getData(maxSize: 10*1024*1024){ data,error in // then get the image from it
                     if let error = error{
                         print(error.localizedDescription)
                     } else{
                         let image = UIImage(data: data!)
-                        print("download hahahah")
                         self.images.append(image!)
                         counter += 1
                         
-                        if counter == self.post?.images.count{
+                        if counter == self.post?.images.count{ // only setup when all the images has been downloaded, asynchronous handling
                             self.setupImages(){ () in
                                 
                             }
@@ -58,8 +56,9 @@ class SeeMoreViewController: UIViewController {
     }
     
     func setupImages(completion:@escaping () -> Void){
+        // add the images to the stackView
         var counter = 0
-        for view in stackView.arrangedSubviews {
+        for view in stackView.arrangedSubviews { // make sure it is empty before add the view into the stack view to avoid duplicate view
             stackView.removeArrangedSubview(view)
             view.removeFromSuperview()
         }
@@ -83,13 +82,14 @@ class SeeMoreViewController: UIViewController {
                 imageView.widthAnchor.constraint(equalTo: imageView.heightAnchor, multiplier: aspectRatio),
             ])
             counter += 1
-            if counter == self.images.count{
+            if counter == self.images.count{// only add it into the scrollView once all the view has been added into stackView
                 self.relax()
                 completion()
             }
         }
     }
     func relax(){
+        // set the constraint
         scrollView.translatesAutoresizingMaskIntoConstraints = false
         stackView.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(scrollView)
