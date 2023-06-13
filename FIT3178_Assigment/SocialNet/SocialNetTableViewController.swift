@@ -47,7 +47,6 @@ class SocialNetTableViewController: UITableViewController,DatabaseListener,UITex
         postList = posts
         tableView.reloadData()
         print("reload")
-        print(postList[0])
     }
     
     func onCommentChange(change: DatabaseChange, comments: [Comment]) {
@@ -73,6 +72,7 @@ class SocialNetTableViewController: UITableViewController,DatabaseListener,UITex
         super.viewWillAppear(animated)
         databaseController?.addListener(listener: self)
         firstLoad = true
+        print("hiiiii")
     }
 
     override func viewWillDisappear(_ animated: Bool) {
@@ -101,6 +101,17 @@ class SocialNetTableViewController: UITableViewController,DatabaseListener,UITex
         return 5
     }
     
+    override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        if containImage{
+            containImage = false
+            return 400
+        }
+        else{
+            return 150
+        }
+    }
+    
+    var containImage = false
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let postCell = tableView.dequeueReusableCell(withIdentifier: "postCell", for: indexPath) as! CardTableViewCell
@@ -110,11 +121,11 @@ class SocialNetTableViewController: UITableViewController,DatabaseListener,UITex
         postCell.section = indexPath.section
         postCell.post = post
         if !post.images.isEmpty{
-            tableView.rowHeight = 400
+//            tableView.rowHeight = 400
+            containImage = true
             postCell.downloadImages()
         }
         else{
-            tableView.rowHeight = 150
             postCell.setupPostNoImage()
         }
         
