@@ -1,5 +1,4 @@
-<img width="380" alt="image" src="https://github.com/WCYSelina/Hobby_Net/assets/95896839/5d8b9aca-56a2-4bd7-9d39-781addd0337b"># HobbyNet Application
-
+# HobbyNet Application
 ## Project Details
 
 **Objective:**
@@ -32,21 +31,26 @@
 <img width="380" alt="image" src="https://github.com/WCYSelina/Hobby_Net/assets/95896839/f6570b61-f806-4f1a-9a4d-e361de038ab7">
 <img width="380" alt="image" src="https://github.com/WCYSelina/Hobby_Net/assets/95896839/58a81e54-48c5-40ee-acb6-29879cf46a4e">
 
+
 ***Social Net***
 - Like other Social Media, in this page, user able to post posts and other users would able to see the posts
 - Users also able to like and comment the post
+
 <img width="380" alt="image" src="https://github.com/WCYSelina/Hobby_Net/assets/95896839/c4c9b55d-e104-4b1f-b6e5-73e7657db059">
 <img width="380" alt="image" src="https://github.com/WCYSelina/Hobby_Net/assets/95896839/7c7b95f0-0dfb-4587-8d43-4b8bed34000a">
+<img width="380" alt="image" src="https://github.com/WCYSelina/Hobby_Net/assets/95896839/5d8b9aca-56a2-4bd7-9d39-781addd0337b">
 
 ***Event***
 - User able to create events that other users can join the event and subscribe it
 - Users able to view what event they have created or joined
 - If the user has subscribed to the event, a notification will be pushed an hour before the events
+  
 ![2023-11-07 22-46-08](https://github.com/WCYSelina/Hobby_Net/assets/95896839/b0fde946-95cf-43e6-83dc-0068b1ab5eb6)
 
 ***User***
 - Users able to change their name
 - Users able to view the posts they have posted and liked
+  
 ![image](https://github.com/WCYSelina/Hobby_Net/assets/95896839/b29ca95e-1e6d-479d-b6f3-84b6cb1fc84b)
 ![image](https://github.com/WCYSelina/Hobby_Net/assets/95896839/2b1ea5fb-8f3a-4624-809b-bb6454fdf4ee)
 
