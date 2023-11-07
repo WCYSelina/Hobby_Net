@@ -38,7 +38,6 @@
 
 <img width="380" alt="image" src="https://github.com/WCYSelina/Hobby_Net/assets/95896839/c4c9b55d-e104-4b1f-b6e5-73e7657db059">
 <img width="380" alt="image" src="https://github.com/WCYSelina/Hobby_Net/assets/95896839/7c7b95f0-0dfb-4587-8d43-4b8bed34000a">
-<img width="380" alt="image" src="https://github.com/WCYSelina/Hobby_Net/assets/95896839/5d8b9aca-56a2-4bd7-9d39-781addd0337b">
 
 ***Event***
 - User able to create events that other users can join the event and subscribe it
